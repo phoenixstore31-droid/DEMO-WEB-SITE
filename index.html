@@ -1,0 +1,1348 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>BIG STORE | Premium Gaming Top-Up</title>
+
+<meta name="description" content="BIG STORE - Premium Global Gaming Top-Up Platform. Fast, Secure and Reliable.">
+
+<meta name="theme-color" content="#080808">
+
+<link rel="stylesheet" href="index.css">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+
+<!-- =====================================
+     BIG STORE BOTTOM NAVIGATION CSS
+===================================== -->
+
+<style>
+
+/* =====================================
+   BOTTOM NAVIGATION
+===================================== */
+
+.big-store-bottom-nav {
+
+    position: fixed;
+
+    bottom: 0;
+
+    left: 0;
+
+    width: 100%;
+
+    z-index: 99999;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-around;
+
+    padding: 10px 5px;
+
+    padding-bottom: calc(10px + env(safe-area-inset-bottom));
+
+    background: rgba(8, 8, 8, 0.97);
+
+    border-top: 1px solid rgba(212, 175, 55, 0.20);
+
+    box-shadow: 0 -5px 25px rgba(0, 0, 0, 0.5);
+
+    backdrop-filter: blur(18px);
+
+    -webkit-backdrop-filter: blur(18px);
+
+}
+
+
+/* NAV ITEM */
+
+.big-store-bottom-nav .nav-item {
+
+    position: relative;
+
+    flex: 1;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 5px;
+
+    padding: 7px 2px;
+
+    color: #858585;
+
+    text-decoration: none;
+
+    font-family: Arial, sans-serif;
+
+    transition: all 0.25s ease;
+
+    -webkit-tap-highlight-color: transparent;
+
+}
+
+
+/* ICON */
+
+.big-store-bottom-nav .nav-item i {
+
+    font-size: 20px;
+
+    transition: all 0.25s ease;
+
+}
+
+
+/* TEXT */
+
+.big-store-bottom-nav .nav-item span {
+
+    font-size: 11px;
+
+    font-weight: 600;
+
+    white-space: nowrap;
+
+}
+
+
+/* ACTIVE NAVIGATION */
+
+.big-store-bottom-nav .nav-item.active {
+
+    color: #e9c65b;
+
+}
+
+
+.big-store-bottom-nav .nav-item.active i {
+
+    color: #f5d77a;
+
+    transform: translateY(-3px);
+
+    filter: drop-shadow(
+        0 0 7px rgba(212, 175, 55, 0.5)
+    );
+
+}
+
+
+/* ACTIVE INDICATOR */
+
+.big-store-bottom-nav .nav-item.active::before {
+
+    content: "";
+
+    position: absolute;
+
+    top: -10px;
+
+    width: 28px;
+
+    height: 3px;
+
+    background: #d4af37;
+
+    border-radius: 0 0 5px 5px;
+
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+
+}
+
+
+/* HOVER */
+
+@media (hover: hover) {
+
+    .big-store-bottom-nav .nav-item:hover {
+
+        color: #f5d77a;
+
+        transform: translateY(-2px);
+
+    }
+
+}
+
+
+/* TABLET */
+
+@media (min-width: 600px) {
+
+    .big-store-bottom-nav {
+
+        left: 50%;
+
+        transform: translateX(-50%);
+
+        bottom: 15px;
+
+        width: min(600px, calc(100% - 40px));
+
+        padding: 12px 15px;
+
+        border: 1px solid rgba(212, 175, 55, 0.2);
+
+        border-radius: 18px;
+
+    }
+
+}
+
+
+/* DESKTOP */
+
+@media (min-width: 1000px) {
+
+    .big-store-bottom-nav {
+
+        width: 650px;
+
+        bottom: 20px;
+
+        padding: 13px 20px;
+
+    }
+
+}
+
+
+/* SMALL MOBILE */
+
+@media (max-width: 360px) {
+
+    .big-store-bottom-nav .nav-item i {
+
+        font-size: 18px;
+
+    }
+
+    .big-store-bottom-nav .nav-item span {
+
+        font-size: 10px;
+
+    }
+
+}
+
+
+/* BODY SPACE */
+
+body {
+
+    padding-bottom: 100px !important;
+
+}
+
+
+/* ACCESSIBILITY */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .big-store-bottom-nav * {
+
+        transition: none !important;
+
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================
+     TOP HEADER
+===================================== -->
+
+<header class="main-header">
+
+
+    <div class="header-logo">
+
+
+        <span class="logo-icon">
+
+            <i class="fa-solid fa-crown"></i>
+
+        </span>
+
+
+        <div class="logo-text">
+
+            <h2>BIG <span>STORE</span></h2>
+
+            <small>PREMIUM GAMING STORE</small>
+
+        </div>
+
+
+    </div>
+
+
+
+    <div class="header-actions">
+
+
+        <button class="notification-btn" aria-label="Notifications">
+
+            <i class="fa-regular fa-bell"></i>
+
+            <span class="notification-dot"></span>
+
+        </button>
+
+
+
+        <button class="profile-btn" aria-label="Profile">
+
+            <i class="fa-regular fa-user"></i>
+
+        </button>
+
+
+    </div>
+
+
+</header>
+
+
+
+<!-- =====================================
+     WALLET BALANCE
+===================================== -->
+
+<section class="wallet-section">
+
+
+    <div class="wallet-card">
+
+
+        <div class="wallet-info">
+
+
+            <div class="wallet-icon">
+
+                <i class="fa-solid fa-wallet"></i>
+
+            </div>
+
+
+            <div>
+
+                <span>MY WALLET BALANCE</span>
+
+                <h2 id="walletBalance">$0.00</h2>
+
+            </div>
+
+
+        </div>
+
+
+
+        <button class="wallet-add-btn" id="addMoneyBtn">
+
+            <i class="fa-solid fa-plus"></i>
+
+            Add Money
+
+        </button>
+
+
+    </div>
+
+
+</section>
+
+
+
+<!-- =====================================
+     MAIN CONTENT
+===================================== -->
+
+<main class="main-content">
+
+
+
+    <!-- PROMOTIONAL SLIDER -->
+
+    <section class="hero-section">
+
+
+        <div class="hero-slider" id="heroSlider">
+
+
+            <div class="hero-content">
+
+
+                <span class="hero-badge">
+
+                    <i class="fa-solid fa-crown"></i>
+
+                    PREMIUM GAMING STORE
+
+                </span>
+
+
+
+                <h1>
+
+                    Power Up.<br>
+
+                    <span>Play More.</span>
+
+                </h1>
+
+
+
+                <p>
+
+                    Fast, secure and reliable gaming top-up
+
+                    services around the world.
+
+                </p>
+
+
+
+                <button class="hero-btn" id="startTopupBtn">
+
+                    Explore Games
+
+                    <i class="fa-solid fa-arrow-right"></i>
+
+                </button>
+
+
+            </div>
+
+
+
+            <div class="hero-decoration">
+
+                <i class="fa-solid fa-gamepad"></i>
+
+            </div>
+
+
+
+            <div class="slider-indicators">
+
+                <span class="active"></span>
+
+                <span></span>
+
+                <span></span>
+
+            </div>
+
+
+        </div>
+
+
+    </section>
+
+
+
+    <!-- =====================================
+         QUICK ACCESS
+    ===================================== -->
+
+    <section class="quick-access-section">
+
+
+        <div class="section-heading">
+
+
+            <div>
+
+                <span class="section-label">SHORTCUTS</span>
+
+                <h2>Quick <span>Access</span></h2>
+
+                <p>What do you need?</p>
+
+            </div>
+
+
+
+            <i class="fa-solid fa-bolt heading-icon"></i>
+
+
+        </div>
+
+
+
+        <div class="quick-access-grid">
+
+
+            <a href="games.html" class="quick-card">
+
+
+                <div class="quick-icon gold">
+
+                    <i class="fa-solid fa-gamepad"></i>
+
+                </div>
+
+
+                <h3>Games</h3>
+
+                <p>Browse games</p>
+
+
+            </a>
+
+
+
+            <a href="wallet-topup.html" class="quick-card">
+
+
+                <div class="quick-icon blue">
+
+                    <i class="fa-solid fa-credit-card"></i>
+
+                </div>
+
+
+                <h3>Payments</h3>
+
+                <p>Payment methods</p>
+
+
+            </a>
+
+
+
+            <a href="history.html" class="quick-card">
+
+
+                <div class="quick-icon purple">
+
+                    <i class="fa-solid fa-clock-rotate-left"></i>
+
+                </div>
+
+
+                <h3>Orders</h3>
+
+                <p>Track your orders</p>
+
+
+            </a>
+
+
+
+            <a href="support.html" class="quick-card">
+
+
+                <div class="quick-icon green">
+
+                    <i class="fa-solid fa-headset"></i>
+
+                </div>
+
+
+                <h3>Support</h3>
+
+                <p>Get assistance</p>
+
+
+            </a>
+
+
+
+            <a href="offers.html" class="quick-card">
+
+
+                <div class="quick-icon red">
+
+                    <i class="fa-solid fa-gift"></i>
+
+                </div>
+
+
+                <h3>Offers</h3>
+
+                <p>Special deals</p>
+
+
+            </a>
+
+
+
+            <a href="profile.html" class="quick-card">
+
+
+                <div class="quick-icon gold">
+
+                    <i class="fa-solid fa-user"></i>
+
+                </div>
+
+
+                <h3>My Account</h3>
+
+                <p>Manage profile</p>
+
+
+            </a>
+
+
+        </div>
+
+
+    </section>
+
+
+
+    <!-- =====================================
+         WHY BIG STORE
+    ===================================== -->
+
+    <section class="why-section">
+
+
+        <div class="section-heading">
+
+
+            <div>
+
+                <span class="section-label">WHY BIG STORE</span>
+
+                <h2>Built For <span>Gamers</span></h2>
+
+                <p>
+
+                    Everything you need for a smooth and reliable experience.
+
+                </p>
+
+            </div>
+
+
+        </div>
+
+
+
+        <div class="features-grid">
+
+
+            <div class="feature-card">
+
+
+                <i class="fa-solid fa-bolt"></i>
+
+
+                <h3>Fast Delivery</h3>
+
+
+                <p>
+
+                    Quick processing for your digital purchases.
+
+                </p>
+
+
+            </div>
+
+
+
+            <div class="feature-card">
+
+
+                <i class="fa-solid fa-shield-halved"></i>
+
+
+                <h3>Secure Payments</h3>
+
+
+                <p>
+
+                    Your payment information is handled securely.
+
+                </p>
+
+
+            </div>
+
+
+
+            <div class="feature-card">
+
+
+                <i class="fa-solid fa-gem"></i>
+
+
+                <h3>Great Prices</h3>
+
+
+                <p>
+
+                    Competitive prices for popular digital products.
+
+                </p>
+
+
+            </div>
+
+
+
+            <div class="feature-card">
+
+
+                <i class="fa-solid fa-headset"></i>
+
+
+                <h3>Friendly Support</h3>
+
+
+                <p>
+
+                    Get help whenever you need it.
+
+                </p>
+
+
+            </div>
+
+
+        </div>
+
+
+    </section>
+
+
+
+    <!-- =====================================
+         COMMUNITY
+    ===================================== -->
+
+    <section class="community-section">
+
+
+        <div class="section-heading">
+
+
+            <div>
+
+                <span class="section-label">BIG STORE COMMUNITY</span>
+
+                <h2>Top <span>Players</span></h2>
+
+                <p>Our community leaderboard.</p>
+
+            </div>
+
+
+
+            <i class="fa-solid fa-trophy heading-icon"></i>
+
+
+        </div>
+
+
+
+        <div class="leaderboard-list" id="leaderboardList">
+
+
+            <div class="leaderboard-placeholder">
+
+                <i class="fa-solid fa-trophy"></i>
+
+                <p>
+
+                    Community leaderboard will appear here.
+
+                </p>
+
+            </div>
+
+
+        </div>
+
+
+
+        <div class="your-ranking-card">
+
+
+            <div>
+
+                <span>YOUR RANKING</span>
+
+                <h2 id="userRanking">#--</h2>
+
+                <p>Keep playing and climb higher!</p>
+
+            </div>
+
+
+
+            <div class="ranking-trophy">
+
+                <i class="fa-solid fa-award"></i>
+
+            </div>
+
+
+        </div>
+
+
+    </section>
+
+
+
+    <!-- =====================================
+         HOT DEALS
+    ===================================== -->
+
+    <section class="deals-section">
+
+
+        <div class="section-heading">
+
+
+            <div>
+
+                <span class="section-label">BIG STORE DEALS</span>
+
+                <h2>Hot Offers <span>🔥</span></h2>
+
+                <p>
+
+                    Explore selected products available in our store.
+
+                </p>
+
+            </div>
+
+
+
+            <a href="games.html" class="view-all-btn">
+
+                View All
+
+                <i class="fa-solid fa-arrow-right"></i>
+
+            </a>
+
+
+        </div>
+
+
+
+        <div class="deals-grid" id="dealsGrid">
+
+
+            <div class="deals-placeholder">
+
+                <i class="fa-solid fa-box-open"></i>
+
+                <p>
+
+                    Featured products will appear here.
+
+                </p>
+
+            </div>
+
+
+        </div>
+
+
+    </section>
+
+
+
+    <!-- =====================================
+         PAYMENT METHODS
+    ===================================== -->
+
+    <section class="payment-section">
+
+
+        <div class="payment-card">
+
+
+            <div class="payment-icon">
+
+                <i class="fa-solid fa-lock"></i>
+
+            </div>
+
+
+
+            <div class="payment-content">
+
+
+                <span>SECURE PAYMENTS</span>
+
+
+                <h2>Payment <span>Methods</span></h2>
+
+
+                <p>
+
+                    Explore our available payment options
+
+                    and secure payment methods.
+
+                </p>
+
+
+                <a href="wallet-topup.html">
+
+                    Explore Payments
+
+                    <i class="fa-solid fa-arrow-right"></i>
+
+                </a>
+
+
+            </div>
+
+
+        </div>
+
+
+    </section>
+
+
+
+    <!-- =====================================
+         CUSTOMER REVIEWS
+    ===================================== -->
+
+    <section class="reviews-section">
+
+
+        <div class="section-heading">
+
+
+            <div>
+
+                <span class="section-label">CUSTOMER EXPERIENCE</span>
+
+                <h2>What Our <span>Customers Say</span></h2>
+
+                <p>
+
+                    Real reviews from BIG STORE customers.
+
+                </p>
+
+            </div>
+
+
+        </div>
+
+
+
+        <div class="reviews-container" id="reviewsContainer">
+
+
+            <div class="reviews-placeholder">
+
+                <i class="fa-solid fa-star"></i>
+
+                <p>
+
+                    Customer reviews will appear here.
+
+                </p>
+
+            </div>
+
+
+        </div>
+
+
+
+        <a href="reviews.html" class="reviews-link">
+
+            VIEW ALL REVIEWS
+
+            <i class="fa-solid fa-arrow-right"></i>
+
+        </a>
+
+
+    </section>
+
+
+
+    <!-- =====================================
+         FAQ
+    ===================================== -->
+
+    <section class="faq-section">
+
+
+        <div class="section-heading">
+
+
+            <div>
+
+                <span class="section-label">HELP CENTER</span>
+
+                <h2>Frequently <span>Asked Questions</span></h2>
+
+            </div>
+
+
+        </div>
+
+
+
+        <div class="faq-list">
+
+
+            <details class="faq-item">
+
+
+                <summary>How fast is delivery?</summary>
+
+
+                <p>
+
+                    Delivery time depends on the selected product and service.
+
+                </p>
+
+
+            </details>
+
+
+
+            <details class="faq-item">
+
+
+                <summary>How do I place an order?</summary>
+
+
+                <p>
+
+                    Choose your game, select a product and follow the checkout process.
+
+                </p>
+
+
+            </details>
+
+
+
+            <details class="faq-item">
+
+
+                <summary>How can I contact support?</summary>
+
+
+                <p>
+
+                    Contact our support team through the available support channels.
+
+                </p>
+
+
+            </details>
+
+
+
+            <details class="faq-item">
+
+
+                <summary>How do I add money to my wallet?</summary>
+
+
+                <p>
+
+                    Visit the wallet section to explore available deposit methods.
+
+                </p>
+
+
+            </details>
+
+
+        </div>
+
+
+    </section>
+
+
+
+    <!-- =====================================
+         SUPPORT BANNER
+    ===================================== -->
+
+    <section class="support-section">
+
+
+        <div class="support-card">
+
+
+            <div class="support-icon">
+
+                <i class="fa-solid fa-headset"></i>
+
+            </div>
+
+
+
+            <span>BIG STORE SUPPORT</span>
+
+
+
+            <h2>We're Here <span>To Help</span></h2>
+
+
+
+            <p>
+
+                Have a question or need assistance
+
+                with your order?
+
+            </p>
+
+
+
+            <a href="support.html" class="support-btn">
+
+                Contact Support
+
+                <i class="fa-solid fa-arrow-right"></i>
+
+            </a>
+
+
+        </div>
+
+
+    </section>
+
+
+</main>
+
+
+
+<!-- =====================================
+     FOOTER
+===================================== -->
+
+<footer class="main-footer">
+
+
+    <div class="footer-logo">
+
+
+        <i class="fa-solid fa-crown"></i>
+
+
+        <h2>BIG <span>STORE</span></h2>
+
+
+    </div>
+
+
+
+    <p>
+
+        Your ultimate destination for premium
+
+        gaming top-up services.
+
+    </p>
+
+
+
+    <div class="footer-links">
+
+
+        <a href="about.html">About Us</a>
+
+
+        <a href="terms.html">Terms</a>
+
+
+        <a href="privacy.html">Privacy</a>
+
+
+        <a href="refund.html">Refund Policy</a>
+
+
+        <a href="support.html">Contact</a>
+
+
+    </div>
+
+
+
+    <div class="footer-bottom">
+
+
+        <p>
+
+            &copy; <span id="currentYear"></span>
+
+            BIG STORE. All Rights Reserved.
+
+        </p>
+
+
+        <span>POWERED BY BIG STORE</span>
+
+
+    </div>
+
+
+</footer>
+
+
+
+<!-- =====================================
+     BIG STORE BOTTOM NAVIGATION
+===================================== -->
+
+<nav class="big-store-bottom-nav">
+
+
+    <a href="index.html" class="nav-item">
+
+        <i class="fas fa-home"></i>
+
+        <span>Home</span>
+
+    </a>
+
+
+
+    <a href="games.html" class="nav-item">
+
+        <i class="fas fa-gamepad"></i>
+
+        <span>Games</span>
+
+    </a>
+
+
+
+    <a href="wallet-topup.html" class="nav-item">
+
+        <i class="fas fa-wallet"></i>
+
+        <span>Wallet</span>
+
+    </a>
+
+
+
+    <a href="history.html" class="nav-item">
+
+        <i class="fas fa-clock-rotate-left"></i>
+
+        <span>History</span>
+
+    </a>
+
+
+
+    <a href="profile.html" class="nav-item">
+
+        <i class="fas fa-user"></i>
+
+        <span>Profile</span>
+
+    </a>
+
+
+</nav>
+
+
+
+<!-- =====================================
+     ACTIVE NAVIGATION SYSTEM
+===================================== -->
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+
+    const currentPage = window.location.pathname
+
+        .split("/")
+
+        .pop()
+
+        .toLowerCase() || "index.html";
+
+
+    const navItems = document.querySelectorAll(
+
+        ".big-store-bottom-nav .nav-item"
+
+    );
+
+
+    navItems.forEach(item => {
+
+
+        const link = item.getAttribute("href").toLowerCase();
+
+
+        item.classList.toggle(
+
+            "active",
+
+            link === currentPage
+
+        );
+
+
+    });
+
+
+    console.log(
+
+        "BIG STORE Bottom Navigation Loaded Successfully!"
+
+    );
+
+
+});
+
+</script>
+
+
+
+<!-- =====================================
+     INDEX JAVASCRIPT
+===================================== -->
+
+<script src="index.js"></script>
+
+
+</body>
+
+</html>

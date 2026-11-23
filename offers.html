@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Special Offers | BIG STORE</title>
+
+    <meta name="description" content="Discover exclusive gaming top-up deals, special discounts and limited-time offers at BIG STORE.">
+
+    <meta name="theme-color" content="#090909">
+
+    <link rel="stylesheet" href="offers.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+
+    <!-- ======================================
+         HEADER
+    ======================================= -->
+
+    <header class="offers-header">
+
+        <a href="index.html" class="offers-brand">
+            <span class="brand-icon">
+                <i class="fa-solid fa-crown"></i>
+            </span>
+
+            <span class="brand-text">
+                BIG <span>STORE</span>
+            </span>
+        </a>
+
+        <div class="header-actions">
+
+            <button class="header-icon-btn" id="notificationBtn" aria-label="Notifications">
+                <i class="fa-regular fa-bell"></i>
+                <span class="notification-dot"></span>
+            </button>
+
+            <button class="header-profile-btn" id="profileBtn" aria-label="Profile">
+                <i class="fa-regular fa-user"></i>
+            </button>
+
+        </div>
+
+    </header>
+
+
+    <!-- ======================================
+         MAIN CONTENT
+    ======================================= -->
+
+    <main class="offers-page">
+
+
+        <!-- ======================================
+             HERO SECTION
+        ======================================= -->
+
+        <section class="offers-hero">
+
+            <div class="hero-background-glow"></div>
+
+            <div class="hero-content">
+
+                <div class="offers-badge">
+                    <i class="fa-solid fa-bolt"></i>
+                    EXCLUSIVE DEALS
+                </div>
+
+                <h1>
+                    Amazing Offers.
+                    <span>Better Gaming.</span>
+                </h1>
+
+                <p>
+                    Discover exclusive deals and special discounts
+                    on your favourite games.
+                </p>
+
+                <a href="#availableOffers" class="hero-btn">
+                    Explore Offers
+                    <i class="fa-solid fa-arrow-right"></i>
+                </a>
+
+            </div>
+
+            <div class="hero-decoration">
+
+                <div class="decoration-circle circle-one"></div>
+                <div class="decoration-circle circle-two"></div>
+
+                <div class="hero-gift-icon">
+                    <i class="fa-solid fa-gift"></i>
+                </div>
+
+                <div class="floating-tag tag-one">
+                    <i class="fa-solid fa-percent"></i>
+                    SPECIAL DEAL
+                </div>
+
+                <div class="floating-tag tag-two">
+                    <i class="fa-solid fa-star"></i>
+                    BEST VALUE
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ======================================
+             OFFER SUMMARY
+        ======================================= -->
+
+        <section class="offer-summary">
+
+            <div class="summary-card">
+
+                <div class="summary-icon">
+                    <i class="fa-solid fa-tags"></i>
+                </div>
+
+                <div class="summary-info">
+                    <h3 id="totalOffers">0</h3>
+                    <p>Available Offers</p>
+                </div>
+
+            </div>
+
+
+            <div class="summary-card">
+
+                <div class="summary-icon">
+                    <i class="fa-solid fa-fire"></i>
+                </div>
+
+                <div class="summary-info">
+                    <h3 id="activeOffers">0</h3>
+                    <p>Active Deals</p>
+                </div>
+
+            </div>
+
+
+            <div class="summary-card">
+
+                <div class="summary-icon">
+                    <i class="fa-solid fa-clock"></i>
+                </div>
+
+                <div class="summary-info">
+                    <h3 id="endingOffers">0</h3>
+                    <p>Ending Soon</p>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ======================================
+             OFFER CATEGORIES
+        ======================================= -->
+
+        <section class="offer-category-section">
+
+            <div class="section-heading">
+
+                <div>
+                    <span class="section-subtitle">FIND YOUR DEAL</span>
+                    <h2>Offer Categories</h2>
+                </div>
+
+            </div>
+
+
+            <div class="offer-category-list">
+
+                <button class="offer-category-btn active" data-category="all">
+
+                    <i class="fa-solid fa-layer-group"></i>
+                    <span>All Offers</span>
+
+                </button>
+
+
+                <button class="offer-category-btn" data-category="freefire">
+
+                    <i class="fa-solid fa-fire"></i>
+                    <span>Free Fire</span>
+
+                </button>
+
+
+                <button class="offer-category-btn" data-category="pubg">
+
+                    <i class="fa-solid fa-crosshairs"></i>
+                    <span>PUBG Mobile</span>
+
+                </button>
+
+
+                <button class="offer-category-btn" data-category="mobilelegends">
+
+                    <i class="fa-solid fa-dragon"></i>
+                    <span>Mobile Legends</span>
+
+                </button>
+
+
+                <button class="offer-category-btn" data-category="other">
+
+                    <i class="fa-solid fa-gamepad"></i>
+                    <span>Other Games</span>
+
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- ======================================
+             AVAILABLE OFFERS
+        ======================================= -->
+
+        <section class="available-offers-section" id="availableOffers">
+
+            <div class="section-heading">
+
+                <div>
+                    <span class="section-subtitle">DON'T MISS OUT</span>
+                    <h2>Available Offers</h2>
+                    <p>Explore our latest gaming deals.</p>
+                </div>
+
+                <div class="offer-count">
+                    <span id="visibleOfferCount">0</span> Offers
+                </div>
+
+            </div>
+
+
+            <!-- Search and Filter -->
+
+            <div class="offer-filter-bar">
+
+                <div class="offer-search-box">
+
+                    <i class="fa-solid fa-magnifying-glass"></i>
+
+                    <input
+                        type="search"
+                        id="offerSearch"
+                        placeholder="Search offers..."
+                        autocomplete="off"
+                    >
+
+                    <button id="clearOfferSearch" aria-label="Clear search">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+
+                </div>
+
+
+                <select id="offerSort" class="offer-sort-select">
+
+                    <option value="latest">Latest Offers</option>
+                    <option value="discount-high">Highest Discount</option>
+                    <option value="ending-soon">Ending Soon</option>
+
+                </select>
+
+            </div>
+
+
+            <!-- Loading -->
+
+            <div class="offers-loading" id="offersLoading">
+
+                <div class="loading-spinner"></div>
+
+                <p>Loading amazing offers...</p>
+
+            </div>
+
+
+            <!-- Offers Grid -->
+
+            <div class="offers-grid" id="offersGrid">
+
+
+                <!--
+                    Offer cards will be displayed here
+                    using offers.js.
+                -->
+
+
+            </div>
+
+
+            <!-- Empty State -->
+
+            <div class="offers-empty" id="offersEmpty" hidden>
+
+                <div class="empty-icon">
+                    <i class="fa-solid fa-gift"></i>
+                </div>
+
+                <h3>No Offers Found</h3>
+
+                <p>
+                    We couldn't find any offers matching your search.
+                    Please try another category.
+                </p>
+
+                <button id="resetOfferFilters">
+                    <i class="fa-solid fa-rotate-left"></i>
+                    Reset Filters
+                </button>
+
+            </div>
+
+
+            <!-- Error State -->
+
+            <div class="offers-error" id="offersError" hidden>
+
+                <div class="error-icon">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+
+                <h3>Something Went Wrong</h3>
+
+                <p id="offersErrorMessage">
+                    Unable to load offers.
+                </p>
+
+                <button id="retryOffersBtn">
+                    <i class="fa-solid fa-rotate-right"></i>
+                    Try Again
+                </button>
+
+            </div>
+
+
+        </section>
+
+
+        <!-- ======================================
+             PROMO CODE SECTION
+        ======================================= -->
+
+        <section class="promo-code-section">
+
+            <div class="promo-code-content">
+
+                <div class="promo-icon">
+                    <i class="fa-solid fa-ticket"></i>
+                </div>
+
+                <div class="promo-text">
+
+                    <span class="section-subtitle">EXTRA SAVINGS</span>
+
+                    <h2>Have a Promo Code?</h2>
+
+                    <p>
+                        Apply your promotional code during checkout
+                        to unlock eligible discounts.
+                    </p>
+
+                </div>
+
+            </div>
+
+            <div class="promo-note">
+
+                <i class="fa-solid fa-circle-info"></i>
+
+                <span>
+                    Promo code availability depends on the active offer.
+                </span>
+
+            </div>
+
+        </section>
+
+
+        <!-- ======================================
+             WHY BIG STORE OFFERS
+        ======================================= -->
+
+        <section class="offer-benefits-section">
+
+            <div class="section-heading">
+
+                <div>
+                    <span class="section-subtitle">MORE VALUE FOR YOU</span>
+                    <h2>Why Choose Our Deals?</h2>
+                </div>
+
+            </div>
+
+
+            <div class="offer-benefits-grid">
+
+                <div class="benefit-card">
+
+                    <div class="benefit-icon">
+                        <i class="fa-solid fa-percent"></i>
+                    </div>
+
+                    <h3>Special Discounts</h3>
+
+                    <p>
+                        Enjoy exclusive deals on selected gaming products.
+                    </p>
+
+                </div>
+
+
+                <div class="benefit-card">
+
+                    <div class="benefit-icon">
+                        <i class="fa-solid fa-bolt"></i>
+                    </div>
+
+                    <h3>Limited-Time Deals</h3>
+
+                    <p>
+                        Discover special offers available for a limited time.
+                    </p>
+
+                </div>
+
+
+                <div class="benefit-card">
+
+                    <div class="benefit-icon">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+
+                    <h3>Secure Shopping</h3>
+
+                    <p>
+                        Enjoy a secure and convenient shopping experience.
+                    </p>
+
+                </div>
+
+
+                <div class="benefit-card">
+
+                    <div class="benefit-icon">
+                        <i class="fa-solid fa-gem"></i>
+                    </div>
+
+                    <h3>More Value</h3>
+
+                    <p>
+                        Get more value from your favourite gaming top-ups.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ======================================
+             SUPPORT BANNER
+        ======================================= -->
+
+        <section class="offers-support-banner">
+
+            <div class="support-banner-icon">
+                <i class="fa-solid fa-headset"></i>
+            </div>
+
+            <div class="support-banner-content">
+
+                <h2>Need Help With An Offer?</h2>
+
+                <p>
+                    Contact our support team if you have questions
+                    about any special deal.
+                </p>
+
+            </div>
+
+            <a href="support.html" class="support-banner-btn">
+                Get Support
+                <i class="fa-solid fa-arrow-right"></i>
+            </a>
+
+        </section>
+
+
+    </main>
+
+
+    <!-- ======================================
+         BOTTOM NAVIGATION
+    ======================================= -->
+
+    <nav class="big-store-bottom-nav">
+
+        <a href="index.html" class="nav-item">
+
+            <i class="fa-solid fa-house"></i>
+            <span>Home</span>
+
+        </a>
+
+
+        <a href="games.html" class="nav-item">
+
+            <i class="fa-solid fa-gamepad"></i>
+            <span>Games</span>
+
+        </a>
+
+
+        <a href="wallet-topup.html" class="nav-item">
+
+            <i class="fa-solid fa-wallet"></i>
+            <span>Wallet</span>
+
+        </a>
+
+
+        <a href="offers.html" class="nav-item active">
+
+            <i class="fa-solid fa-tags"></i>
+            <span>Offers</span>
+
+        </a>
+
+
+        <a href="profile.html" class="nav-item">
+
+            <i class="fa-solid fa-user"></i>
+            <span>Profile</span>
+
+        </a>
+
+    </nav>
+
+
+    <!-- ======================================
+         TOAST NOTIFICATION
+    ======================================= -->
+
+    <div class="offers-toast" id="offersToast">
+
+        <div class="toast-icon">
+            <i class="fa-solid fa-circle-info"></i>
+        </div>
+
+        <span id="offersToastMessage">
+            Notification
+        </span>
+
+    </div>
+
+
+    <!-- ======================================
+         JAVASCRIPT
+    ======================================= -->
+
+    <script type="module" src="offers.js"></script>
+
+</body>
+</html>
