@@ -8,24 +8,20 @@
     <title>Free Fire Top-Up | BIG STORE</title>
 
     <meta name="description"
-        content="Buy Free Fire Diamonds securely at BIG STORE. Fast and reliable game top-up service.">
+        content="Buy Free Fire Diamonds and game packages securely at BIG STORE.">
 
-    <meta name="theme-color" content="#090909">
+    <meta name="theme-color" content="#080808">
 
-    <!-- Font Awesome -->
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
         rel="stylesheet">
 
-    <!-- CSS -->
     <link rel="stylesheet" href="freefire.css">
-
 </head>
 
 <body>
@@ -39,13 +35,11 @@
         </div>
     </div>
 
-
-    <!-- BACKGROUND EFFECTS -->
+    <!-- BACKGROUND -->
     <div class="background-effects">
         <div class="glow glow-one"></div>
         <div class="glow glow-two"></div>
     </div>
-
 
     <!-- HEADER -->
     <header class="main-header">
@@ -61,7 +55,6 @@
                     BIG<span>STORE</span>
                 </span>
             </a>
-
 
             <nav class="header-navigation">
 
@@ -82,20 +75,16 @@
 
             </nav>
 
-
             <div class="header-actions">
 
                 <div class="wallet-display" id="walletDisplay">
-
                     <i class="fa-solid fa-wallet"></i>
 
                     <div>
                         <small>MY WALLET</small>
                         <strong id="walletBalance">LKR 0.00</strong>
                     </div>
-
                 </div>
-
 
                 <a href="profile.html" class="profile-button">
                     <i class="fa-solid fa-user"></i>
@@ -104,15 +93,14 @@
 
             </div>
 
-
-            <button class="mobile-menu-button" id="mobileMenuButton">
+            <button class="mobile-menu-button" id="mobileMenuButton"
+                aria-label="Open navigation menu">
                 <i class="fa-solid fa-bars"></i>
             </button>
 
         </div>
 
     </header>
-
 
     <!-- MOBILE NAVIGATION -->
     <div class="mobile-navigation" id="mobileNavigation">
@@ -139,10 +127,8 @@
 
     </div>
 
-
     <!-- MAIN CONTENT -->
     <main class="main-container">
-
 
         <!-- BREADCRUMB -->
         <div class="breadcrumb">
@@ -155,8 +141,7 @@
 
         </div>
 
-
-        <!-- GAME HERO SECTION -->
+        <!-- GAME HERO -->
         <section class="game-hero">
 
             <div class="game-hero-content">
@@ -175,7 +160,6 @@
                     Get your favourite Free Fire Diamonds and
                     exclusive game packages with BIG STORE.
                 </p>
-
 
                 <div class="hero-features">
 
@@ -198,30 +182,24 @@
 
             </div>
 
-
             <div class="game-hero-image">
-
                 <div class="hero-image-overlay"></div>
 
                 <div class="hero-game-label">
                     <span>GAME TOP-UP</span>
                     <strong>FREE FIRE</strong>
                 </div>
-
             </div>
 
         </section>
 
-
-        <!-- TOPUP CONTENT -->
+        <!-- TOPUP LAYOUT -->
         <div class="topup-layout">
-
 
             <!-- LEFT SECTION -->
             <section class="topup-main">
 
-
-                <!-- STEP 01 -->
+                <!-- STEP 01: PLAYER INFORMATION -->
                 <div class="section-card">
 
                     <div class="section-heading">
@@ -235,8 +213,6 @@
 
                     </div>
 
-
-                    <!-- UID INPUT -->
                     <div class="form-group">
 
                         <label for="playerUID">
@@ -262,8 +238,6 @@
 
                     </div>
 
-
-                    <!-- NAME CHECK BUTTON -->
                     <button class="primary-button name-check-button"
                         id="nameCheckButton">
 
@@ -272,7 +246,6 @@
                         <span>Verify Player</span>
 
                     </button>
-
 
                     <!-- PLAYER RESULT -->
                     <div class="player-result" id="playerResult">
@@ -299,16 +272,18 @@
 
                     </div>
 
+                    <div class="verification-message"
+                        id="verificationMessage">
 
-                    <div class="verification-message" id="verificationMessage">
                         <i class="fa-solid fa-circle-info"></i>
+
                         Please verify your Player ID before purchasing.
+
                     </div>
 
                 </div>
 
-
-                <!-- STEP 02 -->
+                <!-- STEP 02: PRODUCTS -->
                 <div class="section-card products-section">
 
                     <div class="section-heading">
@@ -322,7 +297,6 @@
 
                     </div>
 
-
                     <!-- REGION INFORMATION -->
                     <div class="region-information">
 
@@ -332,7 +306,9 @@
 
                         <div>
                             <strong>Selected Region</strong>
-                            <p id="selectedRegion">Verify your Player ID first</p>
+                            <p id="selectedRegion">
+                                Verify your Player ID first
+                            </p>
                         </div>
 
                         <span class="region-status" id="regionStatus">
@@ -341,159 +317,12 @@
 
                     </div>
 
-
-                    <!-- PRODUCTS -->
+                    <!-- DYNAMIC PRODUCTS -->
                     <div class="products-grid" id="productsGrid">
-
-
-                        <!-- PRODUCT 01 -->
-                        <button class="product-card" data-product="25 Diamonds">
-
-                            <div class="product-image">
-                                <img src="images/freefire/25-diamonds.png"
-                                    alt="25 Diamonds"
-                                    onerror="this.style.display='none'">
-
-                                <i class="fa-solid fa-gem fallback-gem"></i>
-                            </div>
-
-                            <div class="product-details">
-                                <h3>25 Diamonds</h3>
-                                <p>Free Fire</p>
-                            </div>
-
-                            <div class="product-price">
-                                <span>LKR</span>
-                                <strong>---</strong>
-                            </div>
-
-                        </button>
-
-
-                        <!-- PRODUCT 02 -->
-                        <button class="product-card" data-product="50 Diamonds">
-
-                            <div class="product-image">
-                                <img src="images/freefire/50-diamonds.png"
-                                    alt="50 Diamonds"
-                                    onerror="this.style.display='none'">
-
-                                <i class="fa-solid fa-gem fallback-gem"></i>
-                            </div>
-
-                            <div class="product-details">
-                                <h3>50 Diamonds</h3>
-                                <p>Free Fire</p>
-                            </div>
-
-                            <div class="product-price">
-                                <span>LKR</span>
-                                <strong>---</strong>
-                            </div>
-
-                        </button>
-
-
-                        <!-- PRODUCT 03 -->
-                        <button class="product-card" data-product="115 Diamonds">
-
-                            <div class="product-image">
-                                <img src="images/freefire/115-diamonds.png"
-                                    alt="115 Diamonds"
-                                    onerror="this.style.display='none'">
-
-                                <i class="fa-solid fa-gem fallback-gem"></i>
-                            </div>
-
-                            <div class="product-details">
-                                <h3>115 Diamonds</h3>
-                                <p>Free Fire</p>
-                            </div>
-
-                            <div class="product-price">
-                                <span>LKR</span>
-                                <strong>---</strong>
-                            </div>
-
-                        </button>
-
-
-                        <!-- PRODUCT 04 -->
-                        <button class="product-card" data-product="240 Diamonds">
-
-                            <div class="product-image">
-                                <img src="images/freefire/240-diamonds.png"
-                                    alt="240 Diamonds"
-                                    onerror="this.style.display='none'">
-
-                                <i class="fa-solid fa-gem fallback-gem"></i>
-                            </div>
-
-                            <div class="product-details">
-                                <h3>240 Diamonds</h3>
-                                <p>Free Fire</p>
-                            </div>
-
-                            <div class="product-price">
-                                <span>LKR</span>
-                                <strong>---</strong>
-                            </div>
-
-                        </button>
-
-
-                        <!-- PRODUCT 05 -->
-                        <button class="product-card" data-product="Weekly Membership">
-
-                            <div class="product-image">
-                                <img src="images/freefire/weekly.png"
-                                    alt="Weekly Membership"
-                                    onerror="this.style.display='none'">
-
-                                <i class="fa-solid fa-crown fallback-gem"></i>
-                            </div>
-
-                            <div class="product-details">
-                                <h3>Weekly</h3>
-                                <p>Membership</p>
-                            </div>
-
-                            <div class="product-price">
-                                <span>LKR</span>
-                                <strong>---</strong>
-                            </div>
-
-                        </button>
-
-
-                        <!-- PRODUCT 06 -->
-                        <button class="product-card" data-product="Monthly Membership">
-
-                            <div class="product-image">
-                                <img src="images/freefire/monthly.png"
-                                    alt="Monthly Membership"
-                                    onerror="this.style.display='none'">
-
-                                <i class="fa-solid fa-crown fallback-gem"></i>
-                            </div>
-
-                            <div class="product-details">
-                                <h3>Monthly</h3>
-                                <p>Membership</p>
-                            </div>
-
-                            <div class="product-price">
-                                <span>LKR</span>
-                                <strong>---</strong>
-                            </div>
-
-                        </button>
-
-
+                        <!-- Products will load from Supabase using freefire.js -->
                     </div>
 
-
-                    <!-- NO PRODUCTS MESSAGE -->
+                    <!-- NO PRODUCTS -->
                     <div class="no-products" id="noProducts">
 
                         <div class="empty-icon">
@@ -510,8 +339,7 @@
 
                 </div>
 
-
-                <!-- STEP 03 -->
+                <!-- STEP 03: ORDER CONFIRMATION -->
                 <div class="section-card">
 
                     <div class="section-heading">
@@ -524,7 +352,6 @@
                         </div>
 
                     </div>
-
 
                     <div class="order-summary">
 
@@ -557,8 +384,8 @@
 
                     </div>
 
-
-                    <button class="purchase-button" id="purchaseButton" disabled>
+                    <button class="purchase-button"
+                        id="purchaseButton" disabled>
 
                         <i class="fa-solid fa-lock"></i>
 
@@ -568,26 +395,19 @@
 
                     </button>
 
-
                     <div class="secure-payment">
-
                         <i class="fa-solid fa-shield-halved"></i>
-
                         Your transaction is protected by BIG STORE.
-
                     </div>
 
                 </div>
 
-
             </section>
-
 
             <!-- RIGHT SIDEBAR -->
             <aside class="topup-sidebar">
 
-
-                <!-- WALLET CARD -->
+                <!-- WALLET -->
                 <div class="sidebar-card wallet-card">
 
                     <div class="sidebar-card-heading">
@@ -603,23 +423,22 @@
 
                     </div>
 
-
                     <div class="wallet-amount">
+
                         <small>AVAILABLE BALANCE</small>
-                        <h2 id="sidebarWalletBalance">LKR 0.00</h2>
+
+                        <h2 id="sidebarWalletBalance">
+                            LKR 0.00
+                        </h2>
+
                     </div>
 
-
                     <a href="wallet.html" class="add-money-button">
-
                         <i class="fa-solid fa-plus"></i>
-
                         Add Money
-
                     </a>
 
                 </div>
-
 
                 <!-- HOW IT WORKS -->
                 <div class="sidebar-card">
@@ -637,7 +456,6 @@
 
                     </div>
 
-
                     <div class="how-it-works">
 
                         <div class="work-step">
@@ -653,7 +471,6 @@
 
                         </div>
 
-
                         <div class="work-step">
 
                             <div class="work-step-icon">
@@ -667,7 +484,6 @@
 
                         </div>
 
-
                         <div class="work-step">
 
                             <div class="work-step-icon">
@@ -680,7 +496,6 @@
                             </div>
 
                         </div>
-
 
                         <div class="work-step">
 
@@ -699,40 +514,22 @@
 
                 </div>
 
-
                 <!-- IMPORTANT NOTICE -->
                 <div class="sidebar-card notice-card">
 
                     <div class="notice-heading">
-
                         <i class="fa-solid fa-triangle-exclamation"></i>
-
                         <h3>Important Notice</h3>
-
                     </div>
 
                     <ul>
-
-                        <li>
-                            Always enter the correct Player ID.
-                        </li>
-
-                        <li>
-                            Verify your player name before purchasing.
-                        </li>
-
-                        <li>
-                            Never share your game password.
-                        </li>
-
-                        <li>
-                            Top-up orders may take a few seconds to process.
-                        </li>
-
+                        <li>Always enter the correct Player ID.</li>
+                        <li>Verify your player name before purchasing.</li>
+                        <li>Never share your game password.</li>
+                        <li>Top-up orders may take a few seconds to process.</li>
                     </ul>
 
                 </div>
-
 
                 <!-- SUPPORT -->
                 <div class="sidebar-card support-card">
@@ -754,14 +551,11 @@
 
                 </div>
 
-
             </aside>
 
         </div>
 
-
     </main>
-
 
     <!-- FOOTER -->
     <footer class="main-footer">
@@ -779,7 +573,7 @@
             <div class="footer-bottom">
 
                 <span>
-                    © <span id="currentYear"></span> BIG STORE.
+                    &copy; <span id="currentYear"></span> BIG STORE.
                     All rights reserved.
                 </span>
 
@@ -794,7 +588,6 @@
 
     </footer>
 
-
     <!-- TOAST NOTIFICATION -->
     <div class="toast-container" id="toastContainer">
 
@@ -807,16 +600,14 @@
             <p id="toastMessage">Message goes here.</p>
         </div>
 
-        <button id="closeToast">
+        <button id="closeToast" aria-label="Close notification">
             <i class="fa-solid fa-xmark"></i>
         </button>
 
     </div>
 
-
     <!-- JAVASCRIPT -->
     <script type="module" src="freefire.js"></script>
 
 </body>
-
 </html>
