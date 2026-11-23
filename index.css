@@ -1726,3 +1726,260 @@ summary:focus-visible {
     }
 
 }
+
+/* ==========================================
+   BIG STORE COMMUNITY LEADERBOARD
+   PREMIUM BLACK & GOLD
+========================================== */
+
+.community-section {
+    width: 100%;
+    padding: 25px 16px;
+    margin: 20px auto;
+}
+
+/* LEADERBOARD CONTAINER */
+
+.leaderboard-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 22px;
+}
+
+/* PLAYER CARD */
+
+.leaderboard-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 15px;
+    min-width: 0;
+    background: linear-gradient(
+        135deg,
+        #171717,
+        #101010
+    );
+    border: 1px solid rgba(212, 175, 55, 0.16);
+    border-radius: 15px;
+    transition: 0.25s ease;
+}
+
+.leaderboard-item:hover {
+    border-color: rgba(212, 175, 55, 0.55);
+    transform: translateY(-2px);
+}
+
+/* CURRENT USER */
+
+.leaderboard-item.current-user {
+    background: linear-gradient(
+        120deg,
+        rgba(212, 175, 55, 0.16),
+        #151515
+    );
+    border: 1px solid #d4af37;
+    box-shadow: 0 0 18px rgba(212, 175, 55, 0.12);
+}
+
+/* RANK */
+
+.leaderboard-rank {
+    flex: 0 0 35px;
+    text-align: center;
+    font-size: 21px;
+    font-weight: 900;
+    color: #e9c65b;
+}
+
+/* TOP THREE */
+
+.leaderboard-item:nth-child(1) .leaderboard-rank {
+    color: #ffd700;
+}
+
+.leaderboard-item:nth-child(2) .leaderboard-rank {
+    color: #c0c0c0;
+}
+
+.leaderboard-item:nth-child(3) .leaderboard-rank {
+    color: #cd7f32;
+}
+
+/* AVATAR */
+
+.leaderboard-avatar {
+    width: 48px;
+    height: 48px;
+    flex: 0 0 48px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid #d4af37;
+    background: #222;
+}
+
+/* PLAYER DETAILS */
+
+.leaderboard-details {
+    flex: 1;
+    min-width: 0;
+}
+
+.leaderboard-details h3 {
+    margin: 0 0 5px;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.leaderboard-details p {
+    margin: 0;
+    color: #999;
+    font-size: 11px;
+}
+
+/* TOTAL SPENT */
+
+.leaderboard-amount {
+    flex: 0 0 auto;
+    max-width: 42%;
+    color: #e9c65b;
+    font-size: 12px;
+    font-weight: 800;
+    text-align: right;
+    overflow-wrap: anywhere;
+}
+
+/* PLACEHOLDER */
+
+.leaderboard-placeholder {
+    width: 100%;
+    padding: 35px 15px;
+    text-align: center;
+    background: #141414;
+    border: 1px dashed rgba(212, 175, 55, 0.35);
+    border-radius: 15px;
+    color: #999;
+}
+
+.leaderboard-placeholder i {
+    color: #d4af37;
+    font-size: 28px;
+    margin-bottom: 12px;
+}
+
+.leaderboard-placeholder p {
+    font-size: 13px;
+    margin: 0;
+}
+
+/* YOUR RANKING CARD */
+
+.your-ranking-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    margin-top: 22px;
+    padding: 22px;
+    background: linear-gradient(
+        120deg,
+        #29200b,
+        #151515,
+        #111
+    );
+    border: 1px solid rgba(212, 175, 55, 0.4);
+    border-radius: 18px;
+}
+
+.your-ranking-card span {
+    color: #d4af37;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+}
+
+.your-ranking-card h2 {
+    margin: 8px 0;
+    color: #ffd978;
+    font-size: 32px;
+    font-weight: 900;
+}
+
+.your-ranking-card p {
+    margin: 0;
+    color: #aaa;
+    font-size: 12px;
+}
+
+.ranking-trophy {
+    width: 55px;
+    height: 55px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 15px;
+    background: rgba(212, 175, 55, 0.12);
+    color: #e9c65b;
+    font-size: 28px;
+}
+
+/* TABLET AND DESKTOP */
+
+@media (min-width: 768px) {
+
+    .community-section {
+        max-width: 900px;
+        padding: 35px 25px;
+    }
+
+    .leaderboard-item {
+        padding: 18px 22px;
+    }
+
+    .leaderboard-avatar {
+        width: 55px;
+        height: 55px;
+        flex-basis: 55px;
+    }
+
+    .leaderboard-details h3 {
+        font-size: 16px;
+    }
+
+    .leaderboard-amount {
+        font-size: 14px;
+    }
+
+}
+
+/* SMALL MOBILE */
+
+@media (max-width: 380px) {
+
+    .leaderboard-item {
+        gap: 8px;
+        padding: 12px 9px;
+    }
+
+    .leaderboard-rank {
+        flex-basis: 27px;
+        font-size: 17px;
+    }
+
+    .leaderboard-avatar {
+        width: 40px;
+        height: 40px;
+        flex-basis: 40px;
+    }
+
+    .leaderboard-details h3 {
+        font-size: 12px;
+    }
+
+    .leaderboard-amount {
+        font-size: 10px;
+    }
+
+}

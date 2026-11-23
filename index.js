@@ -915,38 +915,197 @@ async function loadCustomerReviews() {
 
 
 // ================================================
-// 13. LEADERBOARD
+// 13. REAL COMMUNITY LEADERBOARD
+// SUPABASE RPC INTEGRATION
 // ================================================
 
 async function loadLeaderboard() {
 
     const leaderboardList =
-    document.getElementById("leaderboardList");
-
+        document.getElementById("leaderboardList");
 
     const rankingElement =
-    document.getElementById("userRanking");
-
+        document.getElementById("userRanking");
 
     if (!leaderboardList) return;
 
-
     leaderboardList.innerHTML = `
-
         <div class="leaderboard-placeholder">
-
-            <i class="fa-solid fa-trophy"></i>
-
-            <p>Leaderboard will be available soon.</p>
-
+            <i class="fa-solid fa-spinner fa-spin"></i>
+            <p>Loading Top Players...</p>
         </div>
-
     `;
 
-
     if (rankingElement) {
+        rankingElement.textContent = "Loading...";
+    }
 
-        rankingElement.textContent = "#--";
+    try {
+
+        // Fetch real leaderboard data
+        const { data, error } = await supabase.rpc(
+            "get_community_leaderboard"
+        );
+
+        if (error) throw error;
+
+        if (!data || data.length === 0) {
+
+            leaderboardList.innerHTML = `
+                <div class="leaderboard-placeholder">
+                    <i class="fa-solid fa-trophy"></i>
+                    <p>No completed top-up players yet.</p>
+                </div>
+            `;
+
+            if (rankingElement) {
+                rankingElement.textContent = "#--";
+            }
+
+            return;
+        }
+
+        // Find current logged-in customer
+        const currentPlayer = data.find(
+            player => player.is_current_user === true
+        );
+
+        if (rankingElement) {
+
+            rankingElement.textContent =
+                currentPlayer
+                    ? "#" + currentPlayer.player_rank
+                    : "#--";
+
+        }
+
+        // Show only Top 10
+        const topPlayers = data.filter(
+            player => Number(player.player_rank) <= 10
+        );
+
+        leaderboardList.innerHTML = "";
+
+        topPlayers.forEach(player => {
+
+            const rank = Number(player.player_rank);
+
+            const username =
+                player.username || "BIG STORE Player";
+
+            const avatar =
+                player.avatar_url || FALLBACK_IMAGE;
+
+            const totalSpent =
+                Number(player.total_spent || 0);
+
+            const totalOrders =
+                Number(player.total_orders || 0);
+
+            let medal = "";
+
+            if (rank === 1) {
+                medal = "🥇";
+            } else if (rank === 2) {
+                medal = "🥈";
+            } else if (rank === 3) {
+                medal = "🥉";
+            } else {
+                medal = "#" + rank;
+            }
+
+            const card = document.createElement("div");
+
+            card.className = "leaderboard-item";
+
+            if (player.is_current_user === true) {
+                card.classList.add("current-user");
+            }
+
+            const rankElement =
+                document.createElement("div");
+
+            rankElement.className = "leaderboard-rank";
+            rankElement.textContent = medal;
+
+            const image =
+                document.createElement("img");
+
+            image.className = "leaderboard-avatar";
+            image.src = avatar;
+            image.alt = username;
+            image.loading = "lazy";
+
+            setupImageFallback(image);
+
+            const details =
+                document.createElement("div");
+
+            details.className = "leaderboard-details";
+
+            const name =
+                document.createElement("h3");
+
+            name.textContent = username;
+
+            if (player.is_current_user === true) {
+                name.textContent += " (You)";
+            }
+
+            const orders =
+                document.createElement("p");
+
+            orders.textContent =
+                totalOrders + " Completed Orders";
+
+            details.appendChild(name);
+            details.appendChild(orders);
+
+            const amount =
+                document.createElement("div");
+
+            amount.className = "leaderboard-amount";
+
+            amount.textContent =
+                "LKR " + totalSpent.toLocaleString(
+                    "en-LK",
+                    {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    }
+                );
+
+            card.appendChild(rankElement);
+            card.appendChild(image);
+            card.appendChild(details);
+            card.appendChild(amount);
+
+            leaderboardList.appendChild(card);
+
+        });
+
+        console.log(
+            "BIG STORE Leaderboard Loaded:",
+            data
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Leaderboard Error:",
+            error
+        );
+
+        leaderboardList.innerHTML = `
+            <div class="leaderboard-placeholder">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <p>Leaderboard could not be loaded.</p>
+            </div>
+        `;
+
+        if (rankingElement) {
+            rankingElement.textContent = "#--";
+        }
 
     }
 
