@@ -1,21 +1,21 @@
-/* ==========================================
-   BIG STORE - HISTORY SYSTEM
-   SUPABASE INTEGRATION
-========================================== */
+// ==========================================
+// BIG STORE - TRANSACTION HISTORY
+// SUPABASE INTEGRATION
+// ==========================================
 
 import { createClient } from
 "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
 
-/* ==========================================
-   SUPABASE CONFIGURATION
-========================================== */
+// ==========================================
+// SUPABASE CONFIGURATION
+// ==========================================
 
 const SUPABASE_URL =
-"https://zzxzrrntyvqbhyzuhaso.supabase.co";
+"https://drqanlbxrpahscbxmlyt.supabase.co";
 
 const SUPABASE_KEY =
-"sb_publishable_7NpKLvkhQsF3LvPsrXNQdg_z6mIRnDO";
+"sb_publishable_9xJxxVib4BAD5RXItitbQQ_O3qfyZ-T";
 
 const supabase = createClient(
     SUPABASE_URL,
@@ -23,9 +23,9 @@ const supabase = createClient(
 );
 
 
-/* ==========================================
-   DOM ELEMENTS
-========================================== */
+// ==========================================
+// DOM ELEMENTS
+// ==========================================
 
 const transactionList =
 document.getElementById("transactionList");
@@ -79,9 +79,9 @@ const retryHistoryBtn =
 document.getElementById("retryHistoryBtn");
 
 
-/* ==========================================
-   STATE
-========================================== */
+// ==========================================
+// STATE
+// ==========================================
 
 let currentUser = null;
 
@@ -96,19 +96,20 @@ let currentPage = 1;
 const ITEMS_PER_PAGE = 10;
 
 
-/* ==========================================
-   HELPER FUNCTIONS
-========================================== */
+// ==========================================
+// HELPERS
+// ==========================================
 
 function showLoading() {
 
     historyLoading.hidden = false;
-
     historyEmpty.hidden = true;
-
     historyError.hidden = true;
-
     pagination.hidden = true;
+
+    transactionList
+        .querySelectorAll(".transaction-card")
+        .forEach(card => card.remove());
 
 }
 
@@ -125,9 +126,7 @@ function showError(message) {
     hideLoading();
 
     historyEmpty.hidden = true;
-
     historyError.hidden = false;
-
     pagination.hidden = true;
 
     historyErrorMessage.textContent = message;
@@ -143,7 +142,7 @@ function formatCurrency(amount) {
         return "LKR 0.00";
     }
 
-    return "LKR " + number.toLocaleString(
+    return "LKR " + Math.abs(number).toLocaleString(
         "en-LK",
         {
             minimumFractionDigits: 2,
@@ -169,13 +168,9 @@ function formatDate(dateValue) {
     return date.toLocaleString("en-LK", {
 
         year: "numeric",
-
         month: "short",
-
         day: "numeric",
-
         hour: "2-digit",
-
         minute: "2-digit"
 
     });
@@ -183,28 +178,51 @@ function formatDate(dateValue) {
 }
 
 
+// ==========================================
+// NORMALIZE STATUS
+// ==========================================
+
 function normalizeStatus(status) {
 
     const value = String(status || "")
         .trim()
         .toLowerCase();
 
-    if (
-        ["success", "successful", "completed", "complete", "approved", "paid"].includes(value)
-    ) {
+    if ([
+        "success",
+        "successful",
+        "completed",
+        "complete",
+        "approved",
+        "paid"
+    ].includes(value)) {
+
         return "success";
+
     }
 
-    if (
-        ["pending", "processing", "waiting", "in_progress"].includes(value)
-    ) {
+    if ([
+        "pending",
+        "processing",
+        "waiting",
+        "in_progress"
+    ].includes(value)) {
+
         return "pending";
+
     }
 
-    if (
-        ["failed", "failure", "rejected", "cancelled", "canceled", "error"].includes(value)
-    ) {
+    if ([
+        "failed",
+        "failure",
+        "rejected",
+        "cancelled",
+        "canceled",
+        "error"
+    ].includes(value)) {
+
         return "failed";
+
     }
 
     return "pending";
@@ -212,42 +230,14 @@ function normalizeStatus(status) {
 }
 
 
-function getAmount(item) {
-
-    return Number(
-        item.amount ??
-        item.total_amount ??
-        item.price ??
-        item.wallet_amount ??
-        0
-    );
-
-}
-
-
-function getTransactionId(item) {
-
-    return (
-        item.transaction_id ??
-        item.order_id ??
-        item.reference_id ??
-        item.id ??
-        "N/A"
-    );
-
-}
-
-
-/* ==========================================
-   LOAD AUTHENTICATED USER
-========================================== */
+// ==========================================
+// GET AUTHENTICATED USER
+// ==========================================
 
 async function checkUser() {
 
     const {
-        data: {
-            session
-        },
+        data,
         error
     } = await supabase.auth.getSession();
 
@@ -255,7 +245,7 @@ async function checkUser() {
         throw error;
     }
 
-    if (!session || !session.user) {
+    if (!data.session) {
 
         window.location.href = "login.html";
 
@@ -263,45 +253,81 @@ async function checkUser() {
 
     }
 
-    currentUser = session.user;
+    currentUser = data.session.user;
 
     return currentUser;
 
 }
 
 
-/* ==========================================
-   LOAD ORDERS
-========================================== */
+// ==========================================
+// LOAD ALL ROWS
+// Handles Supabase pagination
+// ==========================================
 
-async function loadOrders() {
+async function loadAllRows(tableName) {
 
-    const {
-        data,
-        error
-    } = await supabase
+    const PAGE_SIZE = 1000;
 
-        .from("orders")
+    let results = [];
 
-        .select("*")
+    let start = 0;
 
-        .eq("user_id", currentUser.id)
+    while (true) {
 
-        .order("created_at", {
-            ascending: false
-        });
+        const {
+            data,
+            error
+        } = await supabase
 
-    if (error) {
+            .from(tableName)
 
-        console.error("Orders Loading Error:", error);
+            .select("*")
 
-        throw new Error(
-            "Unable to load your orders. Check the orders table and its RLS policies."
-        );
+            .eq("user_id", currentUser.id)
+
+            .order("created_at", {
+                ascending: false
+            })
+
+            .range(start, start + PAGE_SIZE - 1);
+
+
+        if (error) {
+
+            console.error(
+                tableName + " Error:",
+                error
+            );
+
+            throw error;
+
+        }
+
+        results = results.concat(data || []);
+
+        if (!data || data.length < PAGE_SIZE) {
+            break;
+        }
+
+        start += PAGE_SIZE;
 
     }
 
-    return (data || []).map(order => ({
+    return results;
+
+}
+
+
+// ==========================================
+// LOAD ORDERS
+// ==========================================
+
+async function loadOrders() {
+
+    const orders = await loadAllRows("orders");
+
+    return orders.map(order => ({
 
         ...order,
 
@@ -311,80 +337,180 @@ async function loadOrders() {
 
         history_status: normalizeStatus(order.status),
 
-        history_amount: getAmount(order),
+        history_amount: Number(order.amount || 0),
 
         history_title:
-            order.product_name ??
-            order.game_name ??
-            order.product ??
+            order.product_name ||
+            order.game_name ||
             "Game Top-Up Order",
 
-        history_id: getTransactionId(order)
+        history_id:
+            order.order_number ||
+            order.id,
+
+        history_direction: "debit"
 
     }));
 
 }
 
 
-/* ==========================================
-   LOAD WALLET TRANSACTIONS
-========================================== */
+// ==========================================
+// LOAD WALLET REQUESTS
+// ==========================================
+
+async function loadWalletRequests() {
+
+    const requests = await loadAllRows(
+        "wallet_requests"
+    );
+
+    return requests.map(request => {
+
+        const method = String(
+            request.payment_method || "Wallet"
+        ).replaceAll("_", " ");
+
+        const bank = request.bank_name
+            ? " - " + request.bank_name
+            : "";
+
+        return {
+
+            ...request,
+
+            history_type: "wallet",
+
+            history_date: request.created_at,
+
+            history_status: normalizeStatus(
+                request.status
+            ),
+
+            history_amount: Number(
+                request.amount || 0
+            ),
+
+            history_title:
+                method + bank + " Deposit",
+
+            history_id:
+                request.transaction_id ||
+                request.id,
+
+            history_direction: "credit",
+
+            history_subtitle:
+                "Wallet Deposit Request"
+
+        };
+
+    });
+
+}
+
+
+// ==========================================
+// LOAD WALLET TRANSACTIONS
+// ==========================================
 
 async function loadWalletTransactions() {
 
-    const {
-        data,
-        error
-    } = await supabase
+    const transactions = await loadAllRows(
+        "wallet_transactions"
+    );
 
-        .from("transactions")
+    return transactions.map(transaction => {
 
-        .select("*")
+        const type = String(
+            transaction.transaction_type || ""
+        ).toLowerCase();
 
-        .eq("user_id", currentUser.id)
+        const isDebit = [
 
-        .order("created_at", {
-            ascending: false
-        });
+            "debit",
+            "withdrawal",
+            "withdraw",
+            "purchase",
+            "order",
+            "deduction",
+            "spent"
 
-    if (error) {
+        ].some(word => type.includes(word));
 
-        console.error("Wallet Transactions Error:", error);
 
-        throw new Error(
-            "Unable to load wallet transactions. Check the transactions table and its RLS policies."
-        );
+        return {
 
-    }
+            ...transaction,
 
-    return (data || []).map(transaction => ({
+            history_type: "wallet",
 
-        ...transaction,
+            history_date: transaction.created_at,
 
-        history_type: "wallet",
+            // A wallet transaction is already recorded.
+            history_status: "success",
 
-        history_date: transaction.created_at,
+            history_amount: Number(
+                transaction.amount || 0
+            ),
 
-        history_status: normalizeStatus(transaction.status),
+            history_title:
+                transaction.description ||
+                transaction.transaction_type ||
+                "Wallet Transaction",
 
-        history_amount: getAmount(transaction),
+            history_id: transaction.id,
 
-        history_title:
-            transaction.description ??
-            transaction.transaction_type ??
-            transaction.type ??
-            "Wallet Transaction",
+            history_direction:
+                isDebit ? "debit" : "credit",
 
-        history_id: getTransactionId(transaction)
+            history_subtitle:
+                transaction.transaction_type || "Wallet"
 
-    }));
+        };
+
+    });
 
 }
 
 
-/* ==========================================
-   LOAD ALL HISTORY
-========================================== */
+// ==========================================
+// UPDATE SUMMARY
+// ==========================================
+
+function updateSummary(orders) {
+
+    const successful = orders.filter(order => {
+
+        return order.history_status === "success";
+
+    }).length;
+
+
+    const pending = orders.filter(order => {
+
+        return order.history_status === "pending";
+
+    }).length;
+
+
+    totalOrdersElement.textContent =
+        orders.length;
+
+
+    successfulOrdersElement.textContent =
+        successful;
+
+
+    pendingOrdersElement.textContent =
+        pending;
+
+}
+
+
+// ==========================================
+// LOAD ALL HISTORY
+// ==========================================
 
 async function loadHistory() {
 
@@ -398,21 +524,54 @@ async function loadHistory() {
             return;
         }
 
+
         const [
+
             orders,
+            walletRequests,
             walletTransactions
+
         ] = await Promise.all([
 
             loadOrders(),
+
+            loadWalletRequests(),
 
             loadWalletTransactions()
 
         ]);
 
 
+        // Avoid showing an approved deposit twice.
+        // The wallet transaction has request_id
+        // pointing to the original wallet request.
+
+        const processedRequestIds = new Set(
+
+            walletTransactions
+
+                .map(item => item.request_id)
+
+                .filter(Boolean)
+
+        );
+
+
+        const uniqueWalletRequests =
+            walletRequests.filter(request => {
+
+                return !processedRequestIds.has(
+                    request.id
+                );
+
+            });
+
+
         allTransactions = [
 
             ...orders,
+
+            ...uniqueWalletRequests,
 
             ...walletTransactions
 
@@ -427,14 +586,15 @@ async function loadHistory() {
         });
 
 
-        updateSummary(orders, walletTransactions);
+        updateSummary(orders);
 
         applyFilters();
 
         hideLoading();
 
+
         console.log(
-            "BIG STORE History Loaded Successfully!",
+            "BIG STORE History Loaded Successfully",
             allTransactions
         );
 
@@ -442,10 +602,14 @@ async function loadHistory() {
 
     catch (error) {
 
-        console.error("History Error:", error);
+        console.error(
+            "History Loading Error:",
+            error
+        );
 
         showError(
-            error.message || "Unable to load transaction history."
+            error.message ||
+            "Unable to load your transaction history."
         );
 
     }
@@ -453,38 +617,9 @@ async function loadHistory() {
 }
 
 
-/* ==========================================
-   UPDATE SUMMARY
-========================================== */
-
-function updateSummary(orders, walletTransactions) {
-
-    const successful = orders.filter(item => {
-
-        return normalizeStatus(item.status) === "success";
-
-    }).length;
-
-
-    const pending = orders.filter(item => {
-
-        return normalizeStatus(item.status) === "pending";
-
-    }).length;
-
-
-    totalOrdersElement.textContent = orders.length;
-
-    successfulOrdersElement.textContent = successful;
-
-    pendingOrdersElement.textContent = pending;
-
-}
-
-
-/* ==========================================
-   APPLY FILTERS
-========================================== */
+// ==========================================
+// APPLY FILTERS
+// ==========================================
 
 function applyFilters() {
 
@@ -498,13 +633,20 @@ function applyFilters() {
     filteredTransactions = allTransactions.filter(item => {
 
 
-        /* TAB FILTER */
+        // TAB FILTER
 
         if (
+
             currentTab !== "all" &&
+
             item.history_type !== (
-                currentTab === "orders" ? "order" : "wallet"
+
+                currentTab === "orders"
+                    ? "order"
+                    : "wallet"
+
             )
+
         ) {
 
             return false;
@@ -512,11 +654,14 @@ function applyFilters() {
         }
 
 
-        /* STATUS FILTER */
+        // STATUS FILTER
 
         if (
+
             selectedStatus !== "all" &&
+
             item.history_status !== selectedStatus
+
         ) {
 
             return false;
@@ -524,7 +669,7 @@ function applyFilters() {
         }
 
 
-        /* SEARCH FILTER */
+        // SEARCH FILTER
 
         if (searchValue) {
 
@@ -540,9 +685,16 @@ function applyFilters() {
 
                 item.transaction_type,
 
-                item.type
+                item.transaction_id,
+
+                item.order_number,
+
+                item.player_id,
+
+                item.description
 
             ].join(" ").toLowerCase();
+
 
             if (!searchableText.includes(searchValue)) {
 
@@ -551,6 +703,7 @@ function applyFilters() {
             }
 
         }
+
 
         return true;
 
@@ -564,18 +717,173 @@ function applyFilters() {
 }
 
 
-/* ==========================================
-   RENDER TRANSACTIONS
-========================================== */
+// ==========================================
+// CREATE TRANSACTION CARD
+// ==========================================
+
+function createTransactionCard(item) {
+
+    const card = document.createElement("div");
+
+    card.className = "transaction-card";
+
+
+    const isOrder =
+        item.history_type === "order";
+
+
+    const status = item.history_status;
+
+
+    const statusLabels = {
+
+        success: "Successful",
+
+        pending: "Pending",
+
+        failed: "Failed"
+
+    };
+
+
+    const icon = isOrder
+        ? "fa-gamepad"
+        : "fa-wallet";
+
+
+    const iconStatus = {
+
+        success: "fa-circle-check",
+
+        pending: "fa-clock",
+
+        failed: "fa-circle-xmark"
+
+    };
+
+
+    const direction =
+        item.history_direction || "credit";
+
+
+    const amountPrefix =
+        direction === "debit" ? "-" : "+";
+
+
+    const title = document.createElement("h3");
+
+    title.textContent =
+        item.history_title || "Transaction";
+
+
+    const transactionId = document.createElement("p");
+
+    transactionId.className = "transaction-id";
+
+    transactionId.textContent =
+        "ID: " + (item.history_id || "N/A");
+
+
+    const statusBadge = document.createElement("span");
+
+    statusBadge.className =
+        "transaction-status status-" + status;
+
+
+    const statusIcon = document.createElement("i");
+
+    statusIcon.className =
+        "fas " + iconStatus[status];
+
+
+    statusBadge.appendChild(statusIcon);
+
+    statusBadge.appendChild(
+        document.createTextNode(
+            " " + statusLabels[status]
+        )
+    );
+
+
+    const details = document.createElement("div");
+
+    details.className = "transaction-details";
+
+    details.appendChild(title);
+
+    details.appendChild(transactionId);
+
+    details.appendChild(statusBadge);
+
+
+    const transactionIcon = document.createElement("div");
+
+    transactionIcon.className = "transaction-icon";
+
+
+    const iconElement = document.createElement("i");
+
+    iconElement.className = "fas " + icon;
+
+
+    transactionIcon.appendChild(iconElement);
+
+
+    const right = document.createElement("div");
+
+    right.className = "transaction-right";
+
+
+    const amount = document.createElement("span");
+
+    amount.className = "transaction-amount";
+
+    amount.textContent =
+        amountPrefix + formatCurrency(
+            item.history_amount
+        );
+
+
+    const date = document.createElement("span");
+
+    date.className = "transaction-date";
+
+    date.textContent =
+        formatDate(item.history_date);
+
+
+    right.appendChild(amount);
+
+    right.appendChild(date);
+
+
+    card.appendChild(transactionIcon);
+
+    card.appendChild(details);
+
+    card.appendChild(right);
+
+
+    return card;
+
+}
+
+
+// ==========================================
+// RENDER TRANSACTIONS
+// ==========================================
 
 function renderTransactions() {
 
-    transactionList.querySelectorAll(
-        ".transaction-card"
-    ).forEach(card => card.remove());
+    transactionList
+
+        .querySelectorAll(".transaction-card")
+
+        .forEach(card => card.remove());
 
 
-    const totalItems = filteredTransactions.length;
+    const totalItems =
+        filteredTransactions.length;
 
 
     if (totalItems === 0) {
@@ -593,29 +901,35 @@ function renderTransactions() {
 
 
     const totalPages = Math.ceil(
+
         totalItems / ITEMS_PER_PAGE
+
     );
 
 
     const startIndex =
+
         (currentPage - 1) * ITEMS_PER_PAGE;
 
 
-    const endIndex =
-        startIndex + ITEMS_PER_PAGE;
+    const pageItems =
 
+        filteredTransactions.slice(
 
-    const pageItems = filteredTransactions.slice(
-        startIndex,
-        endIndex
-    );
+            startIndex,
+
+            startIndex + ITEMS_PER_PAGE
+
+        );
 
 
     pageItems.forEach(item => {
 
-        const card = createTransactionCard(item);
+        transactionList.appendChild(
 
-        transactionList.appendChild(card);
+            createTransactionCard(item)
+
+        );
 
     });
 
@@ -625,132 +939,9 @@ function renderTransactions() {
 }
 
 
-/* ==========================================
-   CREATE TRANSACTION CARD
-========================================== */
-
-function createTransactionCard(item) {
-
-    const card = document.createElement("div");
-
-    card.className = "transaction-card";
-
-
-    const isOrder =
-        item.history_type === "order";
-
-
-    const icon = isOrder
-        ? "fa-gamepad"
-        : "fa-wallet";
-
-
-    const status = item.history_status;
-
-
-    const statusLabel = {
-
-        success: "Successful",
-
-        pending: "Pending",
-
-        failed: "Failed"
-
-    }[status];
-
-
-    const amount = formatCurrency(
-        item.history_amount
-    );
-
-
-    const transactionTitle =
-        item.history_title || "Transaction";
-
-
-    const transactionDate =
-        formatDate(item.history_date);
-
-
-    const transactionId =
-        item.history_id;
-
-
-    const amountPrefix = isOrder ? "-" : "";
-
-
-    card.innerHTML = `
-
-        <div class="transaction-icon">
-
-            <i class="fas ${icon}"></i>
-
-        </div>
-
-
-        <div class="transaction-details">
-
-            <h3></h3>
-
-            <p class="transaction-id"></p>
-
-
-            <span class="transaction-status status-${status}">
-
-                <i class="fas ${
-                    status === "success"
-                    ? "fa-circle-check"
-                    : status === "failed"
-                    ? "fa-circle-xmark"
-                    : "fa-clock"
-                }"></i>
-
-                ${statusLabel}
-
-            </span>
-
-        </div>
-
-
-        <div class="transaction-right">
-
-            <span class="transaction-amount"></span>
-
-            <span class="transaction-date"></span>
-
-        </div>
-
-    `;
-
-
-    card.querySelector(
-        ".transaction-details h3"
-    ).textContent = transactionTitle;
-
-
-    card.querySelector(
-        ".transaction-id"
-    ).textContent = "ID: " + transactionId;
-
-
-    card.querySelector(
-        ".transaction-amount"
-    ).textContent = amountPrefix + amount;
-
-
-    card.querySelector(
-        ".transaction-date"
-    ).textContent = transactionDate;
-
-
-    return card;
-
-}
-
-
-/* ==========================================
-   PAGINATION
-========================================== */
+// ==========================================
+// PAGINATION
+// ==========================================
 
 function updatePagination(totalPages) {
 
@@ -767,6 +958,7 @@ function updatePagination(totalPages) {
 
 
     pageInfo.textContent =
+
         `Page ${currentPage} of ${totalPages}`;
 
 
@@ -780,9 +972,9 @@ function updatePagination(totalPages) {
 }
 
 
-/* ==========================================
-   TAB EVENTS
-========================================== */
+// ==========================================
+// TAB EVENTS
+// ==========================================
 
 historyTabs.forEach(tab => {
 
@@ -808,44 +1000,40 @@ historyTabs.forEach(tab => {
 });
 
 
-/* ==========================================
-   SEARCH EVENTS
-========================================== */
+// ==========================================
+// SEARCH EVENTS
+// ==========================================
 
-historySearch.addEventListener(
-    "input",
-    () => {
+historySearch.addEventListener("input", () => {
 
-        clearHistorySearch.classList.toggle(
-            "visible",
-            historySearch.value.length > 0
-        );
+    clearHistorySearch.classList.toggle(
 
-        applyFilters();
+        "visible",
 
-    }
-);
+        historySearch.value.length > 0
+
+    );
 
 
-clearHistorySearch.addEventListener(
-    "click",
-    () => {
+    applyFilters();
 
-        historySearch.value = "";
-
-        clearHistorySearch.classList.remove(
-            "visible"
-        );
-
-        applyFilters();
-
-    }
-);
+});
 
 
-/* ==========================================
-   STATUS FILTER EVENT
-========================================== */
+clearHistorySearch.addEventListener("click", () => {
+
+    historySearch.value = "";
+
+    clearHistorySearch.classList.remove("visible");
+
+    applyFilters();
+
+});
+
+
+// ==========================================
+// STATUS FILTER
+// ==========================================
 
 statusFilter.addEventListener(
     "change",
@@ -853,51 +1041,47 @@ statusFilter.addEventListener(
 );
 
 
-/* ==========================================
-   PAGINATION EVENTS
-========================================== */
+// ==========================================
+// PAGINATION EVENTS
+// ==========================================
 
-previousPage.addEventListener(
-    "click",
-    () => {
+previousPage.addEventListener("click", () => {
 
-        if (currentPage > 1) {
+    if (currentPage > 1) {
 
-            currentPage--;
+        currentPage--;
 
-            renderTransactions();
-
-        }
+        renderTransactions();
 
     }
-);
+
+});
 
 
-nextPage.addEventListener(
-    "click",
-    () => {
+nextPage.addEventListener("click", () => {
 
-        const totalPages = Math.ceil(
-            filteredTransactions.length /
-            ITEMS_PER_PAGE
-        );
+    const totalPages = Math.ceil(
+
+        filteredTransactions.length /
+        ITEMS_PER_PAGE
+
+    );
 
 
-        if (currentPage < totalPages) {
+    if (currentPage < totalPages) {
 
-            currentPage++;
+        currentPage++;
 
-            renderTransactions();
-
-        }
+        renderTransactions();
 
     }
-);
+
+});
 
 
-/* ==========================================
-   RETRY BUTTON
-========================================== */
+// ==========================================
+// RETRY BUTTON
+// ==========================================
 
 retryHistoryBtn.addEventListener(
     "click",
@@ -905,15 +1089,15 @@ retryHistoryBtn.addEventListener(
 );
 
 
-/* ==========================================
-   HEADER BUTTONS
-========================================== */
+// ==========================================
+// HEADER BUTTONS
+// ==========================================
 
 document.getElementById(
     "notificationBtn"
 ).addEventListener("click", () => {
 
-    console.log("Notifications clicked");
+    window.location.href = "notifications.html";
 
 });
 
@@ -927,17 +1111,18 @@ document.getElementById(
 });
 
 
-/* ==========================================
-   BOTTOM NAV ACTIVE PAGE
-========================================== */
+// ==========================================
+// BOTTOM NAVIGATION
+// ==========================================
 
 function setupBottomNavigation() {
 
-    const currentPage =
+    const currentFile =
+
         window.location.pathname
-        .split("/")
-        .pop()
-        .toLowerCase() || "index.html";
+            .split("/")
+            .pop()
+            .toLowerCase() || "index.html";
 
 
     document.querySelectorAll(
@@ -948,9 +1133,13 @@ function setupBottomNavigation() {
 
         if (!link) return;
 
+
         item.classList.toggle(
+
             "active",
-            link.toLowerCase() === currentPage
+
+            link.toLowerCase() === currentFile
+
         );
 
     });
@@ -958,16 +1147,19 @@ function setupBottomNavigation() {
 }
 
 
-/* ==========================================
-   AUTH STATE
-========================================== */
+// ==========================================
+// AUTH STATE
+// ==========================================
 
 supabase.auth.onAuthStateChange(
     (event, session) => {
 
         if (
+
             event === "SIGNED_OUT" ||
+
             !session
+
         ) {
 
             window.location.href = "login.html";
@@ -978,9 +1170,9 @@ supabase.auth.onAuthStateChange(
 );
 
 
-/* ==========================================
-   INITIALIZE
-========================================== */
+// ==========================================
+// INITIALIZE
+// ==========================================
 
 document.addEventListener(
     "DOMContentLoaded",
