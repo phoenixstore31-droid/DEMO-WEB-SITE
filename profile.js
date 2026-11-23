@@ -1,18 +1,18 @@
-// ==================================================
+// ==========================================
 // BIG STORE - PROFILE SYSTEM
-// SUPABASE AUTHENTICATION & PROFILE MANAGEMENT
-// ==================================================
-
-
-// ==================================================
-// 1. SUPABASE CONNECTION
-// ==================================================
+// SUPABASE AUTHENTICATION
+// ==========================================
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const SUPABASE_URL = "https://tvhgxlqqeklrdlgbkosa.supabase.co";
 
-const SUPABASE_KEY = "sb_publishable_Ep28HPF1SXIXQXBF2i__eg_h_jmjw4I";
+// ==========================================
+// SUPABASE CONNECTION
+// ==========================================
+
+const SUPABASE_URL = "https://drqanlbxrpahscbxmlyt.supabase.co";
+
+const SUPABASE_KEY = "sb_publishable_9xJxxVib4BAD5RXItitbQQ_O3qfyZ-T";
 
 const supabase = createClient(
     SUPABASE_URL,
@@ -27,42 +27,30 @@ const supabase = createClient(
 );
 
 
-// ==================================================
-// 2. GLOBAL VARIABLES
-// ==================================================
+// ==========================================
+// DOM ELEMENT HELPER
+// ==========================================
+
+const $ = (id) => document.getElementById(id);
+
+
+// ==========================================
+// GLOBAL VARIABLES
+// ==========================================
 
 let currentUser = null;
 let currentProfile = null;
 
 
-// ==================================================
-// 3. HTML ELEMENT HELPER
-// ==================================================
+// ==========================================
+// CURRENCY FORMAT
+// ==========================================
 
-function getElement(id) {
-    return document.getElementById(id);
-}
+function formatCurrency(amount) {
 
-function setText(id, value) {
+    const value = Number(amount || 0);
 
-    const element = getElement(id);
-
-    if (element) {
-        element.textContent = value ?? "";
-    }
-
-}
-
-
-// ==================================================
-// 4. FORMAT FUNCTIONS
-// ==================================================
-
-function formatMoney(value) {
-
-    const amount = Number(value || 0);
-
-    return "Rs. " + amount.toLocaleString("en-LK", {
+    return "LKR " + value.toLocaleString("en-LK", {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2
     });
@@ -70,46 +58,33 @@ function formatMoney(value) {
 }
 
 
-function formatNumber(value) {
-
-    return Number(value || 0).toLocaleString("en-LK", {
-        maximumFractionDigits: 2
-    });
-
-}
-
+// ==========================================
+// DATE FORMAT
+// ==========================================
 
 function formatDate(date) {
 
-    if (!date) {
-        return "Not available";
-    }
+    if (!date) return "Not available";
 
-    const formattedDate = new Date(date);
-
-    if (isNaN(formattedDate.getTime())) {
-        return "Not available";
-    }
-
-    return formattedDate.toLocaleDateString("en-LK", {
-        year: "numeric",
+    return new Date(date).toLocaleDateString("en-GB", {
+        day: "2-digit",
         month: "long",
-        day: "numeric"
+        year: "numeric"
     });
 
 }
 
 
-// ==================================================
-// 5. TOAST NOTIFICATION
-// ==================================================
+// ==========================================
+// TOAST NOTIFICATION
+// ==========================================
 
 function showToast(message, type = "success") {
 
-    const toast = getElement("profileToast");
+    const toast = $("profileToast");
 
     if (!toast) {
-        alert(message);
+        console.log(message);
         return;
     }
 
@@ -117,9 +92,9 @@ function showToast(message, type = "success") {
 
     toast.className = "profile-toast show " + type;
 
-    clearTimeout(toast.toastTimer);
+    clearTimeout(window.profileToastTimer);
 
-    toast.toastTimer = setTimeout(() => {
+    window.profileToastTimer = setTimeout(() => {
 
         toast.classList.remove("show");
 
@@ -128,496 +103,512 @@ function showToast(message, type = "success") {
 }
 
 
-// ==================================================
-// 6. ERROR MESSAGE
-// ==================================================
+// ==========================================
+// LOADING / ERROR
+// ==========================================
 
-function showProfileError(message) {
+function showLoading() {
 
-    const loading = getElement("profileLoading");
-    const errorBox = getElement("profileError");
-    const errorMessage = getElement("profileErrorMessage");
-
-    if (loading) {
-        loading.style.display = "none";
+    if ($("profileLoading")) {
+        $("profileLoading").style.display = "flex";
     }
 
-    if (errorBox) {
-        errorBox.style.display = "block";
-    }
-
-    if (errorMessage) {
-        errorMessage.textContent = message;
-    }
-
-    console.error("PROFILE ERROR:", message);
-
-}
-
-
-// ==================================================
-// 7. LOADING SCREEN
-// ==================================================
-
-function hideProfileLoading() {
-
-    const loading = getElement("profileLoading");
-
-    if (loading) {
-        loading.style.display = "none";
+    if ($("profileError")) {
+        $("profileError").style.display = "none";
     }
 
 }
 
 
-// ==================================================
-// 8. INITIALIZE PROFILE
-// ==================================================
+function hideLoading() {
 
-async function initializeProfile() {
-
-    try {
-
-        const { data, error } = await supabase.auth.getSession();
-
-        if (error) {
-            throw error;
-        }
-
-        if (!data.session) {
-
-            window.location.replace("login.html");
-
-            return;
-
-        }
-
-        await loadProfile();
-
-    } catch (error) {
-
-        console.error("Initialization Error:", error);
-
-        showProfileError(error.message);
-
+    if ($("profileLoading")) {
+        $("profileLoading").style.display = "none";
     }
 
 }
 
 
-// ==================================================
-// 9. LOAD USER PROFILE
-// ==================================================
+function showError(message) {
+
+    hideLoading();
+
+    if ($("profileError")) {
+        $("profileError").style.display = "block";
+    }
+
+    if ($("profileErrorMessage")) {
+        $("profileErrorMessage").textContent = message;
+    }
+
+}
+
+
+// ==========================================
+// LOAD AUTHENTICATED USER
+// ==========================================
+
+async function loadCurrentUser() {
+
+    const { data, error } = await supabase.auth.getUser();
+
+    if (error || !data.user) {
+
+        window.location.replace("login.html");
+
+        return null;
+
+    }
+
+    currentUser = data.user;
+
+    return data.user;
+
+}
+
+
+// ==========================================
+// LOAD PROFILE FROM SUPABASE
+// ==========================================
 
 async function loadProfile() {
 
+    showLoading();
+
     try {
 
-        const { data: userData, error: userError } =
-            await supabase.auth.getUser();
+        // Get authenticated user
 
-        if (userError) {
-            throw userError;
+        const user = await loadCurrentUser();
+
+        if (!user) return;
+
+
+        // Get profile
+
+        const { data, error } = await supabase
+
+            .from("profiles")
+
+            .select(`
+                id,
+                username,
+                email,
+                avatar_url,
+                phone,
+                wallet_balance,
+                total_orders,
+                total_spent,
+                reward_points,
+                is_reseller,
+                reseller_status,
+                reseller_expires_at,
+                created_at
+            `)
+
+            .eq("id", user.id)
+
+            .maybeSingle();
+
+
+        if (error) {
+
+            throw error;
+
         }
 
-        if (!userData.user) {
 
-            window.location.replace("login.html");
+        if (!data) {
 
-            return;
-
-        }
-
-        currentUser = userData.user;
-
-        const userId = currentUser.id;
-
-
-        // ==========================================
-        // GET PROFILE FROM SUPABASE
-        // ==========================================
-
-        const { data: profile, error: profileError } =
-            await supabase
-                .from("profiles")
-                .select(`
-                    id,
-                    username,
-                    email,
-                    created_at,
-                    avatar_url,
-                    wallet_balance,
-                    total_orders,
-                    total_spent,
-                    reward_points,
-                    is_reseller,
-                    reseller_plan_id,
-                    reseller_status,
-                    reseller_started_at,
-                    reseller_expires_at
-                `)
-                .eq("id", userId)
-                .maybeSingle();
-
-
-        if (profileError) {
-            throw profileError;
-        }
-
-        if (!profile) {
-
-            showProfileError(
+            throw new Error(
                 "Your profile was not found. Please contact support."
             );
 
-            return;
-
         }
 
-        currentProfile = profile;
+
+        currentProfile = data;
 
 
-        // ==========================================
-        // DISPLAY PROFILE INFORMATION
-        // ==========================================
+        // Display profile
 
-        displayProfile(profile);
+        displayProfile(user, data);
 
 
-        // ==========================================
-        // DISPLAY PROFILE STATS
-        // ==========================================
+        hideLoading();
 
-        displayProfileStats(profile);
-
-
-        hideProfileLoading();
-
-        const errorBox = getElement("profileError");
-
-        if (errorBox) {
-            errorBox.style.display = "none";
-        }
 
     } catch (error) {
 
-        console.error("PROFILE ERROR:", error);
+        console.error("Profile Loading Error:", error);
 
-        showProfileError(error.message);
+        showError(error.message || "Unable to load your profile.");
 
     }
 
 }
 
 
-// ==================================================
-// 10. DISPLAY PROFILE
-// ==================================================
+// ==========================================
+// DISPLAY PROFILE
+// ==========================================
 
-function displayProfile(profile) {
+function displayProfile(user, profile) {
 
     const username =
         profile.username ||
-        currentUser.user_metadata?.username ||
-        currentUser.user_metadata?.full_name ||
-        "BIG STORE User";
-
-    const email =
-        profile.email ||
-        currentUser.email ||
-        "Not available";
-
-    const phone =
-        currentUser.user_metadata?.phone ||
-        "Not available";
+        user.user_metadata?.username ||
+        user.email?.split("@")[0] ||
+        "User";
 
 
-    // PROFILE NAME
+    const email = user.email || profile.email || "";
 
-    setText("profileName", username);
+    const phone = profile.phone || "Not added";
 
-    setText("infoFullName", username);
-
-
-    // EMAIL
-
-    setText("profileEmail", email);
-
-    setText("infoEmail", email);
+    const userId = user.id;
 
 
-    // PHONE
+    // ======================================
+    // PROFILE HEADER
+    // ======================================
 
-    setText("infoPhone", phone);
+    if ($("profileName")) {
 
+        $("profileName").textContent = username;
 
-    // USER ID
-
-    setText("profileUserId", currentUser.id);
-
-    setText("infoUserId", currentUser.id);
-
-
-    // JOINED DATE
-
-    const joinedDate = formatDate(
-        profile.created_at || currentUser.created_at
-    );
-
-    setText("infoJoinedDate", joinedDate);
+    }
 
 
-    // ACCOUNT STATUS
+    if ($("profileEmail")) {
 
-    setText("accountStatus", "Active Account");
+        $("profileEmail").textContent = email;
+
+    }
 
 
+    if ($("profileUserId")) {
+
+        $("profileUserId").textContent = userId;
+
+    }
+
+
+    // ======================================
     // PROFILE AVATAR
+    // ======================================
 
-    const avatar = getElement("profileAvatar");
+    const avatar = $("profileAvatar");
 
     if (avatar) {
 
-        const avatarURL = profile.avatar_url;
+        if (profile.avatar_url) {
 
-        if (avatarURL) {
+            avatar.src = profile.avatar_url;
 
-            if (avatar.tagName === "IMG") {
+            avatar.style.display = "block";
 
-                avatar.src = avatarURL;
+            avatar.onerror = () => {
 
-            } else {
+                avatar.removeAttribute("src");
 
-                avatar.style.backgroundImage =
-                    `url("${avatarURL}")`;
+                avatar.alt = username;
 
-                avatar.style.backgroundSize = "cover";
+            };
 
-                avatar.style.backgroundPosition = "center";
+        } else {
 
-            }
+            avatar.removeAttribute("src");
+
+            avatar.alt = username;
 
         }
 
     }
 
 
-    // EDIT FORM
+    // ======================================
+    // ACCOUNT STATUS
+    // ======================================
 
-    const editName = getElement("editFullName");
+    if ($("accountStatus")) {
 
-    if (editName) {
-        editName.value = username;
+        $("accountStatus").textContent =
+            user.email_confirmed_at ? "Verified Account" : "Unverified Account";
+
     }
 
 
-    const editPhone = getElement("editPhone");
-
-    if (editPhone) {
-        editPhone.value =
-            currentUser.user_metadata?.phone || "";
-    }
-
-}
-
-
-// ==================================================
-// 11. DISPLAY PROFILE STATISTICS
-// ==================================================
-
-function displayProfileStats(profile) {
-
+    // ======================================
     // WALLET BALANCE
+    // ======================================
 
-    setText(
-        "profileWalletBalance",
-        formatMoney(profile.wallet_balance)
-    );
+    if ($("profileWalletBalance")) {
+
+        $("profileWalletBalance").textContent =
+            formatCurrency(profile.wallet_balance);
+
+    }
 
 
+    // ======================================
     // REWARD POINTS
+    // ======================================
 
-    setText(
-        "profileRewardPoints",
-        formatNumber(profile.reward_points)
-    );
+    if ($("profileRewardPoints")) {
+
+        $("profileRewardPoints").textContent =
+            Number(profile.reward_points || 0).toFixed(2);
+
+    }
 
 
+    // ======================================
     // TOTAL SPENT
+    // ======================================
 
-    setText(
-        "profileTotalSpent",
-        formatMoney(profile.total_spent)
-    );
+    if ($("profileTotalSpent")) {
+
+        $("profileTotalSpent").textContent =
+            formatCurrency(profile.total_spent);
+
+    }
 
 
-    // TOTAL ORDERS - OPTIONAL ELEMENT
+    // ======================================
+    // PERSONAL INFORMATION
+    // ======================================
 
-    setText(
-        "profileTotalOrders",
-        formatNumber(profile.total_orders)
-    );
+    if ($("infoFullName")) {
+
+        $("infoFullName").textContent = username;
+
+    }
+
+
+    if ($("infoEmail")) {
+
+        $("infoEmail").textContent = email;
+
+    }
+
+
+    if ($("infoPhone")) {
+
+        $("infoPhone").textContent = phone;
+
+    }
+
+
+    if ($("infoJoinedDate")) {
+
+        $("infoJoinedDate").textContent =
+            formatDate(profile.created_at);
+
+    }
+
+
+    if ($("infoUserId")) {
+
+        $("infoUserId").textContent = userId;
+
+    }
+
+
+    // ======================================
+    // RESELLER STATUS
+    // ======================================
+
+    const resellerStatus = profile.reseller_status;
+
+    const resellerActive =
+        profile.is_reseller === true &&
+        resellerStatus === "active" &&
+        (
+            !profile.reseller_expires_at ||
+            new Date(profile.reseller_expires_at) > new Date()
+        );
+
+    // Optional element if available in HTML
+
+    if ($("resellerStatus")) {
+
+        $("resellerStatus").textContent =
+            resellerActive ? "Active Reseller" : "Regular User";
+
+    }
+
 
 }
 
 
-// ==================================================
-// 12. OPEN EDIT PROFILE MODAL
-// ==================================================
+// ==========================================
+// OPEN MODAL
+// ==========================================
 
-function openEditModal() {
+function openModal(id) {
 
-    const modal = getElement("editProfileModal");
+    const modal = $(id);
 
     if (!modal) return;
 
-    if (currentProfile) {
-        displayProfile(currentProfile);
-    }
+    modal.classList.add("active");
 
-    modal.classList.add("show");
+    modal.style.display = "flex";
 
 }
 
 
-// ==================================================
-// 13. CLOSE EDIT PROFILE MODAL
-// ==================================================
+// ==========================================
+// CLOSE MODAL
+// ==========================================
 
-function closeEditModal() {
+function closeModal(id) {
 
-    const modal = getElement("editProfileModal");
+    const modal = $(id);
 
-    if (modal) {
-        modal.classList.remove("show");
-    }
+    if (!modal) return;
+
+    modal.classList.remove("active");
+
+    modal.style.display = "none";
 
 }
 
 
-// ==================================================
-// 14. SAVE PROFILE
-// ==================================================
+// ==========================================
+// EDIT PROFILE MODAL
+// ==========================================
+
+function openEditProfile() {
+
+    if (!currentProfile) return;
+
+    if ($("editFullName")) {
+
+        $("editFullName").value =
+            currentProfile.username || "";
+
+    }
+
+    if ($("editPhone")) {
+
+        $("editPhone").value =
+            currentProfile.phone || "";
+
+    }
+
+    openModal("editProfileModal");
+
+}
+
+
+// ==========================================
+// CLOSE EDIT MODAL
+// ==========================================
+
+function closeEditProfile() {
+
+    closeModal("editProfileModal");
+
+}
+
+
+// ==========================================
+// SAVE PROFILE
+// ==========================================
 
 async function saveProfile(event) {
 
     event.preventDefault();
 
-    if (!currentUser) {
-        showToast("Please login again.", "error");
-        return;
-    }
+    if (!currentUser) return;
 
+    const username = $("editFullName")?.value.trim() || "";
 
-    const usernameInput = getElement("editFullName");
-
-    const phoneInput = getElement("editPhone");
-
-    const saveButton = getElement("saveProfileBtn");
-
-
-    const username = usernameInput?.value.trim();
-
-    const phone = phoneInput?.value.trim() || "";
-
-
-    if (!username) {
-
-        showToast("Please enter your username.", "error");
-
-        return;
-
-    }
+    const phone = $("editPhone")?.value.trim() || "";
 
 
     if (username.length < 3) {
 
-        showToast(
-            "Username must contain at least 3 characters.",
-            "error"
-        );
+        showToast("Username must contain at least 3 characters.", "error");
 
         return;
 
     }
 
 
+    const saveButton = $("saveProfileBtn");
+
     if (saveButton) {
+
         saveButton.disabled = true;
+
         saveButton.textContent = "Saving...";
+
     }
 
 
     try {
 
-        // UPDATE PROFILES TABLE
+        // Update permitted profile columns only
 
-        const { data: updatedProfile, error: profileError } =
-            await supabase
-                .from("profiles")
-                .update({
-                    username: username
-                })
-                .eq("id", currentUser.id)
-                .select()
-                .single();
+        const { error } = await supabase
+
+            .from("profiles")
+
+            .update({
+
+                username: username,
+
+                phone: phone
+
+            })
+
+            .eq("id", currentUser.id);
 
 
-        if (profileError) {
-            throw profileError;
+        if (error) {
+
+            throw error;
+
         }
 
 
-        // UPDATE AUTH USER METADATA
+        // Update local user metadata too
 
-        const { error: authError } =
-            await supabase.auth.updateUser({
+        const { error: authError } = await supabase.auth.updateUser({
 
-                data: {
-                    username: username,
-                    full_name: username,
-                    phone: phone
-                }
+            data: {
 
-            });
+                username: username
+
+            }
+
+        });
 
 
         if (authError) {
-            throw authError;
+
+            console.warn("Metadata update warning:", authError.message);
+
         }
 
 
-        // UPDATE LOCAL DATA
+        // Reload profile
 
-        currentProfile = {
-            ...currentProfile,
-            ...updatedProfile
-        };
+        closeEditProfile();
 
-
-        const { data: userData } =
-            await supabase.auth.getUser();
-
-        if (userData?.user) {
-            currentUser = userData.user;
-        }
-
-
-        // REFRESH DISPLAY
-
-        displayProfile(currentProfile);
-
-
-        closeEditModal();
+        await loadProfile();
 
         showToast("Profile updated successfully!", "success");
 
 
     } catch (error) {
 
-        console.error("UPDATE PROFILE ERROR:", error);
+        console.error("Profile Update Error:", error);
 
-        showToast(error.message, "error");
+        showToast(error.message || "Unable to update profile.", "error");
 
     } finally {
 
@@ -634,66 +625,55 @@ async function saveProfile(event) {
 }
 
 
-// ==================================================
-// 15. OPEN PASSWORD MODAL
-// ==================================================
+// ==========================================
+// PASSWORD MODAL
+// ==========================================
 
 function openPasswordModal() {
 
-    const modal = getElement("passwordModal");
+    if ($("changePasswordForm")) {
 
-    if (modal) {
-        modal.classList.add("show");
+        $("changePasswordForm").reset();
+
     }
+
+    openModal("passwordModal");
 
 }
 
-
-// ==================================================
-// 16. CLOSE PASSWORD MODAL
-// ==================================================
 
 function closePasswordModal() {
 
-    const modal = getElement("passwordModal");
-
-    if (modal) {
-        modal.classList.remove("show");
-    }
+    closeModal("passwordModal");
 
 }
 
 
-// ==================================================
-// 17. CHANGE PASSWORD
-// ==================================================
+// ==========================================
+// CHANGE PASSWORD
+// ==========================================
 
 async function changePassword(event) {
 
     event.preventDefault();
 
-    const newPassword = getElement("newPassword")?.value;
+    const newPassword = $("newPassword")?.value || "";
 
-    const confirmPassword = getElement("confirmPassword")?.value;
-
-    const updateButton = getElement("updatePasswordBtn");
+    const confirmPassword = $("confirmPassword")?.value || "";
 
 
-    if (!newPassword || !confirmPassword) {
+    if (newPassword.length < 8) {
 
-        showToast("Please fill all password fields.", "error");
+        showToast("Password must contain at least 8 characters.", "error");
 
         return;
 
     }
 
 
-    if (newPassword.length < 6) {
+    if (!/[A-Za-z]/.test(newPassword) || !/[0-9]/.test(newPassword)) {
 
-        showToast(
-            "Password must contain at least 6 characters.",
-            "error"
-        );
+        showToast("Password must contain letters and numbers.", "error");
 
         return;
 
@@ -709,25 +689,7 @@ async function changePassword(event) {
     }
 
 
-    // CHECK LOGIN PROVIDER
-
-    const providers =
-        currentUser?.app_metadata?.providers || [];
-
-    if (
-        providers.includes("google") &&
-        !providers.includes("email")
-    ) {
-
-        showToast(
-            "Google accounts cannot change passwords here.",
-            "error"
-        );
-
-        return;
-
-    }
-
+    const updateButton = $("updatePasswordBtn");
 
     if (updateButton) {
 
@@ -748,27 +710,22 @@ async function changePassword(event) {
 
 
         if (error) {
+
             throw error;
-        }
 
-
-        const form = getElement("changePasswordForm");
-
-        if (form) {
-            form.reset();
         }
 
 
         closePasswordModal();
 
-        showToast("Password changed successfully!", "success");
+        showToast("Password updated successfully!", "success");
 
 
     } catch (error) {
 
-        console.error("PASSWORD ERROR:", error);
+        console.error("Password Update Error:", error);
 
-        showToast(error.message, "error");
+        showToast(error.message || "Unable to update password.", "error");
 
     } finally {
 
@@ -785,17 +742,19 @@ async function changePassword(event) {
 }
 
 
-// ==================================================
-// 18. LOGOUT
-// ==================================================
+// ==========================================
+// LOGOUT
+// ==========================================
 
 async function logoutUser() {
 
-    const confirmed = confirm(
-        "Are you sure you want to logout?"
-    );
+    const logoutButton = $("logoutBtn");
 
-    if (!confirmed) return;
+    if (logoutButton) {
+
+        logoutButton.disabled = true;
+
+    }
 
 
     try {
@@ -803,7 +762,9 @@ async function logoutUser() {
         const { error } = await supabase.auth.signOut();
 
         if (error) {
+
             throw error;
+
         }
 
         window.location.replace("login.html");
@@ -811,113 +772,117 @@ async function logoutUser() {
 
     } catch (error) {
 
-        console.error("LOGOUT ERROR:", error);
+        console.error("Logout Error:", error);
 
-        showToast(error.message, "error");
+        showToast("Unable to logout. Please try again.", "error");
+
+        if (logoutButton) {
+
+            logoutButton.disabled = false;
+
+        }
 
     }
 
 }
 
 
-// ==================================================
-// 19. BUTTON EVENTS
-// ==================================================
+// ==========================================
+// EVENT LISTENERS
+// ==========================================
 
-function setupEvents() {
-
-
-    // EDIT PROFILE BUTTON
-
-    getElement("editProfileBtn")
-        ?.addEventListener("click", openEditModal);
+function setupEventListeners() {
 
 
-    getElement("editPersonalInfoBtn")
-        ?.addEventListener("click", openEditModal);
+    // Edit Profile
+
+    $("editProfileBtn")?.addEventListener("click", openEditProfile);
+
+    $("editPersonalInfoBtn")?.addEventListener("click", openEditProfile);
 
 
-    // CLOSE EDIT MODAL
+    // Close Edit Modal
 
-    getElement("closeEditModal")
-        ?.addEventListener("click", closeEditModal);
+    $("closeEditModal")?.addEventListener("click", closeEditProfile);
 
+    $("closeModalOverlay")?.addEventListener("click", closeEditProfile);
 
-    getElement("cancelEditBtn")
-        ?.addEventListener("click", closeEditModal);
-
-
-    getElement("closeModalOverlay")
-        ?.addEventListener("click", closeEditModal);
+    $("cancelEditBtn")?.addEventListener("click", closeEditProfile);
 
 
-    // SAVE PROFILE
+    // Save Profile
 
-    getElement("editProfileForm")
-        ?.addEventListener("submit", saveProfile);
-
-
-    // PASSWORD MODAL
-
-    getElement("changePasswordBtn")
-        ?.addEventListener("click", openPasswordModal);
+    $("editProfileForm")?.addEventListener("submit", saveProfile);
 
 
-    getElement("closePasswordModal")
-        ?.addEventListener("click", closePasswordModal);
+    // Change Password
+
+    $("changePasswordBtn")?.addEventListener("click", openPasswordModal);
 
 
-    getElement("cancelPasswordBtn")
-        ?.addEventListener("click", closePasswordModal);
+    // Close Password Modal
+
+    $("closePasswordModal")?.addEventListener("click", closePasswordModal);
+
+    $("closePasswordOverlay")?.addEventListener("click", closePasswordModal);
+
+    $("cancelPasswordBtn")?.addEventListener("click", closePasswordModal);
 
 
-    getElement("closePasswordOverlay")
-        ?.addEventListener("click", closePasswordModal);
+    // Update Password
+
+    $("changePasswordForm")?.addEventListener("submit", changePassword);
 
 
-    // CHANGE PASSWORD
+    // Logout
 
-    getElement("changePasswordForm")
-        ?.addEventListener("submit", changePassword);
-
-
-    // LOGOUT
-
-    getElement("logoutBtn")
-        ?.addEventListener("click", logoutUser);
+    $("logoutBtn")?.addEventListener("click", logoutUser);
 
 
-    // RETRY PROFILE
+    // Retry
 
-    getElement("retryProfileBtn")
-        ?.addEventListener("click", () => {
-
-            const errorBox = getElement("profileError");
-
-            if (errorBox) {
-                errorBox.style.display = "none";
-            }
-
-            const loading = getElement("profileLoading");
-
-            if (loading) {
-                loading.style.display = "block";
-            }
-
-            loadProfile();
-
-        });
+    $("retryProfileBtn")?.addEventListener("click", loadProfile);
 
 
-    // CLOSE MODALS ON ESCAPE
+    // ESC key
 
     document.addEventListener("keydown", (event) => {
 
         if (event.key === "Escape") {
 
-            closeEditModal();
+            closeEditProfile();
 
             closePasswordModal();
+
+        }
+
+    });
+
+
+}
+
+
+// ==========================================
+// BOTTOM NAVIGATION
+// ==========================================
+
+function setupBottomNavigation() {
+
+    const navItems = document.querySelectorAll(
+        ".big-store-bottom-nav .nav-item"
+    );
+
+    navItems.forEach(item => {
+
+        const href = item.getAttribute("href");
+
+        if (href === "profile.html") {
+
+            item.classList.add("active");
+
+        } else {
+
+            item.classList.remove("active");
 
         }
 
@@ -926,34 +891,23 @@ function setupEvents() {
 }
 
 
-// ==================================================
-// 20. AUTH STATE LISTENER
-// ==================================================
+// ==========================================
+// INITIALIZE PROFILE
+// ==========================================
 
-supabase.auth.onAuthStateChange((event, session) => {
+async function initializeProfile() {
 
-    if (event === "SIGNED_OUT") {
+    setupEventListeners();
 
-        window.location.replace("login.html");
+    setupBottomNavigation();
 
-    }
+    await loadProfile();
 
-});
-
-
-// ==================================================
-// 21. START PROFILE SYSTEM
-// ==================================================
-
-document.addEventListener("DOMContentLoaded", () => {
-
-    setupEvents();
-
-    initializeProfile();
-
-});
+}
 
 
-// ==================================================
-// BIG STORE PROFILE SYSTEM COMPLETED
-// ==================================================
+// ==========================================
+// START
+// ==========================================
+
+initializeProfile();
