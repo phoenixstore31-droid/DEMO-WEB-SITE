@@ -6,7 +6,6 @@
 import { createClient } from
 "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
-
 // ======================================================
 // 01. SUPABASE CONNECTION
 // ======================================================
@@ -22,25 +21,20 @@ const supabase = createClient(
     SUPABASE_ANON_KEY
 );
 
-
 // ======================================================
 // 02. GLOBAL VARIABLES
 // ======================================================
 
 let currentUser = null;
-
 let currentProfile = null;
-
 let walletBalance = 0;
 
 let verifiedPlayer = null;
-
 let selectedProduct = null;
-
 let availableProducts = [];
 
 let toastTimer = null;
-
+let isPurchasing = false;
 
 // ======================================================
 // 03. DOM ELEMENTS
@@ -103,7 +97,6 @@ document.getElementById("summaryTotal");
 const toastContainer =
 document.getElementById("toastContainer");
 
-
 // ======================================================
 // 04. PAGE INITIALIZATION
 // ======================================================
@@ -119,19 +112,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     setupMobileMenu();
-
     setupToast();
-
     setupPlayerInput();
-
     setupNameCheck();
-
     setupPurchaseButton();
 
     await initializePage();
 
 });
-
 
 // ======================================================
 // 05. INITIALIZE PAGE
@@ -143,13 +131,10 @@ async function initializePage() {
 
         await checkLogin();
 
-        if (!currentUser) {
-            return;
-        }
+        if (!currentUser) return;
 
         await loadWalletBalance();
 
-        // Products are loaded from secure backend.
         await loadProducts();
 
     } catch (error) {
@@ -160,8 +145,8 @@ async function initializePage() {
         );
 
         showToast(
-            "Something went wrong",
-            "Unable to load the Free Fire page.",
+            "Something Went Wrong",
+            error.message || "Unable to load Free Fire page.",
             "error"
         );
 
@@ -172,7 +157,6 @@ async function initializePage() {
     }
 
 }
-
 
 // ======================================================
 // 06. CHECK LOGIN
@@ -185,9 +169,7 @@ async function checkLogin() {
         error
     } = await supabase.auth.getSession();
 
-    if (error) {
-        throw error;
-    }
+    if (error) throw error;
 
     if (!session) {
 
@@ -198,10 +180,7 @@ async function checkLogin() {
         );
 
         setTimeout(() => {
-
-            window.location.href =
-            "login.html";
-
+            window.location.href = "login.html";
         }, 1500);
 
         return;
@@ -212,7 +191,6 @@ async function checkLogin() {
 
 }
 
-
 // ======================================================
 // 07. AUTH STATE CHANGE
 // ======================================================
@@ -220,28 +198,26 @@ async function checkLogin() {
 supabase.auth.onAuthStateChange(
     (event, session) => {
 
-        if (
-            event === "SIGNED_OUT" ||
-            !session
-        ) {
+        if (event === "SIGNED_OUT" || !session) {
 
-            window.location.href =
-            "login.html";
+            window.location.href = "login.html";
+
+        }
+
+        if (event === "TOKEN_REFRESHED" && session) {
+
+            currentUser = session.user;
 
         }
 
     }
 );
 
-
 // ======================================================
 // 08. BACKEND CONNECTION
 // ======================================================
 
-async function callFreeFireBackend(
-    action,
-    data = {}
-) {
+async function callFreeFireBackend(action, data = {}) {
 
     const {
         data: { session },
@@ -249,36 +225,24 @@ async function callFreeFireBackend(
     } = await supabase.auth.getSession();
 
     if (error || !session) {
-
-        throw new Error(
-            "Please login again."
-        );
-
+        throw new Error("Please login again.");
     }
 
     const response = await fetch(
         "/.netlify/functions/freefire",
         {
-
             method: "POST",
 
             headers: {
-
                 "Content-Type": "application/json",
-
                 "Authorization":
                 `Bearer ${session.access_token}`
-
             },
 
             body: JSON.stringify({
-
                 action,
-
                 ...data
-
             })
-
         }
     );
 
@@ -309,7 +273,6 @@ async function callFreeFireBackend(
 
 }
 
-
 // ======================================================
 // 09. LOAD WALLET BALANCE
 // ======================================================
@@ -319,23 +282,14 @@ async function loadWalletBalance() {
     if (!currentUser) return;
 
     const { data, error } = await supabase
-
         .from("profiles")
-
-        .select(
-            "wallet_balance, username, email"
-        )
-
+        .select("wallet_balance, username, email")
         .eq("id", currentUser.id)
-
         .single();
 
     if (error) {
 
-        console.error(
-            "Wallet Error:",
-            error
-        );
+        console.error("Wallet Error:", error);
 
         showToast(
             "Wallet Error",
@@ -349,13 +303,13 @@ async function loadWalletBalance() {
 
     currentProfile = data;
 
-    walletBalance =
-    Number(data.wallet_balance || 0);
+    walletBalance = Number(data.wallet_balance || 0);
 
     updateWalletDisplay();
 
-}
+    updateOrderSummary();
 
+}
 
 // ======================================================
 // 10. UPDATE WALLET DISPLAY
@@ -367,21 +321,16 @@ function updateWalletDisplay() {
     formatCurrency(walletBalance);
 
     if (walletBalanceElement) {
-
         walletBalanceElement.textContent =
         formattedBalance;
-
     }
 
     if (sidebarWalletBalance) {
-
         sidebarWalletBalance.textContent =
         formattedBalance;
-
     }
 
 }
-
 
 // ======================================================
 // 11. CURRENCY FORMAT
@@ -400,9 +349,8 @@ function formatCurrency(amount) {
 
 }
 
-
 // ======================================================
-// 12. LOAD FREE FIRE PRODUCTS DIRECTLY FROM SUPABASE
+// 12. LOAD FREE FIRE PRODUCTS
 // ======================================================
 
 async function loadProducts() {
@@ -410,9 +358,7 @@ async function loadProducts() {
     try {
 
         const { data, error } = await supabase
-
             .from("topup_products")
-
             .select(`
                 id,
                 game_name,
@@ -425,47 +371,26 @@ async function loadProducts() {
                 is_active,
                 sort_order
             `)
-
             .eq("game_code", "freefire_sgmy")
-
             .eq("region", "SG")
-
             .eq("is_active", true)
-
             .order("sort_order", {
                 ascending: true
             });
 
-
-        if (error) {
-
-            console.error(
-                "SUPABASE PRODUCTS ERROR:",
-                error
-            );
-
-            throw error;
-
-        }
-
+        if (error) throw error;
 
         availableProducts = (data || []).map(product => ({
-
             ...product,
-
             price: Number(product.price)
-
         }));
 
-
         console.log(
-            "SUPABASE FREE FIRE PRODUCTS:",
+            "FREE FIRE PRODUCTS:",
             availableProducts
         );
 
-
         renderProducts();
-
 
     } catch (error) {
 
@@ -482,16 +407,13 @@ async function loadProducts() {
 
 }
 
-
 // ======================================================
 // 13. RENDER PRODUCTS
 // ======================================================
 
 function renderProducts() {
 
-    if (!productsGrid || !noProducts) {
-        return;
-    }
+    if (!productsGrid || !noProducts) return;
 
     productsGrid.innerHTML = "";
 
@@ -508,20 +430,17 @@ function renderProducts() {
     if (verifiedPlayer.region !== "SG") {
 
         showNoProducts(
-            "Top-up is currently available only for SG region accounts."
+            "Top-up is currently available only for SG accounts."
         );
 
         return;
 
     }
 
-    const products =
-    availableProducts.filter(product => {
+    const products = availableProducts.filter(product => {
 
-        return (
-            String(product.region || "")
-            .toUpperCase() === "SG"
-        );
+        return String(product.region || "")
+        .toUpperCase() === "SG";
 
     });
 
@@ -545,38 +464,28 @@ function renderProducts() {
         document.createElement("button");
 
         card.type = "button";
-
         card.className = "product-card";
+        card.dataset.productId = product.id;
 
-        card.dataset.productId =
-        product.id;
-
-
-        // PRODUCT IMAGE
+        // IMAGE
 
         const imageBox =
         document.createElement("div");
 
-        imageBox.className =
-        "product-image";
+        imageBox.className = "product-image";
 
         const image =
         document.createElement("img");
 
-        image.alt =
-        product.product_name;
-
+        image.alt = product.product_name;
         image.loading = "lazy";
 
         if (product.image_url) {
 
-            image.src =
-            product.image_url;
+            image.src = product.image_url;
 
             image.onerror = () => {
-
                 image.style.display = "none";
-
             };
 
         } else {
@@ -592,54 +501,45 @@ function renderProducts() {
         "fa-solid fa-gem fallback-gem";
 
         imageBox.appendChild(image);
-
         imageBox.appendChild(fallbackIcon);
 
-
-        // PRODUCT DETAILS
+        // DETAILS
 
         const details =
         document.createElement("div");
 
-        details.className =
-        "product-details";
+        details.className = "product-details";
 
         const title =
         document.createElement("h3");
 
-        title.textContent =
-        product.product_name;
+        title.textContent = product.product_name;
 
         const subtitle =
         document.createElement("p");
 
-        subtitle.textContent =
-        "Free Fire";
+        subtitle.textContent = "Free Fire";
 
         details.appendChild(title);
-
         details.appendChild(subtitle);
 
-
-        // PRODUCT PRICE
+        // PRICE
 
         const priceBox =
         document.createElement("div");
 
-        priceBox.className =
-        "product-price";
+        priceBox.className = "product-price";
 
         const currency =
         document.createElement("span");
 
-        currency.textContent =
-        "LKR";
+        currency.textContent = "LKR";
 
         const price =
         document.createElement("strong");
 
         price.textContent =
-        Number(product.price).toLocaleString(
+        product.price.toLocaleString(
             "en-LK",
             {
                 minimumFractionDigits: 2,
@@ -648,27 +548,19 @@ function renderProducts() {
         );
 
         priceBox.appendChild(currency);
-
         priceBox.appendChild(price);
-
 
         // APPEND
 
         card.appendChild(imageBox);
-
         card.appendChild(details);
-
         card.appendChild(priceBox);
 
-
-        // SELECT PRODUCT
+        // SELECT
 
         card.addEventListener("click", () => {
-
             selectProduct(product, card);
-
         });
-
 
         productsGrid.appendChild(card);
 
@@ -676,16 +568,13 @@ function renderProducts() {
 
 }
 
-
 // ======================================================
 // 14. SHOW NO PRODUCTS
 // ======================================================
 
 function showNoProducts(message) {
 
-    if (!productsGrid || !noProducts) {
-        return;
-    }
+    if (!productsGrid || !noProducts) return;
 
     productsGrid.style.display = "none";
 
@@ -695,13 +584,10 @@ function showNoProducts(message) {
     noProducts.querySelector("p");
 
     if (paragraph) {
-
         paragraph.textContent = message;
-
     }
 
 }
-
 
 // ======================================================
 // 15. SELECT PRODUCT
@@ -725,7 +611,7 @@ function selectProduct(product, card) {
 
         showToast(
             "Region Not Supported",
-            "Top-up is currently available only for SG accounts.",
+            "Only SG accounts are supported.",
             "error"
         );
 
@@ -736,12 +622,10 @@ function selectProduct(product, card) {
     selectedProduct = product;
 
     document
-    .querySelectorAll(".product-card")
-    .forEach(item => {
-
-        item.classList.remove("selected");
-
-    });
+        .querySelectorAll(".product-card")
+        .forEach(item => {
+            item.classList.remove("selected");
+        });
 
     card.classList.add("selected");
 
@@ -749,43 +633,40 @@ function selectProduct(product, card) {
 
 }
 
-
 // ======================================================
 // 16. UPDATE ORDER SUMMARY
 // ======================================================
 
 function updateOrderSummary() {
 
+    if (!purchaseButton) return;
+
     if (!selectedProduct || !verifiedPlayer) {
+
+        purchaseButton.disabled = true;
+
         return;
+
     }
 
     if (summaryPlayerID) {
-
         summaryPlayerID.textContent =
         verifiedPlayer.playerId;
-
     }
 
     if (summaryPlayerName) {
-
         summaryPlayerName.textContent =
         verifiedPlayer.playerName;
-
     }
 
     if (summaryProduct) {
-
         summaryProduct.textContent =
         selectedProduct.product_name;
-
     }
 
     if (summaryTotal) {
-
         summaryTotal.textContent =
         formatCurrency(selectedProduct.price);
-
     }
 
     const productPrice =
@@ -793,11 +674,11 @@ function updateOrderSummary() {
 
     if (walletBalance >= productPrice) {
 
-        purchaseButton.disabled = true;
+        purchaseButton.disabled = false;
 
         purchaseButton.innerHTML = `
-            <i class="fa-solid fa-lock"></i>
-            <span>Purchase Backend Pending</span>
+            <i class="fa-solid fa-shield-halved"></i>
+            <span>Confirm Purchase</span>
             <i class="fa-solid fa-arrow-right"></i>
         `;
 
@@ -815,7 +696,6 @@ function updateOrderSummary() {
 
 }
 
-
 // ======================================================
 // 17. RESET VERIFICATION
 // ======================================================
@@ -823,39 +703,34 @@ function updateOrderSummary() {
 function resetVerification() {
 
     verifiedPlayer = null;
-
     selectedProduct = null;
 
     if (playerResult) {
-
         playerResult.classList.remove("show");
+    }
 
+    if (playerName) {
+        playerName.textContent = "---";
+    }
+
+    if (playerRegion) {
+        playerRegion.textContent = "---";
     }
 
     if (summaryPlayerID) {
-
         summaryPlayerID.textContent = "---";
-
     }
 
     if (summaryPlayerName) {
-
         summaryPlayerName.textContent = "---";
-
     }
 
     if (summaryProduct) {
-
-        summaryProduct.textContent =
-        "Not Selected";
-
+        summaryProduct.textContent = "Not Selected";
     }
 
     if (summaryTotal) {
-
-        summaryTotal.textContent =
-        "LKR 0.00";
-
+        summaryTotal.textContent = "LKR 0.00";
     }
 
     if (purchaseButton) {
@@ -871,36 +746,29 @@ function resetVerification() {
     }
 
     if (selectedRegion) {
-
         selectedRegion.textContent =
         "Verify your Player ID first";
-
     }
 
     if (regionStatus) {
 
-        regionStatus.textContent =
-        "Waiting";
+        regionStatus.textContent = "Waiting";
 
-        regionStatus.className =
-        "region-status";
+        regionStatus.className = "region-status";
 
     }
 
     document
-    .querySelectorAll(".product-card")
-    .forEach(card => {
-
-        card.classList.remove("selected");
-
-    });
+        .querySelectorAll(".product-card")
+        .forEach(card => {
+            card.classList.remove("selected");
+        });
 
     showNoProducts(
         "Verify your Player ID to view available packages."
     );
 
 }
-
 
 // ======================================================
 // 18. PLAYER INPUT
@@ -927,20 +795,14 @@ function setupPlayerInput() {
 
 }
 
-
 // ======================================================
 // 19. FIND ALU RESPONSE VALUE
 // ======================================================
 
 function findResponseValue(object, keys) {
 
-    if (
-        !object ||
-        typeof object !== "object"
-    ) {
-
+    if (!object || typeof object !== "object") {
         return null;
-
     }
 
     for (const key of keys) {
@@ -959,19 +821,12 @@ function findResponseValue(object, keys) {
 
     for (const value of Object.values(object)) {
 
-        if (
-            value &&
-            typeof value === "object"
-        ) {
+        if (value && typeof value === "object") {
 
             const found =
             findResponseValue(value, keys);
 
-            if (found !== null) {
-
-                return found;
-
-            }
+            if (found !== null) return found;
 
         }
 
@@ -981,16 +836,13 @@ function findResponseValue(object, keys) {
 
 }
 
-
 // ======================================================
 // 20. NORMALIZE REGION
 // ======================================================
 
 function normalizeRegion(value) {
 
-    if (!value) {
-        return "UNKNOWN";
-    }
+    if (!value) return "UNKNOWN";
 
     const region =
     String(value).trim().toUpperCase();
@@ -999,293 +851,254 @@ function normalizeRegion(value) {
         region === "SG" ||
         region.includes("SINGAPORE")
     ) {
-
         return "SG";
-
     }
 
     if (
         region === "MY" ||
         region.includes("MALAYSIA")
     ) {
-
         return "MY";
-
     }
 
     return region;
 
 }
 
-
 // ======================================================
-// 21. NAME CHECK - ALU BACKEND
+// 21. NAME CHECK
 // ======================================================
 
 function setupNameCheck() {
 
-    if (!nameCheckButton || !playerUID) {
-        return;
-    }
+    if (!nameCheckButton || !playerUID) return;
 
-    nameCheckButton.addEventListener(
-        "click",
-        async () => {
+    nameCheckButton.addEventListener("click", async () => {
 
-            const uid =
-            playerUID.value.trim();
+        const uid = playerUID.value.trim();
 
-            if (!uid) {
+        if (!uid) {
 
-                showToast(
-                    "Player ID Required",
-                    "Please enter your Free Fire Player ID.",
-                    "error"
-                );
+            showToast(
+                "Player ID Required",
+                "Please enter your Free Fire Player ID.",
+                "error"
+            );
 
-                playerUID.focus();
+            playerUID.focus();
 
-                return;
+            return;
 
-            }
+        }
 
-            if (!/^\d{5,20}$/.test(uid)) {
+        if (!/^\d{5,20}$/.test(uid)) {
 
-                showToast(
-                    "Invalid Player ID",
-                    "Please enter a valid numeric Player ID.",
-                    "error"
-                );
+            showToast(
+                "Invalid Player ID",
+                "Please enter a valid numeric Player ID.",
+                "error"
+            );
 
-                return;
+            return;
 
-            }
+        }
 
-            resetVerification();
+        resetVerification();
 
-            nameCheckButton.disabled = true;
+        nameCheckButton.disabled = true;
 
-            nameCheckButton.innerHTML = `
+        nameCheckButton.innerHTML = `
+            <i class="fa-solid fa-spinner fa-spin"></i>
+            Verifying Player...
+        `;
+
+        if (verificationMessage) {
+
+            verificationMessage.classList.remove("error");
+
+            verificationMessage.innerHTML = `
                 <i class="fa-solid fa-spinner fa-spin"></i>
-                Verifying Player...
+                Connecting to ALU API...
             `;
+
+        }
+
+        try {
+
+            const result =
+            await callFreeFireBackend(
+                "name-check",
+                { uid }
+            );
+
+            const raw = result.data;
+
+            console.log(
+                "FREE FIRE ALU RESPONSE:",
+                raw
+            );
+
+            // ALU VALIDATION
+
+            if (raw?.valid !== "valid") {
+
+                throw new Error(
+                    "Free Fire Player ID could not be verified."
+                );
+
+            }
+
+            // PLAYER NAME
+
+            const actualName =
+            findResponseValue(
+                raw,
+                [
+                    "username",
+                    "player_name",
+                    "playerName",
+                    "characterName",
+                    "charname",
+                    "nickname",
+                    "nickName",
+                    "character_name",
+                    "name"
+                ]
+            );
+
+            // REGION
+
+            const actualRegion =
+            findResponseValue(
+                raw,
+                [
+                    "region",
+                    "server",
+                    "country",
+                    "serverRegion",
+                    "server_region"
+                ]
+            );
+
+            if (!actualName) {
+
+                throw new Error(
+                    "Player name was not found in ALU response."
+                );
+
+            }
+
+            const region =
+            normalizeRegion(actualRegion);
+
+            verifiedPlayer = {
+                playerId: uid,
+                playerName: String(actualName),
+                region
+            };
+
+            // DISPLAY NAME
+
+            if (playerName) {
+                playerName.textContent =
+                verifiedPlayer.playerName;
+            }
+
+            // DISPLAY REGION
+
+            if (playerRegion) {
+                playerRegion.textContent = region;
+            }
+
+            if (selectedRegion) {
+                selectedRegion.textContent = region;
+            }
+
+            // REGION STATUS
+
+            if (regionStatus) {
+
+                regionStatus.textContent =
+                region === "SG"
+                    ? "Verified"
+                    : "Not Supported";
+
+                regionStatus.className =
+                region === "SG"
+                    ? "region-status available"
+                    : "region-status";
+
+            }
+
+            // RESULT
+
+            if (playerResult) {
+                playerResult.classList.add("show");
+            }
 
             if (verificationMessage) {
 
                 verificationMessage.classList.remove("error");
 
-                verificationMessage.innerHTML = `
-                    <i class="fa-solid fa-spinner fa-spin"></i>
-                    Connecting to ALU API...
-                `;
+                verificationMessage.textContent =
+                region === "SG"
+                    ? "Player verified successfully."
+                    : "Only SG accounts are supported.";
 
             }
 
-            try {
+            renderProducts();
 
-                // CALL BACKEND
+            showToast(
+                "Player Verification",
+                region === "SG"
+                    ? "Player verified successfully!"
+                    : "This account is not eligible for SG top-up.",
+                region === "SG"
+                    ? "success"
+                    : "error"
+            );
 
-                const result =
-                await callFreeFireBackend(
-                    "name-check",
-                    { uid }
-                );
+        } catch (error) {
 
-                const raw =
-                result.data;
+            console.error(
+                "PLAYER VERIFICATION ERROR:",
+                error
+            );
 
-                console.log(
-                    "FREE FIRE ALU RESPONSE:",
-                    raw
-                );
+            verifiedPlayer = null;
 
+            if (verificationMessage) {
 
-                // FIND REAL PLAYER NAME
+                verificationMessage.classList.add("error");
 
-                const actualName =
-                findResponseValue(
-                    raw,
-                    [
-                        "player_name",
-                        "playerName",
-                        "characterName",
-                        "charname",
-                        "nickname",
-                        "nickName",
-                        "character_name",
-                        "name"
-                    ]
-                );
-
-
-                // FIND REAL REGION
-
-                const actualRegion =
-                findResponseValue(
-                    raw,
-                    [
-                        "region",
-                        "server",
-                        "country",
-                        "serverRegion",
-                        "server_region"
-                    ]
-                );
-
-
-                // CHECK NAME
-
-                if (!actualName) {
-
-                    throw new Error(
-                        "ALU response received, but player name could not be identified. Please share the API response for correct mapping."
-                    );
-
-                }
-
-
-                const region =
-                normalizeRegion(actualRegion);
-
-
-                // STORE VERIFIED PLAYER
-
-                verifiedPlayer = {
-
-                    playerId: uid,
-
-                    playerName:
-                    String(actualName),
-
-                    region
-
-                };
-
-
-                // DISPLAY PLAYER NAME
-
-                if (playerName) {
-
-                    playerName.textContent =
-                    verifiedPlayer.playerName;
-
-                }
-
-
-                // DISPLAY REGION
-
-                if (playerRegion) {
-
-                    playerRegion.textContent =
-                    region;
-
-                }
-
-                if (selectedRegion) {
-
-                    selectedRegion.textContent =
-                    region;
-
-                }
-
-
-                // REGION STATUS
-
-                if (regionStatus) {
-
-                    regionStatus.textContent =
-                    region === "SG"
-                        ? "Verified"
-                        : "Not Supported";
-
-                    regionStatus.className =
-                    region === "SG"
-                        ? "region-status available"
-                        : "region-status";
-
-                }
-
-
-                // SHOW PLAYER RESULT
-
-                if (playerResult) {
-
-                    playerResult.classList.add("show");
-
-                }
-
-
-                // VERIFICATION MESSAGE
-
-                if (verificationMessage) {
-
-                    verificationMessage.classList.remove("error");
-
-                    verificationMessage.textContent =
-                    region === "SG"
-                        ? "Player verified successfully."
-                        : "Player identified. Top-up is currently available only for SG accounts.";
-
-                }
-
-
-                // LOAD SG PRODUCTS
-
-                renderProducts();
-
-
-                showToast(
-                    "Player Verification",
-                    region === "SG"
-                        ? "Player verified successfully!"
-                        : "This account is not eligible for SG top-up.",
-                    region === "SG"
-                        ? "success"
-                        : "error"
-                );
-
-            } catch (error) {
-
-                console.error(
-                    "PLAYER VERIFICATION ERROR:",
-                    error
-                );
-
-                verifiedPlayer = null;
-
-                if (verificationMessage) {
-
-                    verificationMessage.classList.add("error");
-
-                    verificationMessage.textContent =
-                    error.message ||
-                    "Player verification failed.";
-
-                }
-
-                showToast(
-                    "Verification Failed",
-                    error.message ||
-                    "Unable to verify player.",
-                    "error"
-                );
-
-            } finally {
-
-                nameCheckButton.disabled = false;
-
-                nameCheckButton.innerHTML = `
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                    Verify Player
-                `;
+                verificationMessage.textContent =
+                error.message || "Player verification failed.";
 
             }
+
+            showToast(
+                "Verification Failed",
+                error.message || "Unable to verify player.",
+                "error"
+            );
+
+            renderProducts();
+
+        } finally {
+
+            nameCheckButton.disabled = false;
+
+            nameCheckButton.innerHTML = `
+                <i class="fa-solid fa-magnifying-glass"></i>
+                Verify Player
+            `;
 
         }
-    );
+
+    });
 
 }
-
 
 // ======================================================
 // 22. PURCHASE BUTTON
@@ -1295,21 +1108,147 @@ function setupPurchaseButton() {
 
     if (!purchaseButton) return;
 
-    purchaseButton.addEventListener(
-        "click",
-        () => {
+    purchaseButton.disabled = true;
+
+    purchaseButton.addEventListener("click", async () => {
+
+        if (isPurchasing) return;
+
+        if (!currentUser) {
 
             showToast(
-                "Purchase Unavailable",
-                "Secure purchase processing is not ready yet.",
+                "Login Required",
+                "Please login again.",
                 "error"
             );
 
+            return;
+
         }
-    );
+
+        if (!verifiedPlayer || !selectedProduct) {
+
+            showToast(
+                "Selection Required",
+                "Verify Player ID and select a package.",
+                "error"
+            );
+
+            return;
+
+        }
+
+        if (verifiedPlayer.region !== "SG") {
+
+            showToast(
+                "Region Not Supported",
+                "Only SG accounts are supported.",
+                "error"
+            );
+
+            return;
+
+        }
+
+        const productPrice =
+        Number(selectedProduct.price);
+
+        if (walletBalance < productPrice) {
+
+            showToast(
+                "Insufficient Balance",
+                "Please add money to your wallet.",
+                "error"
+            );
+
+            return;
+
+        }
+
+        const confirmed = window.confirm(
+            `Confirm Free Fire Top-Up?\n\n` +
+            `Player ID: ${verifiedPlayer.playerId}\n` +
+            `Player Name: ${verifiedPlayer.playerName}\n` +
+            `Package: ${selectedProduct.product_name}\n` +
+            `Amount: ${formatCurrency(productPrice)}\n\n` +
+            `Continue?`
+        );
+
+        if (!confirmed) return;
+
+        isPurchasing = true;
+
+        purchaseButton.disabled = true;
+
+        purchaseButton.innerHTML = `
+            <i class="fa-solid fa-spinner fa-spin"></i>
+            <span>Processing Order...</span>
+        `;
+
+        try {
+
+            const clientRequestId =
+            crypto.randomUUID();
+
+            const result =
+            await callFreeFireBackend(
+                "purchase",
+                {
+                    product_id: selectedProduct.id,
+                    player_id: verifiedPlayer.playerId,
+                    client_request_id: clientRequestId
+                }
+            );
+
+            // REFRESH WALLET
+
+            await loadWalletBalance();
+
+            console.log(
+                "FREE FIRE PURCHASE RESULT:",
+                result
+            );
+
+            showToast(
+                "Order Submitted",
+                result.message ||
+                "Your order has been submitted.",
+                "success"
+            );
+
+            purchaseButton.innerHTML = `
+                <i class="fa-solid fa-clock"></i>
+                <span>Order Submitted</span>
+                <i class="fa-solid fa-check"></i>
+            `;
+
+        } catch (error) {
+
+            console.error(
+                "PURCHASE ERROR:",
+                error
+            );
+
+            showToast(
+                "Purchase Failed",
+                error.message ||
+                "Unable to process purchase.",
+                "error"
+            );
+
+            await loadWalletBalance();
+
+            updateOrderSummary();
+
+        } finally {
+
+            isPurchasing = false;
+
+        }
+
+    });
 
 }
-
 
 // ======================================================
 // 23. MOBILE MENU
@@ -1323,45 +1262,25 @@ function setupMobileMenu() {
     const mobileNavigation =
     document.getElementById("mobileNavigation");
 
-    if (
-        !menuButton ||
-        !mobileNavigation
-    ) {
+    if (!menuButton || !mobileNavigation) return;
 
-        return;
+    menuButton.addEventListener("click", () => {
 
-    }
+        mobileNavigation.classList.toggle("show");
 
-    menuButton.addEventListener(
-        "click",
-        () => {
+        const icon =
+        menuButton.querySelector("i");
 
-            mobileNavigation.classList.toggle("show");
+        if (!icon) return;
 
-            const icon =
-            menuButton.querySelector("i");
+        icon.className =
+        mobileNavigation.classList.contains("show")
+            ? "fa-solid fa-xmark"
+            : "fa-solid fa-bars";
 
-            if (!icon) return;
-
-            if (
-                mobileNavigation.classList.contains("show")
-            ) {
-
-                icon.className =
-                "fa-solid fa-xmark";
-
-            } else {
-
-                icon.className =
-                "fa-solid fa-bars";
-
-            }
-
-        }
-    );
+    });
 
 }
-
 
 // ======================================================
 // 24. TOAST NOTIFICATION
@@ -1373,16 +1292,10 @@ function setupToast() {
     document.getElementById("closeToast");
 
     if (closeButton) {
-
-        closeButton.addEventListener(
-            "click",
-            hideToast
-        );
-
+        closeButton.addEventListener("click", hideToast);
     }
 
 }
-
 
 function showToast(
     title,
@@ -1399,20 +1312,14 @@ function showToast(
     document.getElementById("toastMessage");
 
     const toastIcon =
-    toastContainer.querySelector(
-        ".toast-icon i"
-    );
+    toastContainer.querySelector(".toast-icon i");
 
     if (toastTitle) {
-
         toastTitle.textContent = title;
-
     }
 
     if (toastMessage) {
-
         toastMessage.textContent = message;
-
     }
 
     if (toastIcon) {
@@ -1447,7 +1354,6 @@ function showToast(
 
 }
 
-
 function hideToast() {
 
     if (!toastContainer) return;
@@ -1455,7 +1361,6 @@ function hideToast() {
     toastContainer.classList.remove("show");
 
 }
-
 
 // ======================================================
 // 25. HIDE PAGE LOADER
@@ -1469,20 +1374,21 @@ function hideLoader() {
 
 }
 
-
 // ======================================================
 // 26. SECURITY NOTES
 // ======================================================
 
 // 1. Service Role Key is NEVER used in frontend.
 // 2. ALU Secret Key is NEVER used in frontend.
-// 3. Wallet debit must happen in secure backend.
+// 3. Wallet debit happens in backend only.
 // 4. Product price must be checked in backend.
 // 5. User JWT must be verified by backend.
-// 6. ALU response must be verified before completing.
-// 7. Failed orders must be refunded safely.
-// 8. Never trust client-side player information.
+// 6. ALU player name must be verified by backend.
+// 7. ALU response must be verified before completion.
+// 8. Failed orders must be refunded safely.
+// 9. Never trust client-side player information.
+// 10. Never retry an uncertain purchase blindly.
 
 // ======================================================
-// END OF BIG STORE FREE FIRE FRONTEND
+// END BIG STORE FREE FIRE FRONTEND
 // ======================================================
