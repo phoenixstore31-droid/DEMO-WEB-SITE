@@ -402,43 +402,75 @@ function formatCurrency(amount) {
 
 
 // ======================================================
-// 12. LOAD FREE FIRE PRODUCTS
+// 12. LOAD FREE FIRE PRODUCTS DIRECTLY FROM SUPABASE
 // ======================================================
 
 async function loadProducts() {
 
     try {
 
-        const result =
-        await callFreeFireBackend("products");
+        const { data, error } = await supabase
 
-        availableProducts =
-        (result.products || []).filter(product => {
+            .from("topup_products")
 
-            const gameCode =
-            String(
-                product.game_code || ""
-            ).toLowerCase();
+            .select(`
+                id,
+                game_name,
+                game_code,
+                product_name,
+                denom,
+                region,
+                image_url,
+                price,
+                is_active,
+                sort_order
+            `)
 
-            const gameName =
-            String(
-                product.game_name || ""
-            ).toLowerCase();
+            .eq("game_code", "freefire_sgmy")
 
-            return (
-                gameCode.includes("freefire") ||
-                gameCode.includes("free-fire") ||
-                gameName.includes("free fire")
+            .eq("region", "SG")
+
+            .eq("is_active", true)
+
+            .order("sort_order", {
+                ascending: true
+            });
+
+
+        if (error) {
+
+            console.error(
+                "SUPABASE PRODUCTS ERROR:",
+                error
             );
 
-        });
+            throw error;
+
+        }
+
+
+        availableProducts = (data || []).map(product => ({
+
+            ...product,
+
+            price: Number(product.price)
+
+        }));
+
+
+        console.log(
+            "SUPABASE FREE FIRE PRODUCTS:",
+            availableProducts
+        );
+
 
         renderProducts();
+
 
     } catch (error) {
 
         console.error(
-            "Products Error:",
+            "Products Loading Error:",
             error
         );
 
