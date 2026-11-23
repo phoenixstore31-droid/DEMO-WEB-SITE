@@ -1,10 +1,10 @@
 // ======================================================
 // BIG STORE - FREE FIRE TOP-UP
-// FRONTEND JAVASCRIPT
+// COMPLETE FRONTEND JAVASCRIPT
 // ======================================================
 
 import { createClient } from
-    "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+"https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
 
 // ======================================================
@@ -12,10 +12,10 @@ import { createClient } from
 // ======================================================
 
 const SUPABASE_URL =
-    "https://drqanlbxrpahscbxmlyt.supabase.co";
+"https://drqanlbxrpahscbxmlyt.supabase.co";
 
 const SUPABASE_ANON_KEY =
-    "sb_publishable_9xJxxVib4BAD5RXItitbQQ_O3qfyZ-T";
+"sb_publishable_9xJxxVib4BAD5RXItitbQQ_O3qfyZ-T";
 
 const supabase = createClient(
     SUPABASE_URL,
@@ -28,74 +28,80 @@ const supabase = createClient(
 // ======================================================
 
 let currentUser = null;
+
 let currentProfile = null;
 
 let walletBalance = 0;
 
 let verifiedPlayer = null;
+
 let selectedProduct = null;
 
 let availableProducts = [];
+
+let toastTimer = null;
 
 
 // ======================================================
 // 03. DOM ELEMENTS
 // ======================================================
 
-const pageLoader = document.getElementById("pageLoader");
+const pageLoader =
+document.getElementById("pageLoader");
 
-const playerUID = document.getElementById("playerUID");
+const playerUID =
+document.getElementById("playerUID");
 
 const nameCheckButton =
-    document.getElementById("nameCheckButton");
+document.getElementById("nameCheckButton");
 
 const playerResult =
-    document.getElementById("playerResult");
+document.getElementById("playerResult");
 
 const playerName =
-    document.getElementById("playerName");
+document.getElementById("playerName");
 
 const playerRegion =
-    document.getElementById("playerRegion");
+document.getElementById("playerRegion");
 
 const verificationMessage =
-    document.getElementById("verificationMessage");
+document.getElementById("verificationMessage");
 
 const selectedRegion =
-    document.getElementById("selectedRegion");
+document.getElementById("selectedRegion");
 
 const regionStatus =
-    document.getElementById("regionStatus");
+document.getElementById("regionStatus");
 
 const productsGrid =
-    document.getElementById("productsGrid");
+document.getElementById("productsGrid");
 
 const noProducts =
-    document.getElementById("noProducts");
+document.getElementById("noProducts");
 
 const purchaseButton =
-    document.getElementById("purchaseButton");
+document.getElementById("purchaseButton");
 
 const walletBalanceElement =
-    document.getElementById("walletBalance");
+document.getElementById("walletBalance");
 
 const sidebarWalletBalance =
-    document.getElementById("sidebarWalletBalance");
+document.getElementById("sidebarWalletBalance");
 
 const summaryPlayerID =
-    document.getElementById("summaryPlayerID");
+document.getElementById("summaryPlayerID");
 
 const summaryPlayerName =
-    document.getElementById("summaryPlayerName");
+document.getElementById("summaryPlayerName");
 
 const summaryProduct =
-    document.getElementById("summaryProduct");
+document.getElementById("summaryProduct");
 
 const summaryTotal =
-    document.getElementById("summaryTotal");
+document.getElementById("summaryTotal");
 
 const toastContainer =
-    document.getElementById("toastContainer");
+document.getElementById("toastContainer");
 
 
 // ======================================================
@@ -104,16 +110,19 @@ const toastContainer =
 
 document.addEventListener("DOMContentLoaded", async () => {
 
-    document.getElementById("currentYear").textContent =
+    const yearElement =
+    document.getElementById("currentYear");
+
+    if (yearElement) {
+        yearElement.textContent =
         new Date().getFullYear();
+    }
 
     setupMobileMenu();
 
     setupToast();
 
     setupPlayerInput();
-
-    setupProductSelection();
 
     setupNameCheck();
 
@@ -140,11 +149,15 @@ async function initializePage() {
 
         await loadWalletBalance();
 
+        // Products are loaded from secure backend.
         await loadProducts();
 
     } catch (error) {
 
-        console.error("Initialization Error:", error);
+        console.error(
+            "Initialization Error:",
+            error
+        );
 
         showToast(
             "Something went wrong",
@@ -186,7 +199,8 @@ async function checkLogin() {
 
         setTimeout(() => {
 
-            window.location.href = "login.html";
+            window.location.href =
+            "login.html";
 
         }, 1500);
 
@@ -203,19 +217,101 @@ async function checkLogin() {
 // 07. AUTH STATE CHANGE
 // ======================================================
 
-supabase.auth.onAuthStateChange((event, session) => {
+supabase.auth.onAuthStateChange(
+    (event, session) => {
 
-    if (event === "SIGNED_OUT" || !session) {
+        if (
+            event === "SIGNED_OUT" ||
+            !session
+        ) {
 
-        window.location.href = "login.html";
+            window.location.href =
+            "login.html";
+
+        }
 
     }
-
-});
+);
 
 
 // ======================================================
-// 08. LOAD WALLET BALANCE
+// 08. BACKEND CONNECTION
+// ======================================================
+
+async function callFreeFireBackend(
+    action,
+    data = {}
+) {
+
+    const {
+        data: { session },
+        error
+    } = await supabase.auth.getSession();
+
+    if (error || !session) {
+
+        throw new Error(
+            "Please login again."
+        );
+
+    }
+
+    const response = await fetch(
+        "/.netlify/functions/freefire",
+        {
+
+            method: "POST",
+
+            headers: {
+
+                "Content-Type": "application/json",
+
+                "Authorization":
+                `Bearer ${session.access_token}`
+
+            },
+
+            body: JSON.stringify({
+
+                action,
+
+                ...data
+
+            })
+
+        }
+    );
+
+    let result;
+
+    try {
+
+        result = await response.json();
+
+    } catch {
+
+        throw new Error(
+            "Invalid response received from backend."
+        );
+
+    }
+
+    if (!response.ok || !result.success) {
+
+        throw new Error(
+            result.message ||
+            `Backend request failed (${response.status}).`
+        );
+
+    }
+
+    return result;
+
+}
+
+
+// ======================================================
+// 09. LOAD WALLET BALANCE
 // ======================================================
 
 async function loadWalletBalance() {
@@ -223,14 +319,23 @@ async function loadWalletBalance() {
     if (!currentUser) return;
 
     const { data, error } = await supabase
+
         .from("profiles")
-        .select("wallet_balance, username, email")
+
+        .select(
+            "wallet_balance, username, email"
+        )
+
         .eq("id", currentUser.id)
+
         .single();
 
     if (error) {
 
-        console.error("Wallet Error:", error);
+        console.error(
+            "Wallet Error:",
+            error
+        );
 
         showToast(
             "Wallet Error",
@@ -244,7 +349,8 @@ async function loadWalletBalance() {
 
     currentProfile = data;
 
-    walletBalance = Number(data.wallet_balance || 0);
+    walletBalance =
+    Number(data.wallet_balance || 0);
 
     updateWalletDisplay();
 
@@ -252,25 +358,25 @@ async function loadWalletBalance() {
 
 
 // ======================================================
-// 09. UPDATE WALLET DISPLAY
+// 10. UPDATE WALLET DISPLAY
 // ======================================================
 
 function updateWalletDisplay() {
 
     const formattedBalance =
-        formatCurrency(walletBalance);
+    formatCurrency(walletBalance);
 
     if (walletBalanceElement) {
 
         walletBalanceElement.textContent =
-            formattedBalance;
+        formattedBalance;
 
     }
 
     if (sidebarWalletBalance) {
 
         sidebarWalletBalance.textContent =
-            formattedBalance;
+        formattedBalance;
 
     }
 
@@ -278,12 +384,13 @@ function updateWalletDisplay() {
 
 
 // ======================================================
-// 10. CURRENCY FORMAT
+// 11. CURRENCY FORMAT
 // ======================================================
 
 function formatCurrency(amount) {
 
-    return "LKR " + Number(amount || 0).toLocaleString(
+    return "LKR " +
+    Number(amount || 0).toLocaleString(
         "en-LK",
         {
             minimumFractionDigits: 2,
@@ -295,72 +402,66 @@ function formatCurrency(amount) {
 
 
 // ======================================================
-// 11. LOAD TOP-UP PRODUCTS
+// 12. LOAD FREE FIRE PRODUCTS
 // ======================================================
 
 async function loadProducts() {
 
-    const { data, error } = await supabase
-        .from("topup_products")
-        .select(`
-            id,
-            game_name,
-            game_code,
-            product_name,
-            denom,
-            region,
-            image_url,
-            price,
-            is_active,
-            sort_order
-        `)
-        .eq("is_active", true)
-        .order("sort_order", { ascending: true });
+    try {
 
-    if (error) {
+        const result =
+        await callFreeFireBackend("products");
 
-        console.error("Products Error:", error);
+        availableProducts =
+        (result.products || []).filter(product => {
+
+            const gameCode =
+            String(
+                product.game_code || ""
+            ).toLowerCase();
+
+            const gameName =
+            String(
+                product.game_name || ""
+            ).toLowerCase();
+
+            return (
+                gameCode.includes("freefire") ||
+                gameCode.includes("free-fire") ||
+                gameName.includes("free fire")
+            );
+
+        });
+
+        renderProducts();
+
+    } catch (error) {
+
+        console.error(
+            "Products Error:",
+            error
+        );
 
         showNoProducts(
             "Unable to load products. Please try again later."
         );
 
-        return;
-
     }
-
-    // Only Free Fire products are displayed.
-    availableProducts = (data || []).filter(product => {
-
-        const gameCode =
-            String(product.game_code || "").toLowerCase();
-
-        const gameName =
-            String(product.game_name || "").toLowerCase();
-
-        return (
-            gameCode.includes("freefire") ||
-            gameCode.includes("free-fire") ||
-            gameName.includes("free fire")
-        );
-
-    });
-
-    renderProducts();
 
 }
 
 
 // ======================================================
-// 12. RENDER PRODUCTS
+// 13. RENDER PRODUCTS
 // ======================================================
 
 function renderProducts() {
 
-    productsGrid.innerHTML = "";
+    if (!productsGrid || !noProducts) {
+        return;
+    }
 
-    const regionVerified =
-        verifiedPlayer?.region?.toUpperCase() === "SG";
+    productsGrid.innerHTML = "";
 
     if (!verifiedPlayer) {
 
@@ -372,7 +473,7 @@ function renderProducts() {
 
     }
 
-    if (!regionVerified) {
+    if (verifiedPlayer.region !== "SG") {
 
         showNoProducts(
             "Top-up is currently available only for SG region accounts."
@@ -382,9 +483,13 @@ function renderProducts() {
 
     }
 
-    const products = availableProducts.filter(product => {
+    const products =
+    availableProducts.filter(product => {
 
-        return String(product.region || "").toUpperCase() === "SG";
+        return (
+            String(product.region || "")
+            .toUpperCase() === "SG"
+        );
 
     });
 
@@ -404,75 +509,118 @@ function renderProducts() {
 
     products.forEach(product => {
 
-        const card = document.createElement("button");
+        const card =
+        document.createElement("button");
 
         card.type = "button";
 
         card.className = "product-card";
 
-        card.dataset.productId = product.id;
+        card.dataset.productId =
+        product.id;
 
-        const image = document.createElement("img");
 
-        image.src = product.image_url || "";
+        // PRODUCT IMAGE
 
-        image.alt = product.product_name;
+        const imageBox =
+        document.createElement("div");
 
-        image.onerror = () => {
+        imageBox.className =
+        "product-image";
+
+        const image =
+        document.createElement("img");
+
+        image.alt =
+        product.product_name;
+
+        image.loading = "lazy";
+
+        if (product.image_url) {
+
+            image.src =
+            product.image_url;
+
+            image.onerror = () => {
+
+                image.style.display = "none";
+
+            };
+
+        } else {
+
             image.style.display = "none";
-        };
 
-        const imageBox = document.createElement("div");
+        }
 
-        imageBox.className = "product-image";
-
-        const fallbackIcon = document.createElement("i");
+        const fallbackIcon =
+        document.createElement("i");
 
         fallbackIcon.className =
-            "fa-solid fa-gem fallback-gem";
+        "fa-solid fa-gem fallback-gem";
 
         imageBox.appendChild(image);
 
         imageBox.appendChild(fallbackIcon);
 
 
-        const details = document.createElement("div");
+        // PRODUCT DETAILS
 
-        details.className = "product-details";
+        const details =
+        document.createElement("div");
 
-        const title = document.createElement("h3");
+        details.className =
+        "product-details";
 
-        title.textContent = product.product_name;
+        const title =
+        document.createElement("h3");
 
-        const subtitle = document.createElement("p");
+        title.textContent =
+        product.product_name;
 
-        subtitle.textContent = "Free Fire";
+        const subtitle =
+        document.createElement("p");
+
+        subtitle.textContent =
+        "Free Fire";
 
         details.appendChild(title);
 
         details.appendChild(subtitle);
 
 
-        const priceBox = document.createElement("div");
+        // PRODUCT PRICE
 
-        priceBox.className = "product-price";
+        const priceBox =
+        document.createElement("div");
 
-        const currency = document.createElement("span");
+        priceBox.className =
+        "product-price";
 
-        currency.textContent = "LKR";
+        const currency =
+        document.createElement("span");
 
-        const price = document.createElement("strong");
+        currency.textContent =
+        "LKR";
+
+        const price =
+        document.createElement("strong");
 
         price.textContent =
-            Number(product.price).toLocaleString("en-LK", {
+        Number(product.price).toLocaleString(
+            "en-LK",
+            {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2
-            });
+            }
+        );
 
         priceBox.appendChild(currency);
 
         priceBox.appendChild(price);
 
+
+        // APPEND
 
         card.appendChild(imageBox);
 
@@ -480,6 +628,8 @@ function renderProducts() {
 
         card.appendChild(priceBox);
 
+
+        // SELECT PRODUCT
 
         card.addEventListener("click", () => {
 
@@ -496,35 +646,27 @@ function renderProducts() {
 
 
 // ======================================================
-// 13. SHOW NO PRODUCTS
+// 14. SHOW NO PRODUCTS
 // ======================================================
 
 function showNoProducts(message) {
+
+    if (!productsGrid || !noProducts) {
+        return;
+    }
 
     productsGrid.style.display = "none";
 
     noProducts.classList.add("show");
 
-    noProducts.querySelector("p").textContent = message;
+    const paragraph =
+    noProducts.querySelector("p");
 
-}
+    if (paragraph) {
 
+        paragraph.textContent = message;
 
-// ======================================================
-// 14. PRODUCT SELECTION
-// ======================================================
-
-function setupProductSelection() {
-
-    productsGrid.addEventListener("click", event => {
-
-        const card = event.target.closest(".product-card");
-
-        if (!card) return;
-
-        if (card.disabled) return;
-
-    });
+    }
 
 }
 
@@ -561,7 +703,9 @@ function selectProduct(product, card) {
 
     selectedProduct = product;
 
-    document.querySelectorAll(".product-card").forEach(item => {
+    document
+    .querySelectorAll(".product-card")
+    .forEach(item => {
 
         item.classList.remove("selected");
 
@@ -580,22 +724,40 @@ function selectProduct(product, card) {
 
 function updateOrderSummary() {
 
-    if (!selectedProduct || !verifiedPlayer) return;
+    if (!selectedProduct || !verifiedPlayer) {
+        return;
+    }
 
-    summaryPlayerID.textContent =
+    if (summaryPlayerID) {
+
+        summaryPlayerID.textContent =
         verifiedPlayer.playerId;
 
-    summaryPlayerName.textContent =
+    }
+
+    if (summaryPlayerName) {
+
+        summaryPlayerName.textContent =
         verifiedPlayer.playerName;
 
-    summaryProduct.textContent =
+    }
+
+    if (summaryProduct) {
+
+        summaryProduct.textContent =
         selectedProduct.product_name;
 
-    summaryTotal.textContent =
+    }
+
+    if (summaryTotal) {
+
+        summaryTotal.textContent =
         formatCurrency(selectedProduct.price);
 
+    }
+
     const productPrice =
-        Number(selectedProduct.price);
+    Number(selectedProduct.price);
 
     if (walletBalance >= productPrice) {
 
@@ -603,7 +765,7 @@ function updateOrderSummary() {
 
         purchaseButton.innerHTML = `
             <i class="fa-solid fa-lock"></i>
-            <span>Backend Connection Required</span>
+            <span>Purchase Backend Pending</span>
             <i class="fa-solid fa-arrow-right"></i>
         `;
 
@@ -623,34 +785,48 @@ function updateOrderSummary() {
 
 
 // ======================================================
-// 17. PLAYER INPUT
+// 17. RESET VERIFICATION
 // ======================================================
 
-function setupPlayerInput() {
+function resetVerification() {
 
-    playerUID.addEventListener("input", () => {
+    verifiedPlayer = null;
 
-        const value = playerUID.value.trim();
+    selectedProduct = null;
 
-        verifiedPlayer = null;
-
-        selectedProduct = null;
+    if (playerResult) {
 
         playerResult.classList.remove("show");
 
-        document.querySelectorAll(".product-card").forEach(card => {
+    }
 
-            card.classList.remove("selected");
-
-        });
+    if (summaryPlayerID) {
 
         summaryPlayerID.textContent = "---";
 
+    }
+
+    if (summaryPlayerName) {
+
         summaryPlayerName.textContent = "---";
 
-        summaryProduct.textContent = "Not Selected";
+    }
 
-        summaryTotal.textContent = "LKR 0.00";
+    if (summaryProduct) {
+
+        summaryProduct.textContent =
+        "Not Selected";
+
+    }
+
+    if (summaryTotal) {
+
+        summaryTotal.textContent =
+        "LKR 0.00";
+
+    }
+
+    if (purchaseButton) {
 
         purchaseButton.disabled = true;
 
@@ -660,26 +836,60 @@ function setupPlayerInput() {
             <i class="fa-solid fa-arrow-right"></i>
         `;
 
+    }
+
+    if (selectedRegion) {
+
         selectedRegion.textContent =
-            "Verify your Player ID first";
+        "Verify your Player ID first";
 
-        regionStatus.textContent = "Waiting";
+    }
 
-        regionStatus.className = "region-status";
+    if (regionStatus) {
 
-        if (!value) {
+        regionStatus.textContent =
+        "Waiting";
+
+        regionStatus.className =
+        "region-status";
+
+    }
+
+    document
+    .querySelectorAll(".product-card")
+    .forEach(card => {
+
+        card.classList.remove("selected");
+
+    });
+
+    showNoProducts(
+        "Verify your Player ID to view available packages."
+    );
+
+}
+
+
+// ======================================================
+// 18. PLAYER INPUT
+// ======================================================
+
+function setupPlayerInput() {
+
+    if (!playerUID) return;
+
+    playerUID.addEventListener("input", () => {
+
+        resetVerification();
+
+        if (verificationMessage) {
+
+            verificationMessage.classList.remove("error");
 
             verificationMessage.textContent =
-                "Please enter your Player ID.";
+            "Please verify your Player ID.";
 
         }
-
-        productsGrid.style.display = "none";
-
-        noProducts.classList.add("show");
-
-        noProducts.querySelector("p").textContent =
-            "Verify your Player ID to view available packages.";
 
     });
 
@@ -687,168 +897,510 @@ function setupPlayerInput() {
 
 
 // ======================================================
-// 18. NAME CHECK
+// 19. FIND ALU RESPONSE VALUE
+// ======================================================
+
+function findResponseValue(object, keys) {
+
+    if (
+        !object ||
+        typeof object !== "object"
+    ) {
+
+        return null;
+
+    }
+
+    for (const key of keys) {
+
+        if (
+            object[key] !== undefined &&
+            object[key] !== null &&
+            typeof object[key] !== "object"
+        ) {
+
+            return object[key];
+
+        }
+
+    }
+
+    for (const value of Object.values(object)) {
+
+        if (
+            value &&
+            typeof value === "object"
+        ) {
+
+            const found =
+            findResponseValue(value, keys);
+
+            if (found !== null) {
+
+                return found;
+
+            }
+
+        }
+
+    }
+
+    return null;
+
+}
+
+
+// ======================================================
+// 20. NORMALIZE REGION
+// ======================================================
+
+function normalizeRegion(value) {
+
+    if (!value) {
+        return "UNKNOWN";
+    }
+
+    const region =
+    String(value).trim().toUpperCase();
+
+    if (
+        region === "SG" ||
+        region.includes("SINGAPORE")
+    ) {
+
+        return "SG";
+
+    }
+
+    if (
+        region === "MY" ||
+        region.includes("MALAYSIA")
+    ) {
+
+        return "MY";
+
+    }
+
+    return region;
+
+}
+
+
+// ======================================================
+// 21. NAME CHECK - ALU BACKEND
 // ======================================================
 
 function setupNameCheck() {
 
-    nameCheckButton.addEventListener("click", async () => {
+    if (!nameCheckButton || !playerUID) {
+        return;
+    }
 
-        const uid = playerUID.value.trim();
+    nameCheckButton.addEventListener(
+        "click",
+        async () => {
 
-        if (!uid) {
+            const uid =
+            playerUID.value.trim();
 
-            showToast(
-                "Player ID Required",
-                "Please enter your Free Fire Player ID.",
-                "error"
-            );
+            if (!uid) {
 
-            playerUID.focus();
+                showToast(
+                    "Player ID Required",
+                    "Please enter your Free Fire Player ID.",
+                    "error"
+                );
 
-            return;
+                playerUID.focus();
+
+                return;
+
+            }
+
+            if (!/^\d{5,20}$/.test(uid)) {
+
+                showToast(
+                    "Invalid Player ID",
+                    "Please enter a valid numeric Player ID.",
+                    "error"
+                );
+
+                return;
+
+            }
+
+            resetVerification();
+
+            nameCheckButton.disabled = true;
+
+            nameCheckButton.innerHTML = `
+                <i class="fa-solid fa-spinner fa-spin"></i>
+                Verifying Player...
+            `;
+
+            if (verificationMessage) {
+
+                verificationMessage.classList.remove("error");
+
+                verificationMessage.innerHTML = `
+                    <i class="fa-solid fa-spinner fa-spin"></i>
+                    Connecting to ALU API...
+                `;
+
+            }
+
+            try {
+
+                // CALL BACKEND
+
+                const result =
+                await callFreeFireBackend(
+                    "name-check",
+                    { uid }
+                );
+
+                const raw =
+                result.data;
+
+                console.log(
+                    "FREE FIRE ALU RESPONSE:",
+                    raw
+                );
+
+
+                // FIND REAL PLAYER NAME
+
+                const actualName =
+                findResponseValue(
+                    raw,
+                    [
+                        "player_name",
+                        "playerName",
+                        "characterName",
+                        "charname",
+                        "nickname",
+                        "nickName",
+                        "character_name",
+                        "name"
+                    ]
+                );
+
+
+                // FIND REAL REGION
+
+                const actualRegion =
+                findResponseValue(
+                    raw,
+                    [
+                        "region",
+                        "server",
+                        "country",
+                        "serverRegion",
+                        "server_region"
+                    ]
+                );
+
+
+                // CHECK NAME
+
+                if (!actualName) {
+
+                    throw new Error(
+                        "ALU response received, but player name could not be identified. Please share the API response for correct mapping."
+                    );
+
+                }
+
+
+                const region =
+                normalizeRegion(actualRegion);
+
+
+                // STORE VERIFIED PLAYER
+
+                verifiedPlayer = {
+
+                    playerId: uid,
+
+                    playerName:
+                    String(actualName),
+
+                    region
+
+                };
+
+
+                // DISPLAY PLAYER NAME
+
+                if (playerName) {
+
+                    playerName.textContent =
+                    verifiedPlayer.playerName;
+
+                }
+
+
+                // DISPLAY REGION
+
+                if (playerRegion) {
+
+                    playerRegion.textContent =
+                    region;
+
+                }
+
+                if (selectedRegion) {
+
+                    selectedRegion.textContent =
+                    region;
+
+                }
+
+
+                // REGION STATUS
+
+                if (regionStatus) {
+
+                    regionStatus.textContent =
+                    region === "SG"
+                        ? "Verified"
+                        : "Not Supported";
+
+                    regionStatus.className =
+                    region === "SG"
+                        ? "region-status available"
+                        : "region-status";
+
+                }
+
+
+                // SHOW PLAYER RESULT
+
+                if (playerResult) {
+
+                    playerResult.classList.add("show");
+
+                }
+
+
+                // VERIFICATION MESSAGE
+
+                if (verificationMessage) {
+
+                    verificationMessage.classList.remove("error");
+
+                    verificationMessage.textContent =
+                    region === "SG"
+                        ? "Player verified successfully."
+                        : "Player identified. Top-up is currently available only for SG accounts.";
+
+                }
+
+
+                // LOAD SG PRODUCTS
+
+                renderProducts();
+
+
+                showToast(
+                    "Player Verification",
+                    region === "SG"
+                        ? "Player verified successfully!"
+                        : "This account is not eligible for SG top-up.",
+                    region === "SG"
+                        ? "success"
+                        : "error"
+                );
+
+            } catch (error) {
+
+                console.error(
+                    "PLAYER VERIFICATION ERROR:",
+                    error
+                );
+
+                verifiedPlayer = null;
+
+                if (verificationMessage) {
+
+                    verificationMessage.classList.add("error");
+
+                    verificationMessage.textContent =
+                    error.message ||
+                    "Player verification failed.";
+
+                }
+
+                showToast(
+                    "Verification Failed",
+                    error.message ||
+                    "Unable to verify player.",
+                    "error"
+                );
+
+            } finally {
+
+                nameCheckButton.disabled = false;
+
+                nameCheckButton.innerHTML = `
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    Verify Player
+                `;
+
+            }
 
         }
-
-        if (!/^\d{5,20}$/.test(uid)) {
-
-            showToast(
-                "Invalid Player ID",
-                "Please enter a valid numeric Player ID.",
-                "error"
-            );
-
-            return;
-
-        }
-
-        // Backend has not been connected yet.
-        // Never display a fake verified player.
-
-        showToast(
-            "Backend Not Connected",
-            "Player verification will work after ALU backend integration.",
-            "error"
-        );
-
-        verificationMessage.classList.add("error");
-
-        verificationMessage.innerHTML = `
-            <i class="fa-solid fa-circle-exclamation"></i>
-            Player verification is not connected yet.
-            Please wait for backend integration.
-        `;
-
-    });
+    );
 
 }
 
 
 // ======================================================
-// 19. PURCHASE BUTTON
+// 22. PURCHASE BUTTON
 // ======================================================
 
 function setupPurchaseButton() {
 
-    purchaseButton.addEventListener("click", () => {
+    if (!purchaseButton) return;
 
-        showToast(
-            "Purchase Unavailable",
-            "Secure backend purchase integration is not ready yet.",
-            "error"
-        );
+    purchaseButton.addEventListener(
+        "click",
+        () => {
 
-    });
+            showToast(
+                "Purchase Unavailable",
+                "Secure purchase processing is not ready yet.",
+                "error"
+            );
+
+        }
+    );
 
 }
 
 
 // ======================================================
-// 20. MOBILE MENU
+// 23. MOBILE MENU
 // ======================================================
 
 function setupMobileMenu() {
 
     const menuButton =
-        document.getElementById("mobileMenuButton");
+    document.getElementById("mobileMenuButton");
 
     const mobileNavigation =
-        document.getElementById("mobileNavigation");
+    document.getElementById("mobileNavigation");
 
-    if (!menuButton || !mobileNavigation) return;
+    if (
+        !menuButton ||
+        !mobileNavigation
+    ) {
 
-    menuButton.addEventListener("click", () => {
+        return;
 
-        mobileNavigation.classList.toggle("show");
+    }
 
-        const icon = menuButton.querySelector("i");
+    menuButton.addEventListener(
+        "click",
+        () => {
 
-        if (mobileNavigation.classList.contains("show")) {
+            mobileNavigation.classList.toggle("show");
 
-            icon.className = "fa-solid fa-xmark";
+            const icon =
+            menuButton.querySelector("i");
 
-        } else {
+            if (!icon) return;
 
-            icon.className = "fa-solid fa-bars";
+            if (
+                mobileNavigation.classList.contains("show")
+            ) {
+
+                icon.className =
+                "fa-solid fa-xmark";
+
+            } else {
+
+                icon.className =
+                "fa-solid fa-bars";
+
+            }
 
         }
-
-    });
+    );
 
 }
 
 
 // ======================================================
-// 21. TOAST NOTIFICATION
+// 24. TOAST NOTIFICATION
 // ======================================================
-
-let toastTimer = null;
 
 function setupToast() {
 
     const closeButton =
-        document.getElementById("closeToast");
+    document.getElementById("closeToast");
 
     if (closeButton) {
 
-        closeButton.addEventListener("click", hideToast);
+        closeButton.addEventListener(
+            "click",
+            hideToast
+        );
 
     }
 
 }
 
 
-function showToast(title, message, type = "info") {
+function showToast(
+    title,
+    message,
+    type = "info"
+) {
 
     if (!toastContainer) return;
 
     const toastTitle =
-        document.getElementById("toastTitle");
+    document.getElementById("toastTitle");
 
     const toastMessage =
-        document.getElementById("toastMessage");
+    document.getElementById("toastMessage");
 
     const toastIcon =
-        toastContainer.querySelector(".toast-icon i");
+    toastContainer.querySelector(
+        ".toast-icon i"
+    );
 
-    toastTitle.textContent = title;
+    if (toastTitle) {
 
-    toastMessage.textContent = message;
+        toastTitle.textContent = title;
 
-    if (type === "error") {
+    }
 
-        toastIcon.className =
+    if (toastMessage) {
+
+        toastMessage.textContent = message;
+
+    }
+
+    if (toastIcon) {
+
+        if (type === "error") {
+
+            toastIcon.className =
             "fa-solid fa-circle-exclamation";
 
-    } else if (type === "success") {
+        } else if (type === "success") {
 
-        toastIcon.className =
+            toastIcon.className =
             "fa-solid fa-circle-check";
 
-    } else {
+        } else {
 
-        toastIcon.className =
+            toastIcon.className =
             "fa-solid fa-circle-info";
+
+        }
 
     }
 
@@ -856,16 +1408,17 @@ function showToast(title, message, type = "info") {
 
     clearTimeout(toastTimer);
 
-    toastTimer = setTimeout(() => {
-
-        hideToast();
-
-    }, 4500);
+    toastTimer = setTimeout(
+        hideToast,
+        4500
+    );
 
 }
 
 
 function hideToast() {
+
+    if (!toastContainer) return;
 
     toastContainer.classList.remove("show");
 
@@ -873,7 +1426,7 @@ function hideToast() {
 
 
 // ======================================================
-// 22. HIDE PAGE LOADER
+// 25. HIDE PAGE LOADER
 // ======================================================
 
 function hideLoader() {
@@ -886,20 +1439,18 @@ function hideLoader() {
 
 
 // ======================================================
-// 23. SECURITY NOTE
+// 26. SECURITY NOTES
 // ======================================================
 
-// IMPORTANT:
-//
-// 1. Never put SUPABASE_SERVICE_ROLE_KEY in this file.
-// 2. Never put ALU_SECRET_KEY in this file.
-// 3. Never debit wallet directly from frontend.
-// 4. Never trust product prices sent by frontend.
-// 5. Purchase must be processed by secure Netlify backend.
-// 6. Backend must verify the user's Supabase JWT.
-// 7. Backend must verify the ALU response before completing
-//    or refunding an order.
-//
+// 1. Service Role Key is NEVER used in frontend.
+// 2. ALU Secret Key is NEVER used in frontend.
+// 3. Wallet debit must happen in secure backend.
+// 4. Product price must be checked in backend.
+// 5. User JWT must be verified by backend.
+// 6. ALU response must be verified before completing.
+// 7. Failed orders must be refunded safely.
+// 8. Never trust client-side player information.
+
 // ======================================================
-// END OF FREE FIRE FRONTEND
+// END OF BIG STORE FREE FIRE FRONTEND
 // ======================================================
