@@ -615,18 +615,14 @@ async function loadFeaturedProducts() {
 
     try {
 
-        const {
-            data,
-            error
-        } = await supabase
-
-            .from("products")
-
-            .select("*")
-
-            .eq("active", true)
-
-            .limit(6);
+const {
+    data,
+    error
+} = await supabase
+    .from("products")
+    .select("*")
+    .eq("is_active", true)
+    .limit(6);
 
 
         if (error) {
