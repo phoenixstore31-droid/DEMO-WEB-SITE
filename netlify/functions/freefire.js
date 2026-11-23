@@ -1,32 +1,27 @@
-// ======================================================
-// BIG STORE - FREE FIRE BACKEND
-// Supabase + ALU API + Secure Wallet
-// ======================================================
-
 const crypto = require("crypto");
 
-// ======================================================
-// CONFIGURATION
-// ======================================================
+// ==========================================
+// BIG STORE - FREE FIRE BACKEND
+// NAME CHECK + AUTOMATIC TOP-UP
+// ==========================================
+
+const API_BASE = "https://aluu.in";
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_ROLE_KEY =
     process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-const ALU_API_KEY = process.env.ALU_API_KEY;
-const ALU_SECRET_KEY = process.env.ALU_SECRET_KEY;
 
-const ALU_BASE_URL = "https://aluu.in";
+// ==========================================
+// JSON RESPONSE
+// ==========================================
 
-// ======================================================
-// RESPONSE
-// ======================================================
-
-function sendResponse(statusCode, data, origin = "*") {
+function json(statusCode, data, origin = "*") {
     return {
         statusCode,
         headers: {
-            "Content-Type": "application/json",
+            "Content-Type": "application/json; charset=utf-8",
+            "Cache-Control": "no-store",
             "Access-Control-Allow-Origin": origin,
             "Access-Control-Allow-Headers":
                 "Content-Type, Authorization",
@@ -36,11 +31,139 @@ function sendResponse(statusCode, data, origin = "*") {
     };
 }
 
-// ======================================================
-// SUPABASE REST REQUEST
-// ======================================================
+
+// ==========================================
+// VERIFY CUSTOMER
+// ==========================================
+
+async function verifyUser(event) {
+
+    const headers = event.headers || {};
+
+    const authorization =
+        headers.authorization ||
+        headers.Authorization;
+
+    if (!authorization?.startsWith("Bearer ")) {
+        throw new Error("Please login first.");
+    }
+
+    const token = authorization.substring(7);
+
+    const response = await fetch(
+        `${SUPABASE_URL}/auth/v1/user`,
+        {
+            method: "GET",
+            headers: {
+                apikey: SUPABASE_SERVICE_ROLE_KEY,
+                Authorization: `Bearer ${token}`
+            }
+        }
+    );
+
+    if (!response.ok) {
+        throw new Error("Invalid login session.");
+    }
+
+    const user = await response.json();
+
+    if (!user?.id) {
+        throw new Error("Customer verification failed.");
+    }
+
+    return user;
+}
+
+
+// ==========================================
+// ALU SIGNED REQUEST
+// SAME METHOD AS PHOENIX STORE
+// ==========================================
+
+async function aluuRequest(method, pathWithQuery, body = null) {
+
+    const apiKey = process.env.ALU_API_KEY;
+    const secret = process.env.ALU_SECRET_KEY;
+
+    if (!apiKey || !secret) {
+        throw new Error("ALU API credentials are missing.");
+    }
+
+    const timestamp = String(
+        Math.floor(Date.now() / 1000)
+    );
+
+    const rawBody = body
+        ? JSON.stringify(body)
+        : "";
+
+    const message =
+        `${timestamp}.${method}.${pathWithQuery}.${rawBody}`;
+
+    const signature = crypto
+        .createHmac("sha256", secret)
+        .update(message, "utf8")
+        .digest("hex");
+
+    const headers = {
+        "x-api-key": apiKey,
+        "X-Timestamp": timestamp,
+        "X-Signature": signature
+    };
+
+    if (body) {
+        headers["Content-Type"] = "application/json";
+    }
+
+    const controller = new AbortController();
+
+    const timeout = setTimeout(
+        () => controller.abort(),
+        20000
+    );
+
+    try {
+
+        const response = await fetch(
+            `${API_BASE}${pathWithQuery}`,
+            {
+                method,
+                headers,
+                body: body ? rawBody : undefined,
+                signal: controller.signal
+            }
+        );
+
+        const responseText = await response.text();
+
+        let data;
+
+        try {
+            data = JSON.parse(responseText);
+        } catch {
+            data = {
+                message: responseText || "Empty API response."
+            };
+        }
+
+        return {
+            httpStatus: response.status,
+            data
+        };
+
+    } finally {
+        clearTimeout(timeout);
+    }
+}
+
+
+// ==========================================
+// SUPABASE REQUEST
+// SERVICE ROLE ONLY - BACKEND
+// ==========================================
 
 async function supabaseRequest(path, options = {}) {
+
     const response = await fetch(
         `${SUPABASE_URL}/rest/v1/${path}`,
         {
@@ -72,247 +195,73 @@ async function supabaseRequest(path, options = {}) {
             data?.message ||
             data?.details ||
             data?.hint ||
-            `Supabase request failed (${response.status})`
+            `Supabase error: ${response.status}`
         );
     }
 
     return data;
 }
 
-// ======================================================
-// VERIFY CUSTOMER
-// ======================================================
 
-async function verifyUser(event) {
-    const authorization =
-        event.headers.authorization ||
-        event.headers.Authorization;
+// ==========================================
+// FREE FIRE PLAYER NAME CHECK
+// ==========================================
 
-    if (!authorization?.startsWith("Bearer ")) {
-        throw new Error("Please login first.");
+async function nameCheck(input) {
+
+    // Support both frontend field names
+    const uid = String(
+        input.uid || input.player_id || ""
+    ).trim();
+
+    if (!/^\d{5,20}$/.test(uid)) {
+        throw new Error("Invalid Free Fire UID.");
     }
 
-    const accessToken = authorization.substring(7);
+    const params = new URLSearchParams({
+        code: "freefire_sgmy",
+        characterId: uid
+    });
 
-    const response = await fetch(
-        `${SUPABASE_URL}/auth/v1/user`,
-        {
-            headers: {
-                apikey: SUPABASE_SERVICE_ROLE_KEY,
-                Authorization: `Bearer ${accessToken}`
-            }
-        }
+    const pathWithQuery =
+        `/api/check/game-check?${params.toString()}`;
+
+    const result = await aluuRequest(
+        "GET",
+        pathWithQuery
     );
-
-    if (!response.ok) {
-        throw new Error("Login session expired. Please login again.");
-    }
-
-    const user = await response.json();
-
-    if (!user?.id) {
-        throw new Error("Unable to verify customer.");
-    }
-
-    return user;
-}
-
-// ======================================================
-// ALU HMAC SIGNATURE
-// ======================================================
-
-function createALUSignature(
-    timestamp,
-    method,
-    pathWithQuery,
-    rawBody = ""
-) {
-    const message =
-        `${timestamp}.${method}.${pathWithQuery}.${rawBody}`;
-
-    return crypto
-        .createHmac("sha256", ALU_SECRET_KEY)
-        .update(message)
-        .digest("hex");
-}
-
-// ======================================================
-// ALU REQUEST
-// ======================================================
-
-async function aluRequest(method, path, body = null) {
-    if (!ALU_API_KEY || !ALU_SECRET_KEY) {
-        throw new Error("ALU API configuration is missing.");
-    }
-
-    const timestamp = Math.floor(Date.now() / 1000);
-
-    // Use exactly the same raw body for signing and sending.
-    const rawBody = body === null ? "" : JSON.stringify(body);
-
-    const signature = createALUSignature(
-        timestamp,
-        method,
-        path,
-        rawBody
-    );
-
-    const controller = new AbortController();
-
-    const timeout = setTimeout(
-        () => controller.abort(),
-        20000
-    );
-
-    try {
-        const response = await fetch(
-            `${ALU_BASE_URL}${path}`,
-            {
-                method,
-                headers: {
-                    "Content-Type": "application/json",
-                    "x-api-key": ALU_API_KEY,
-                    "X-Timestamp": String(timestamp),
-                    "X-Signature": signature
-                },
-                body: body === null ? undefined : rawBody,
-                signal: controller.signal
-            }
-        );
-
-        const text = await response.text();
-
-        let data;
-
-        try {
-            data = text ? JSON.parse(text) : {};
-        } catch {
-            data = { raw: text };
-        }
-
-        if (!response.ok) {
-            const error = new Error(
-                `ALU API returned HTTP ${response.status}`
-            );
-
-            error.aluStatus = response.status;
-            error.aluData = data;
-
-            throw error;
-        }
-
-        return data;
-
-    } finally {
-        clearTimeout(timeout);
-    }
-}
-
-// ======================================================
-// EXTRACT ALU PLAYER DETAILS
-// ======================================================
-
-function findPlayerData(value, depth = 0) {
-    if (!value || typeof value !== "object" || depth > 5) {
-        return null;
-    }
-
-    if (
-        typeof value.valid === "string" ||
-        typeof value.username === "string"
-    ) {
-        return value;
-    }
-
-    for (const child of Object.values(value)) {
-        if (child && typeof child === "object") {
-            const result = findPlayerData(child, depth + 1);
-
-            if (result) {
-                return result;
-            }
-        }
-    }
-
-    return null;
-}
-
-// ======================================================
-// FREE FIRE NAME CHECK
-// ======================================================
-
-async function checkPlayer(playerId) {
-    const uid = String(playerId || "").trim();
-
-    if (!/^[0-9]{5,20}$/.test(uid)) {
-        throw new Error(
-            "Player ID must contain 5 to 20 digits."
-        );
-    }
-
-    const path =
-        `/api/check/game-check?code=freefire_sgmy&characterId=${encodeURIComponent(uid)}`;
-
-    let aluResult;
-
-    try {
-        aluResult = await aluRequest("GET", path);
-    } catch (error) {
-        console.error("ALU NAME CHECK ERROR:", {
-            message: error.message,
-            status: error.aluStatus,
-            response: error.aluData
-        });
-
-        throw new Error(
-            "ALU Name Check API error: " + error.message
-        );
-    }
 
     console.log(
-        "ALU NAME CHECK RESPONSE:",
-        JSON.stringify(aluResult)
+        "BIG STORE ALU NAME CHECK:",
+        JSON.stringify(result.data)
     );
 
-    const player = findPlayerData(aluResult);
-
-    if (!player || player.valid !== "valid") {
-        throw new Error(
-            "Player verification failed. Please check the Player ID."
-        );
-    }
-
-    if (!player.username) {
-        throw new Error(
-            "ALU did not return the Player Name."
-        );
-    }
-
-    const region = String(
-        player.region || "SG"
-    ).toUpperCase();
-
-    if (region !== "SG") {
-        throw new Error("This Free Fire region is not supported.");
-    }
+    const success =
+        result.httpStatus >= 200 &&
+        result.httpStatus < 300 &&
+        result.data.success !== false;
 
     return {
-        playerId: uid,
-        playerName: player.username,
-        region
+        success,
+        httpStatus: result.httpStatus,
+        data: result.data,
+        alu: result.data
     };
 }
 
-// ======================================================
+
+// ==========================================
 // SECURE WALLET ORDER CREATION
-// ======================================================
+// ==========================================
 
 async function createWalletOrder(
     userId,
     productId,
-    player,
+    playerId,
+    playerName,
     requestId
 ) {
+
     const result = await supabaseRequest(
         "rpc/create_freefire_order_secure",
         {
@@ -320,9 +269,9 @@ async function createWalletOrder(
             body: JSON.stringify({
                 p_user_id: userId,
                 p_product_id: productId,
-                p_player_id: player.playerId,
-                p_player_name: player.playerName,
-                p_region: player.region,
+                p_player_id: playerId,
+                p_player_name: playerName,
+                p_region: "SG",
                 p_client_request_id: requestId
             })
         }
@@ -337,33 +286,37 @@ async function createWalletOrder(
     return result;
 }
 
-// ======================================================
-// GET CUSTOMER ORDER
-// ======================================================
 
-async function getCustomerOrder(orderId, userId) {
+// ==========================================
+// GET CUSTOMER ORDER
+// ==========================================
+
+async function getOrder(orderId, userId) {
+
     const rows = await supabaseRequest(
         "orders" +
         `?id=eq.${encodeURIComponent(orderId)}` +
         `&user_id=eq.${encodeURIComponent(userId)}` +
-        "&select=id,order_number,user_id,player_id,player_name," +
-        "product_name,amount,status,partner_orderid," +
-        "alu_game_code,alu_denom,alu_order_status," +
-        "refund_status,created_at"
+        "&select=id,order_number,user_id,product_name," +
+        "player_id,player_name,amount,status," +
+        "partner_orderid,alu_game_code,alu_denom," +
+        "alu_order_status,refund_status"
     );
 
-    if (!rows?.length) {
+    if (!rows || !rows.length) {
         throw new Error("Order not found.");
     }
 
     return rows[0];
 }
 
-// ======================================================
+
+// ==========================================
 // UPDATE ORDER
-// ======================================================
+// ==========================================
 
 async function updateOrder(orderId, values) {
+
     return supabaseRequest(
         `orders?id=eq.${encodeURIComponent(orderId)}`,
         {
@@ -376,12 +329,14 @@ async function updateOrder(orderId, values) {
     );
 }
 
-// ======================================================
-// ALU CREATE ORDER
-// ======================================================
 
-async function createALUOrder(order) {
-    const body = {
+// ==========================================
+// ALU AUTOMATIC TOP-UP
+// ==========================================
+
+async function createALUTopUp(order) {
+
+    const orderBody = {
         game: order.alu_game_code,
         denom: order.alu_denom,
         userid: order.player_id,
@@ -389,121 +344,146 @@ async function createALUOrder(order) {
         charname: order.player_name
     };
 
-    return aluRequest(
+    // Optional webhook
+    const webhookUrl = process.env.ALU_WEBHOOK_URL;
+
+    if (webhookUrl) {
+
+        const parsedUrl = new URL(webhookUrl);
+
+        if (parsedUrl.protocol !== "https:") {
+            throw new Error("Webhook URL must use HTTPS.");
+        }
+
+        orderBody.partner_webhook_url = webhookUrl;
+    }
+
+    return aluuRequest(
         "POST",
         "/api/v.1/create",
-        body
+        orderBody
     );
 }
 
-// ======================================================
-// NAME CHECK ACTION
-// ======================================================
 
-async function nameCheck(body) {
-    const player = await checkPlayer(body.player_id);
-
-    return {
-        success: true,
-        data: {
-            valid: "valid",
-            username: player.playerName,
-            region: player.region,
-            player_id: player.playerId
-        }
-    };
-}
-
-// ======================================================
+// ==========================================
 // PURCHASE ACTION
-// ======================================================
+// ==========================================
 
-async function purchase(user, body) {
-    const productId = String(body.product_id || "").trim();
+async function purchase(user, input) {
 
-    const requestId = String(
-        body.client_request_id || ""
+    const productId = String(
+        input.product_id || ""
     ).trim();
 
-    if (!productId || !requestId) {
-        throw new Error("Product or request ID is missing.");
+    const playerId = String(
+        input.player_id || input.uid || ""
+    ).trim();
+
+    const requestId = String(
+        input.client_request_id || ""
+    ).trim();
+
+    if (!productId || !playerId || !requestId) {
+        throw new Error("Missing purchase information.");
     }
 
     if (
         !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(requestId)
     ) {
-        throw new Error("Invalid request ID.");
+        throw new Error("Invalid purchase request ID.");
     }
 
-    // Always verify player on the server.
-    const player = await checkPlayer(body.player_id);
+    // 1. Verify player directly with ALU
+    const playerResult = await nameCheck({
+        player_id: playerId
+    });
 
-    // Atomically debit wallet and create order.
+    const playerData = playerResult.data;
+
+    if (
+        !playerResult.success ||
+        playerData?.valid !== "valid" ||
+        !playerData?.username
+    ) {
+        throw new Error(
+            "Free Fire Player Verification Failed."
+        );
+    }
+
+    const playerName = playerData.username;
+
+    // 2. Create secure wallet order
     const walletOrder = await createWalletOrder(
         user.id,
         productId,
-        player,
+        playerId,
+        playerName,
         requestId
     );
 
-    // Never submit a duplicate request again.
+    // 3. Never submit a duplicate request again
     if (walletOrder.duplicate) {
+
         return {
             success: true,
             duplicate: true,
-            message: "This purchase request already exists.",
+            message: "This order already exists.",
             order: walletOrder
         };
     }
 
-    const order = await getCustomerOrder(
+    // 4. Get saved order
+    const order = await getOrder(
         walletOrder.order_id,
         user.id
     );
 
-    // Ensure order has required ALU details.
     if (
         !order.alu_game_code ||
         !order.alu_denom ||
         !order.partner_orderid
     ) {
         throw new Error(
-            "Order is missing required ALU information."
+            "ALU order information is incomplete."
         );
     }
 
+    // 5. Submit automatic top-up
     try {
-        const aluResult = await createALUOrder(order);
+
+        const result = await createALUTopUp(order);
 
         await updateOrder(order.id, {
-            alu_response: aluResult,
+            alu_response: result.data,
             alu_order_status: "submitted"
         });
 
         return {
             success: true,
-            message: "Order submitted. Waiting for confirmation.",
+            message: "Top-Up request submitted to ALU.",
             order: {
                 id: order.id,
                 order_number: order.order_number,
                 status: "pending"
             },
-            alu: aluResult
+            alu: result.data
         };
 
     } catch (error) {
-        console.error("ALU CREATE ORDER ERROR:", {
-            message: error.message,
-            status: error.aluStatus,
-            response: error.aluData
-        });
 
-        // Do not refund an uncertain order automatically.
+        console.error(
+            "BIG STORE ALU CREATE ERROR:",
+            error
+        );
+
+        // Do not automatically refund an uncertain request.
         await updateOrder(order.id, {
             alu_order_status: "submission_uncertain",
             alu_response: {
                 message: error.message,
-                response: error.aluData || null
+                httpStatus: error.httpStatus || null,
+                response: error.data || null
             }
         });
 
@@ -511,7 +491,7 @@ async function purchase(user, body) {
             success: true,
             pending_verification: true,
             message:
-                "Order created. ALU status must be verified.",
+                "Order created. ALU submission needs verification.",
             order: {
                 id: order.id,
                 order_number: order.order_number,
@@ -521,102 +501,114 @@ async function purchase(user, body) {
     }
 }
 
-// ======================================================
-// ORDER STATUS ACTION
-// ======================================================
 
-async function orderStatus(user, body) {
-    const orderId = String(body.order_id || "").trim();
+// ==========================================
+// ORDER STATUS CHECK
+// ==========================================
+
+async function orderStatus(user, input) {
+
+    const orderId = String(
+        input.order_id || ""
+    ).trim();
 
     if (!orderId) {
         throw new Error("Order ID is required.");
     }
 
-    const order = await getCustomerOrder(
+    const order = await getOrder(
         orderId,
         user.id
     );
 
     if (!order.partner_orderid) {
-        throw new Error("ALU Partner Order ID is missing.");
+        throw new Error("Partner Order ID not found.");
     }
 
-    const aluResult = await aluRequest(
+    const path =
+        `/api/v.1/${encodeURIComponent(order.partner_orderid)}`;
+
+    const result = await aluuRequest(
         "GET",
-        `/api/v.1/${encodeURIComponent(order.partner_orderid)}`
+        path
     );
 
-    // Keep raw ALU status until its exact status values are confirmed.
+    await updateOrder(order.id, {
+        alu_response: result.data,
+        alu_order_status: "status_checked"
+    });
+
     return {
-        success: true,
-        message: "ALU status received.",
+        success:
+            result.httpStatus >= 200 &&
+            result.httpStatus < 300,
+        httpStatus: result.httpStatus,
         order: {
             id: order.id,
             order_number: order.order_number,
             status: order.status
         },
-        alu: aluResult
+        alu: result.data
     };
 }
 
-// ======================================================
+
+// ==========================================
 // MAIN HANDLER
-// ======================================================
+// ==========================================
 
 exports.handler = async (event) => {
+
     const origin =
-        event.headers.origin ||
-        event.headers.Origin ||
+        event.headers?.origin ||
+        event.headers?.Origin ||
         "*";
 
+    // OPTIONS
     if (event.httpMethod === "OPTIONS") {
-        return {
-            statusCode: 204,
-            headers: {
-                "Access-Control-Allow-Origin": origin,
-                "Access-Control-Allow-Headers":
-                    "Content-Type, Authorization",
-                "Access-Control-Allow-Methods": "POST, OPTIONS"
-            },
-            body: ""
-        };
+        return json(200, { success: true }, origin);
     }
 
+    // POST ONLY
     if (event.httpMethod !== "POST") {
-        return sendResponse(
+        return json(
             405,
             {
                 success: false,
-                message: "Method not allowed."
+                message: "POST method required."
             },
             origin
         );
     }
 
     try {
+
+        // Check environment
         if (
             !SUPABASE_URL ||
             !SUPABASE_SERVICE_ROLE_KEY ||
-            !ALU_API_KEY ||
-            !ALU_SECRET_KEY
+            !process.env.ALU_API_KEY ||
+            !process.env.ALU_SECRET_KEY
         ) {
             throw new Error(
                 "Backend environment variables are missing."
             );
         }
 
+        // Verify customer
         const user = await verifyUser(event);
 
-        let body;
+        // Parse JSON
+        let input;
 
         try {
-            body = JSON.parse(event.body || "{}");
+            input = JSON.parse(event.body || "{}");
         } catch {
-            return sendResponse(
+            return json(
                 400,
                 {
                     success: false,
-                    message: "Invalid JSON."
+                    message: "Invalid JSON request."
                 },
                 origin
             );
@@ -624,50 +616,60 @@ exports.handler = async (event) => {
 
         let result;
 
-        switch (body.action) {
+        switch (input.action) {
+
             case "name-check":
-                result = await nameCheck(body);
+
+                result = await nameCheck(input);
+
                 break;
 
             case "purchase":
-                result = await purchase(user, body);
+
+                result = await purchase(user, input);
+
                 break;
 
             case "order-status":
-                result = await orderStatus(user, body);
+
+                result = await orderStatus(user, input);
+
                 break;
 
             case "products":
-                return sendResponse(
+
+                return json(
                     410,
                     {
                         success: false,
                         message:
-                            "Load products from Supabase."
+                            "Load products directly from Supabase."
                     },
                     origin
                 );
 
             default:
-                return sendResponse(
+
+                return json(
                     400,
                     {
                         success: false,
-                        message: "Invalid action."
+                        message: "Unknown action."
                     },
                     origin
                 );
         }
 
-        return sendResponse(200, result, origin);
+        return json(200, result, origin);
 
     } catch (error) {
+
         console.error(
-            "BIG STORE FREE FIRE BACKEND ERROR:",
+            "BIG STORE FREE FIRE ERROR:",
             error
         );
 
-        return sendResponse(
+        return json(
             400,
             {
                 success: false,
