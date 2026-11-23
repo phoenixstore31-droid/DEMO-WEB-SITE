@@ -209,7 +209,7 @@ try {
 
     if (!user) {
 
-        window.location.replace("register.html");
+        window.location.replace("login.html");
 
         return;
 
@@ -779,7 +779,7 @@ try {
 
     if (error) throw error;
 
-    window.location.replace("register.html");
+    window.location.replace("login.html");
 
 } catch (error) {
 
@@ -846,7 +846,7 @@ if (error) {
 
 if (!data.session) {
 
-    window.location.replace("register.html");
+    window.location.replace("login.html");
 
     return;
 
@@ -864,7 +864,7 @@ supabase.auth.onAuthStateChange((event) => {
 
 if (event === "SIGNED_OUT") {
 
-    window.location.replace("register.html");
+    window.location.replace("login.html");
 
 }
 

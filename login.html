@@ -6,119 +6,121 @@
 
     <title>Login | BIG STORE</title>
 
-    <meta name="theme-color" content="#080808">
+    <link rel="stylesheet" href="login.css">
 
-    <link rel="stylesheet" href="css/auth.css">
-
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 
 <body>
 
-    <div class="auth-container">
+    <div class="background-glow glow-one"></div>
+    <div class="background-glow glow-two"></div>
 
-        <!-- LOGIN BOX -->
-        <div class="auth-box">
+    <main class="login-container">
 
-            <!-- LOGO -->
-            <div class="auth-logo">
-                <div class="logo-icon">
-                    <i class="fa-solid fa-crown"></i>
-                </div>
+        <div class="login-card">
 
-                <h1>BIG <span>STORE</span></h1>
-                <p>PREMIUM GAMING EXPERIENCE</p>
+            <a href="index.html" class="brand">
+                <div class="brand-icon">B</div>
+                <span>BIG <strong>STORE</strong></span>
+            </a>
+
+            <div class="login-heading">
+                <span class="welcome-label">WELCOME BACK</span>
+
+                <h1>Sign In</h1>
+
+                <p>Login to access your BIG STORE account.</p>
             </div>
 
-            <!-- HEADING -->
-            <div class="auth-heading">
-                <h2>Welcome Back!</h2>
-                <p>Login to continue your gaming journey.</p>
-            </div>
-
-            <!-- LOGIN FORM -->
             <form id="loginForm">
 
                 <div class="input-group">
-                    <label>Email Address</label>
 
-                    <div class="input-box">
-                        <i class="fa-regular fa-envelope"></i>
+                    <label for="email">Email Address</label>
 
-                        <input
-                            type="email"
-                            id="loginEmail"
-                            placeholder="Enter your email"
-                            required
-                        >
-                    </div>
+                    <input
+                        type="email"
+                        id="email"
+                        placeholder="Enter your email"
+                        autocomplete="email"
+                        required
+                    >
+
                 </div>
 
                 <div class="input-group">
-                    <label>Password</label>
 
-                    <div class="input-box">
-                        <i class="fa-solid fa-lock"></i>
+                    <label for="password">Password</label>
+
+                    <div class="password-wrapper">
 
                         <input
                             type="password"
-                            id="loginPassword"
+                            id="password"
                             placeholder="Enter your password"
+                            autocomplete="current-password"
                             required
                         >
 
-                        <button type="button"
-                                class="password-toggle"
-                                id="togglePassword">
-                            <i class="fa-regular fa-eye"></i>
+                        <button
+                            type="button"
+                            id="togglePassword"
+                            class="toggle-password"
+                        >
+                            Show
                         </button>
+
                     </div>
+
                 </div>
 
-                <!-- FORGOT PASSWORD -->
-                <div class="forgot-row">
-                    <a href="forgot-password.html">
-                        Forgot Password?
-                    </a>
+                <div class="form-options">
+
+                    <label class="remember-label">
+                        <input type="checkbox" id="rememberMe" checked>
+                        <span>Remember me</span>
+                    </label>
+
+                    <a href="#" id="forgotPassword">Forgot password?</a>
+
                 </div>
 
-                <!-- MESSAGE -->
-                <div id="loginMessage" class="auth-message"></div>
+                <div id="loginMessage" class="message"></div>
 
-                <!-- LOGIN BUTTON -->
-                <button type="submit" class="auth-submit" id="loginButton">
-                    <span>LOGIN</span>
-                    <i class="fa-solid fa-arrow-right"></i>
+                <button type="submit" id="loginButton" class="login-button">
+
+                    <span id="buttonText">Sign In</span>
+
+                    <span id="buttonLoader" class="loader"></span>
+
                 </button>
 
             </form>
 
-            <!-- REGISTER LINK -->
-            <div class="auth-switch">
+            <div class="register-link">
+
                 Don't have an account?
 
-                <a href="register.html">
-                    Create Account
-                </a>
+                <a href="register.html">Create Account</a>
+
             </div>
 
-            <!-- SECURITY -->
-            <div class="auth-security">
-                <i class="fa-solid fa-shield-halved"></i>
-                Secure Account Protection
+            <div class="security-info">
+                <span class="security-icon">🔒</span>
+                Secure Authentication
             </div>
 
         </div>
 
-        <!-- FOOTER -->
-        <div class="auth-footer">
-            © <span id="currentYear"></span> BIG STORE. All Rights Reserved.
-        </div>
+        <footer>
+            Powered by <a href="index.html">BIG STORE</a>
+        </footer>
 
-    </div>
+    </main>
 
-    <script src="js/auth.js"></script>
+    <script type="module" src="login.js"></script>
 
 </body>
 </html>
