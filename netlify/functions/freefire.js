@@ -1,10 +1,9 @@
 // ======================================================
 // BIG STORE - FREE FIRE BACKEND
-// NETLIFY SERVERLESS FUNCTION
+// SECURE NETLIFY SERVERLESS FUNCTION
 // ======================================================
 
 const crypto = require("crypto");
-
 
 // ======================================================
 // 01. ENVIRONMENT VARIABLES
@@ -20,7 +19,6 @@ const ALU_API_KEY = process.env.ALU_API_KEY;
 const ALU_SECRET_KEY = process.env.ALU_SECRET_KEY;
 
 const ALU_BASE_URL = "https://aluu.in";
-
 
 // ======================================================
 // 02. CORS HEADERS
@@ -39,7 +37,6 @@ function getHeaders(origin) {
 
 }
 
-
 // ======================================================
 // 03. JSON RESPONSE
 // ======================================================
@@ -54,91 +51,34 @@ function response(statusCode, body, origin) {
 
 }
 
-
 // ======================================================
-// 04. SUPABASE REQUEST
-// ======================================================
-
-async function supabaseRequest(path, options = {}) {
-
-    const url =
-        `${SUPABASE_URL}/rest/v1/${path}`;
-
-    const response = await fetch(url, {
-
-        ...options,
-
-        headers: {
-
-            "apikey": SUPABASE_SERVICE_ROLE_KEY,
-
-            "Authorization":
-                `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
-
-            "Content-Type": "application/json",
-
-            "Prefer": "return=representation",
-
-            ...(options.headers || {})
-
-        }
-
-    });
-
-    const text = await response.text();
-
-    let data;
-
-    try {
-
-        data = text ? JSON.parse(text) : null;
-
-    } catch {
-
-        data = text;
-
-    }
-
-    if (!response.ok) {
-
-        throw new Error(
-            data?.message ||
-            data?.error ||
-            "Supabase request failed."
-        );
-
-    }
-
-    return data;
-
-}
-
-
-// ======================================================
-// 05. VERIFY USER LOGIN
+// 04. VERIFY USER LOGIN
 // ======================================================
 
 async function verifyUser(event) {
+
+    if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
+        throw new Error("SUPABASE_CONFIGURATION_ERROR");
+    }
 
     const authorization =
         event.headers?.authorization ||
         event.headers?.Authorization;
 
-    if (!authorization ||
-        !authorization.startsWith("Bearer ")) {
-
+    if (
+        !authorization ||
+        !authorization.startsWith("Bearer ")
+    ) {
         throw new Error("LOGIN_REQUIRED");
-
     }
 
     const accessToken =
         authorization.substring(7).trim();
 
-    const response = await fetch(
+    const result = await fetch(
         `${SUPABASE_URL}/auth/v1/user`,
         {
             method: "GET",
-
             headers: {
                 "apikey": SUPABASE_SERVICE_ROLE_KEY,
                 "Authorization": `Bearer ${accessToken}`
@@ -146,27 +86,22 @@ async function verifyUser(event) {
         }
     );
 
-    if (!response.ok) {
-
+    if (!result.ok) {
         throw new Error("INVALID_SESSION");
-
     }
 
-    const user = await response.json();
+    const user = await result.json();
 
     if (!user || !user.id) {
-
         throw new Error("INVALID_SESSION");
-
     }
 
     return user;
 
 }
 
-
 // ======================================================
-// 06. ALU SIGNATURE
+// 05. CREATE ALU SIGNATURE
 // ======================================================
 
 function createALUSignature(
@@ -186,9 +121,8 @@ function createALUSignature(
 
 }
 
-
 // ======================================================
-// 07. ALU API REQUEST
+// 06. ALU API REQUEST
 // ======================================================
 
 async function aluRequest(
@@ -196,6 +130,10 @@ async function aluRequest(
     path,
     body = null
 ) {
+
+    if (!ALU_API_KEY || !ALU_SECRET_KEY) {
+        throw new Error("ALU_CONFIGURATION_ERROR");
+    }
 
     const timestamp =
         Math.floor(Date.now() / 1000).toString();
@@ -211,73 +149,78 @@ async function aluRequest(
     );
 
     const headers = {
-
         "x-api-key": ALU_API_KEY,
-
         "X-Timestamp": timestamp,
-
         "X-Signature": signature
-
     };
 
     if (body !== null) {
-
         headers["Content-Type"] = "application/json";
-
     }
 
-    const result = await fetch(
-        `${ALU_BASE_URL}${path}`,
-        {
-            method,
-            headers,
-            ...(body !== null ? { body: rawBody } : {})
-        }
+    const controller = new AbortController();
+
+    const timeout = setTimeout(
+        () => controller.abort(),
+        15000
     );
-
-    const text = await result.text();
-
-    let data;
 
     try {
 
-        data = text ? JSON.parse(text) : {};
-
-    } catch {
-
-        data = {
-            raw: text
-        };
-
-    }
-
-    if (!result.ok) {
-
-        console.error("ALU API Error:", data);
-
-        throw new Error(
-            data?.message ||
-            data?.error ||
-            `ALU API returned HTTP ${result.status}`
+        const result = await fetch(
+            `${ALU_BASE_URL}${path}`,
+            {
+                method,
+                headers,
+                signal: controller.signal,
+                ...(body !== null ? { body: rawBody } : {})
+            }
         );
 
-    }
+        const text = await result.text();
 
-    return data;
+        let data;
+
+        try {
+            data = text ? JSON.parse(text) : {};
+        } catch {
+            data = { raw: text };
+        }
+
+        if (!result.ok) {
+
+            console.error(
+                "ALU API ERROR:",
+                result.status,
+                data
+            );
+
+            throw new Error(
+                data?.message ||
+                data?.error ||
+                `ALU_HTTP_${result.status}`
+            );
+
+        }
+
+        return data;
+
+    } finally {
+
+        clearTimeout(timeout);
+
+    }
 
 }
 
-
 // ======================================================
-// 08. PLAYER NAME CHECK
+// 07. FREE FIRE PLAYER NAME CHECK
 // ======================================================
 
 async function checkPlayer(uid) {
 
     if (!/^\d{5,20}$/.test(uid)) {
-
         throw new Error("INVALID_PLAYER_ID");
-
     }
 
     const path =
@@ -297,60 +240,8 @@ async function checkPlayer(uid) {
 
 }
 
-
 // ======================================================
-// 09. LOAD FREE FIRE PRODUCTS
-// ======================================================
-
-async function getProducts() {
-
-    const products = await supabaseRequest(
-        "topup_products?select=id,game_name,game_code,product_name,denom,region,image_url,price,is_active,sort_order&is_active=eq.true&order=sort_order.asc"
-    );
-
-    const freeFireProducts = (products || []).filter(product => {
-
-        const gameCode =
-            String(product.game_code || "").toLowerCase();
-
-        const gameName =
-            String(product.game_name || "").toLowerCase();
-
-        return (
-            gameCode.includes("freefire") ||
-            gameCode.includes("free-fire") ||
-            gameName.includes("free fire")
-        );
-
-    });
-
-    return freeFireProducts.map(product => ({
-
-        id: product.id,
-
-        game_name: product.game_name,
-
-        game_code: product.game_code,
-
-        product_name: product.product_name,
-
-        denom: product.denom,
-
-        region: product.region,
-
-        image_url: product.image_url,
-
-        price: Number(product.price),
-
-        sort_order: product.sort_order
-
-    }));
-
-}
-
-
-// ======================================================
-// 10. MAIN HANDLER
+// 08. MAIN HANDLER
 // ======================================================
 
 exports.handler = async (event) => {
@@ -369,54 +260,28 @@ exports.handler = async (event) => {
 
     }
 
-
     // POST ONLY
 
     if (event.httpMethod !== "POST") {
 
-        return response(405, {
-
-            success: false,
-
-            message: "Method not allowed."
-
-        }, origin);
+        return response(
+            405,
+            {
+                success: false,
+                message: "Method not allowed."
+            },
+            origin
+        );
 
     }
 
-
     try {
 
-        // CHECK ENVIRONMENT VARIABLES
-
-        if (
-            !SUPABASE_URL ||
-            !SUPABASE_SERVICE_ROLE_KEY ||
-            !ALU_API_KEY ||
-            !ALU_SECRET_KEY
-        ) {
-
-            console.error(
-                "Missing required environment variables."
-            );
-
-            return response(500, {
-
-                success: false,
-
-                message: "Server configuration error."
-
-            }, origin);
-
-        }
-
-
-        // VERIFY LOGIN
+        // VERIFY USER
 
         const user = await verifyUser(event);
 
-
-        // READ REQUEST BODY
+        // READ BODY
 
         let body;
 
@@ -426,23 +291,22 @@ exports.handler = async (event) => {
 
         } catch {
 
-            return response(400, {
-
-                success: false,
-
-                message: "Invalid JSON request."
-
-            }, origin);
+            return response(
+                400,
+                {
+                    success: false,
+                    message: "Invalid JSON request."
+                },
+                origin
+            );
 
         }
 
-
         const action = body.action;
 
-
-        // ==================================================
-        // ACTION 1: NAME CHECK
-        // ==================================================
+        // ==============================================
+        // ACTION 1: PLAYER NAME CHECK
+        // ==============================================
 
         if (action === "name-check") {
 
@@ -451,86 +315,80 @@ exports.handler = async (event) => {
 
             if (!uid) {
 
-                return response(400, {
-
-                    success: false,
-
-                    message: "Player ID is required."
-
-                }, origin);
+                return response(
+                    400,
+                    {
+                        success: false,
+                        message: "Player ID is required."
+                    },
+                    origin
+                );
 
             }
 
+            const aluResult = await checkPlayer(uid);
 
-            const aluResult =
-                await checkPlayer(uid);
-
-
-            // Return actual ALU response.
-            // Do not invent player names or regions.
-
-            return response(200, {
-
-                success: true,
-
-                message: "Player verification response received.",
-
-                player_id: uid,
-
-                data: aluResult
-
-            }, origin);
+            return response(
+                200,
+                {
+                    success: true,
+                    message: "Player verification response received.",
+                    player_id: uid,
+                    data: aluResult
+                },
+                origin
+            );
 
         }
 
-
-        // ==================================================
+        // ==============================================
         // ACTION 2: PRODUCTS
-        // ==================================================
+        // ==============================================
 
         if (action === "products") {
 
-            const products = await getProducts();
-
-            return response(200, {
-
-                success: true,
-
-                products
-
-            }, origin);
+            return response(
+                410,
+                {
+                    success: false,
+                    message:
+                        "Products must be loaded directly from Supabase."
+                },
+                origin
+            );
 
         }
 
-
-        // ==================================================
+        // ==============================================
         // ACTION 3: PURCHASE
-        // ==================================================
+        // ==============================================
 
         if (action === "purchase") {
 
-            return response(501, {
-
-                success: false,
-
-                message:
-                    "Secure purchase processing is not enabled yet."
-
-            }, origin);
+            return response(
+                501,
+                {
+                    success: false,
+                    message:
+                        "Secure purchase processing is not enabled yet."
+                },
+                origin
+            );
 
         }
 
-
+        // ==============================================
         // UNKNOWN ACTION
+        // ==============================================
 
-        return response(400, {
-
-            success: false,
-
-            message: "Unknown action."
-
-        }, origin);
-
+        return response(
+            400,
+            {
+                success: false,
+                message: "Unknown action."
+            },
+            origin
+        );
 
     } catch (error) {
 
@@ -544,44 +402,83 @@ exports.handler = async (event) => {
             error.message === "INVALID_SESSION"
         ) {
 
-            return response(401, {
-
-                success: false,
-
-                message: "Please login again."
-
-            }, origin);
+            return response(
+                401,
+                {
+                    success: false,
+                    message: "Please login again."
+                },
+                origin
+            );
 
         }
-
 
         if (error.message === "INVALID_PLAYER_ID") {
 
-            return response(400, {
-
-                success: false,
-
-                message: "Invalid Free Fire Player ID."
-
-            }, origin);
+            return response(
+                400,
+                {
+                    success: false,
+                    message: "Invalid Free Fire Player ID."
+                },
+                origin
+            );
 
         }
 
+        if (error.message === "SUPABASE_CONFIGURATION_ERROR") {
 
-        return response(500, {
+            return response(
+                500,
+                {
+                    success: false,
+                    message: "Supabase server configuration error."
+                },
+                origin
+            );
 
-            success: false,
+        }
 
-            message:
-                "Unable to process your request. Please try again."
+        if (error.message === "ALU_CONFIGURATION_ERROR") {
 
-        }, origin);
+            return response(
+                500,
+                {
+                    success: false,
+                    message: "ALU API configuration error."
+                },
+                origin
+            );
+
+        }
+
+        if (error.name === "AbortError") {
+
+            return response(
+                504,
+                {
+                    success: false,
+                    message: "ALU request timed out."
+                },
+                origin
+            );
+
+        }
+
+        return response(
+            500,
+            {
+                success: false,
+                message:
+                    "Unable to process your request. Please try again."
+            },
+            origin
+        );
 
     }
 
 };
 
-
 // ======================================================
-// END
+// END OF FREE FIRE BACKEND
 // ======================================================
