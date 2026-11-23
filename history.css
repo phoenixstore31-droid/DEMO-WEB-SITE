@@ -1518,3 +1518,15 @@ a {
     }
 
 }
+
+/* ==========================================
+   FIX: LOADING SPINNER VISIBILITY
+========================================== */
+
+.history-loading[hidden] {
+    display: none !important;
+}
+
+.history-loading:not([hidden]) {
+    display: flex !important;
+}
