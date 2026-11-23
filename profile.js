@@ -1,23 +1,25 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-// ==========================================
-// SUPABASE CONFIGURATION
-// ==========================================
+// =====================================
+// BIG STORE - SUPABASE CONNECTION
+// =====================================
 
-const SUPABASE_URL = "https://zzxzrrntyvqbhyzuhaso.supabase.co";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const SUPABASE_KEY = "sb_publishable_7NpKLvkhQsF3LvPsrXNQdg_z6mIRnDO";
+const SUPABASE_URL = "https://tvhgxlqqeklrdlgbkosa.supabase.co";
+
+const SUPABASE_ANON_KEY = "sb_publishable_Ep28HPF1SXIXQXBF2i__eg_h_jmjw4I";
 
 const supabase = createClient(
-SUPABASE_URL,
-SUPABASE_KEY,
-{
-auth: {
-persistSession: true,
-autoRefreshToken: true,
-detectSessionInUrl: true
-}
-}
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY,
+    {
+        auth: {
+            persistSession: true,
+            autoRefreshToken: true,
+            detectSessionInUrl: true
+        }
+    }
 );
 
 // ==========================================
