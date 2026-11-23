@@ -4,349 +4,123 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Register | BIG STORE</title>
+    <title>Create Account | BIG STORE</title>
+
+    <link rel="stylesheet" href="register.css">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Orbitron:wght@600;700;800&display=swap" rel="stylesheet">
-
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --gold: #f5c518;
-            --gold-light: #ffe477;
-            --black: #080808;
-            --card: #111111;
-        }
-
-        body {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 25px;
-            font-family: 'Inter', sans-serif;
-            color: #fff;
-            background:
-                radial-gradient(ellipse at 50% 0%, rgba(245,197,24,.12), transparent 50%),
-                #080808;
-            overflow-x: hidden;
-        }
-
-        .glow {
-            position: fixed;
-            width: 350px;
-            height: 350px;
-            background: rgba(245,197,24,.07);
-            filter: blur(110px);
-            border-radius: 50%;
-            pointer-events: none;
-        }
-
-        .glow.one {
-            top: -150px;
-            left: -100px;
-        }
-
-        .glow.two {
-            bottom: -180px;
-            right: -100px;
-        }
-
-        .register-card {
-            position: relative;
-            width: 100%;
-            max-width: 430px;
-            padding: 48px 38px;
-            text-align: center;
-            background: linear-gradient(145deg, #171717, #0d0d0d);
-            border: 1px solid rgba(245,197,24,.28);
-            border-radius: 22px;
-            box-shadow:
-                0 25px 80px rgba(0,0,0,.7),
-                0 0 35px rgba(245,197,24,.06);
-        }
-
-        .logo {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 35px;
-            font-weight: 800;
-            letter-spacing: 3px;
-            color: var(--gold);
-        }
-
-        .logo span {
-            color: #fff;
-        }
-
-        .logo-line {
-            width: 55px;
-            height: 3px;
-            margin: 13px auto 0;
-            background: var(--gold);
-            border-radius: 10px;
-            box-shadow: 0 0 12px rgba(245,197,24,.6);
-        }
-
-        .tagline {
-            margin-top: 15px;
-            color: #999;
-            font-size: 12px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
-
-        .heading {
-            margin-top: 43px;
-            font-size: 27px;
-            font-weight: 800;
-            letter-spacing: -.8px;
-        }
-
-        .heading span {
-            color: var(--gold);
-        }
-
-        .description {
-            margin: 12px 0 32px;
-            color: #999;
-            font-size: 13px;
-            line-height: 1.7;
-        }
-
-        .google-btn {
-            width: 100%;
-            min-height: 57px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 13px;
-            background: var(--gold);
-            color: #111;
-            border: 1px solid var(--gold);
-            border-radius: 10px;
-            font-size: 14px;
-            font-weight: 800;
-            cursor: pointer;
-            transition: .25s ease;
-        }
-
-        .google-btn:hover {
-            background: var(--gold-light);
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(245,197,24,.2);
-        }
-
-        .google-btn:disabled {
-            opacity: .65;
-            cursor: wait;
-            transform: none;
-        }
-
-        .google-btn img {
-            width: 21px;
-            height: 21px;
-            padding: 2px;
-            background: white;
-            border-radius: 50%;
-        }
-
-        .secure-note {
-            margin-top: 25px;
-            color: #777;
-            font-size: 11px;
-        }
-
-        .secure-note span {
-            color: var(--gold);
-        }
-
-        .footer {
-            margin-top: 38px;
-            padding-top: 20px;
-            border-top: 1px solid #292929;
-            color: #666;
-            font-size: 11px;
-        }
-
-        .footer strong {
-            color: var(--gold);
-        }
-
-        #message {
-            display: none;
-            margin-top: 18px;
-            color: #ff7777;
-            font-size: 12px;
-            line-height: 1.5;
-            overflow-wrap: anywhere;
-        }
-
-        @media(max-width: 480px) {
-            .register-card {
-                padding: 40px 25px;
-            }
-
-            .logo {
-                font-size: 30px;
-            }
-
-            .heading {
-                font-size: 24px;
-            }
-        }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 
 <body>
 
-    <div class="glow one"></div>
-    <div class="glow two"></div>
+    <div class="background-glow"></div>
 
-    <main class="register-card">
+    <main class="register-container">
 
-        <div class="logo">BIG <span>STORE</span></div>
+        <div class="register-card">
 
-        <div class="logo-line"></div>
+            <a href="index.html" class="logo">
+                BIG <span>STORE</span>
+            </a>
 
-        <p class="tagline">Premium Gaming Experience</p>
+            <div class="heading">
+                <h1>Create Account</h1>
+                <p>Join BIG STORE and get started today.</p>
+            </div>
 
-        <h1 class="heading">
-            Create Your <span>Account</span>
-        </h1>
+            <form id="registerForm">
 
-        <p class="description">
-            Join BIG STORE and experience<br>
-            a faster and easier gaming top-up journey.
-        </p>
+                <div class="input-group">
+                    <label for="username">Username</label>
+                    <input
+                        type="text"
+                        id="username"
+                        placeholder="Enter your username"
+                        minlength="3"
+                        maxlength="30"
+                        autocomplete="username"
+                        required
+                    >
+                </div>
 
-        <button class="google-btn" id="googleLogin">
+                <div class="input-group">
+                    <label for="email">Email Address</label>
+                    <input
+                        type="email"
+                        id="email"
+                        placeholder="Enter your email"
+                        autocomplete="email"
+                        required
+                    >
+                </div>
 
-            <img
-                src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
-                alt="Google"
-            >
+                <div class="input-group">
+                    <label for="password">Password</label>
 
-            <span id="buttonText">Continue with Google</span>
+                    <div class="password-box">
+                        <input
+                            type="password"
+                            id="password"
+                            placeholder="Minimum 8 characters"
+                            minlength="8"
+                            autocomplete="new-password"
+                            required
+                        >
 
-        </button>
+                        <button type="button" class="toggle-password" data-target="password">
+                            SHOW
+                        </button>
+                    </div>
+                </div>
 
-        <div id="message"></div>
+                <div class="input-group">
+                    <label for="confirmPassword">Confirm Password</label>
 
-        <p class="secure-note">
-            <span>●</span> Secure Authentication Powered by Google
-        </p>
+                    <div class="password-box">
+                        <input
+                            type="password"
+                            id="confirmPassword"
+                            placeholder="Re-enter your password"
+                            autocomplete="new-password"
+                            required
+                        >
 
-        <div class="footer">
-            © 2026 <strong>BIG STORE</strong>. All Rights Reserved.
+                        <button type="button" class="toggle-password" data-target="confirmPassword">
+                            SHOW
+                        </button>
+                    </div>
+                </div>
+
+                <div class="terms">
+                    <input type="checkbox" id="terms" required>
+                    <label for="terms">
+                        I agree to the Terms & Conditions.
+                    </label>
+                </div>
+
+                <button type="submit" id="registerButton">
+                    <span id="buttonText">CREATE ACCOUNT</span>
+                </button>
+
+                <div id="message" class="message"></div>
+
+            </form>
+
+            <div class="login-link">
+                Already have an account?
+                <a href="login.html">Login</a>
+            </div>
+
+            <div class="footer">
+                Powered by <span>BIG STORE</span>
+            </div>
+
         </div>
 
     </main>
 
-
-    <!-- SUPABASE GOOGLE AUTHENTICATION -->
-
-    <script type="module">
-
-        import { createClient } from
-        'https://esm.sh/@supabase/supabase-js@2';
-
-        const SUPABASE_URL =
-        'https://zzxzrrntyvqbhyzuhaso.supabase.co';
-
-        const SUPABASE_KEY =
-        'sb_publishable_7NpKLvkhQsF3LvPsrXNQdg_z6mIRnDO';
-
-        const supabase = createClient(
-            SUPABASE_URL,
-            SUPABASE_KEY
-        );
-
-        const googleButton =
-        document.getElementById('googleLogin');
-
-        const buttonText =
-        document.getElementById('buttonText');
-
-        const message =
-        document.getElementById('message');
-
-
-        // GOOGLE LOGIN
-
-        googleButton.addEventListener('click', async () => {
-
-            googleButton.disabled = true;
-
-            buttonText.textContent = 'Connecting to Google...';
-
-            message.style.display = 'none';
-
-            try {
-
-                const { error } = await supabase.auth.signInWithOAuth({
-
-                    provider: 'google',
-
-                    options: {
-
-                        redirectTo:
-                        window.location.origin + '/register.html'
-
-                    }
-
-                });
-
-                if (error) {
-                    throw error;
-                }
-
-            } catch (error) {
-
-                console.error('Google Login Error:', error);
-
-                message.textContent =
-                error.message || 'Google login failed. Please try again.';
-
-                message.style.display = 'block';
-
-                googleButton.disabled = false;
-
-                buttonText.textContent = 'Continue with Google';
-
-            }
-
-        });
-
-
-// CHECK LOGIN SESSION AND REDIRECT
-
-async function checkLogin() {
-
-    const { data, error } = await supabase.auth.getSession();
-
-    if (error) {
-        console.error(error);
-        return;
-    }
-
-    if (data.session) {
-
-        // Registration / Login successful
-        window.location.replace('/index.html');
-
-    }
-
-}
-
-checkLogin();
-    </script>
+    <script type="module" src="register.js"></script>
 
 </body>
 </html>

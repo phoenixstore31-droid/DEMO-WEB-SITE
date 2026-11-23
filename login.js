@@ -1,15 +1,19 @@
 // ==========================================
-// BIG STORE - LOGIN SYSTEM
+// BIG STORE - PREMIUM LOGIN SYSTEM
 // SUPABASE AUTHENTICATION
 // ==========================================
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
+
+// ==========================================
 // SUPABASE CONNECTION
+// ==========================================
 
-const SUPABASE_URL = "https://tvhgxlqqeklrdlgbkosa.supabase.co";
+const SUPABASE_URL = "https://drqanlbxrpahscbxmlyt.supabase.co";
 
-const SUPABASE_KEY = "sb_publishable_Ep28HPF1SXIXQXBF2i__eg_h_jmjw4I";
+const SUPABASE_KEY = "sb_publishable_9xJxxVib4BAD5RXItitbQQ_O3qfyZ-T";
+
 
 const supabase = createClient(
     SUPABASE_URL,
@@ -24,7 +28,9 @@ const supabase = createClient(
 );
 
 
-// HTML ELEMENTS
+// ==========================================
+// ELEMENTS
+// ==========================================
 
 const loginForm = document.getElementById("loginForm");
 
@@ -36,56 +42,17 @@ const loginButton = document.getElementById("loginButton");
 
 const buttonText = document.getElementById("buttonText");
 
-const loginMessage = document.getElementById("loginMessage");
+const messageBox = document.getElementById("message");
 
 const togglePassword = document.getElementById("togglePassword");
 
-const forgotPassword = document.getElementById("forgotPassword");
-
 
 // ==========================================
-// CHECK EXISTING LOGIN
+// CURRENT YEAR
 // ==========================================
 
-async function checkExistingLogin() {
-
-    const { data, error } = await supabase.auth.getSession();
-
-    if (error) {
-        console.error("Session Error:", error.message);
-        return;
-    }
-
-    if (data.session) {
-        window.location.replace("index.html");
-    }
-
-}
-
-checkExistingLogin();
-
-
-// ==========================================
-// SHOW / HIDE PASSWORD
-// ==========================================
-
-togglePassword.addEventListener("click", () => {
-
-    if (passwordInput.type === "password") {
-
-        passwordInput.type = "text";
-
-        togglePassword.textContent = "Hide";
-
-    } else {
-
-        passwordInput.type = "password";
-
-        togglePassword.textContent = "Show";
-
-    }
-
-});
+document.getElementById("currentYear").textContent =
+    new Date().getFullYear();
 
 
 // ==========================================
@@ -94,26 +61,40 @@ togglePassword.addEventListener("click", () => {
 
 function showMessage(message, type) {
 
-    loginMessage.textContent = message;
+    messageBox.textContent = message;
 
-    loginMessage.className = "message " + type;
+    messageBox.className = "message " + type;
 
 }
 
 
 // ==========================================
-// LOADING FUNCTION
+// PASSWORD SHOW / HIDE
 // ==========================================
 
-function setLoading(isLoading) {
+togglePassword.addEventListener("click", () => {
 
-    loginButton.disabled = isLoading;
+    const icon = togglePassword.querySelector("i");
 
-    loginButton.classList.toggle("loading", isLoading);
+    if (passwordInput.type === "password") {
 
-    buttonText.textContent = isLoading ? "Signing In..." : "Sign In";
+        passwordInput.type = "text";
 
-}
+        icon.className = "fa-regular fa-eye-slash";
+
+        togglePassword.setAttribute("aria-label", "Hide password");
+
+    } else {
+
+        passwordInput.type = "password";
+
+        icon.className = "fa-regular fa-eye";
+
+        togglePassword.setAttribute("aria-label", "Show password");
+
+    }
+
+});
 
 
 // ==========================================
@@ -124,23 +105,36 @@ loginForm.addEventListener("submit", async (event) => {
 
     event.preventDefault();
 
+    messageBox.className = "message";
+
+
     const email = emailInput.value.trim();
 
     const password = passwordInput.value;
 
+
     if (!email || !password) {
 
-        showMessage("Please enter your email and password.", "error");
+        showMessage(
+            "Please enter your email and password.",
+            "error"
+        );
 
         return;
 
     }
 
-    setLoading(true);
 
-    loginMessage.className = "message";
+    // Loading state
+
+    loginButton.disabled = true;
+
+    buttonText.textContent = "AUTHENTICATING...";
+
 
     try {
+
+        // Supabase Login
 
         const { data, error } = await supabase.auth.signInWithPassword({
 
@@ -150,92 +144,80 @@ loginForm.addEventListener("submit", async (event) => {
 
         });
 
+
         if (error) {
+
             throw error;
+
         }
 
-        if (!data.session) {
+
+        if (!data.session || !data.user) {
+
             throw new Error("Login session could not be created.");
+
         }
 
-        showMessage("Login successful! Redirecting...", "success");
+
+        // Successful login
+
+        showMessage(
+            "Authentication successful. Welcome to BIG STORE!",
+            "success"
+        );
+
+
+        // Redirect
 
         setTimeout(() => {
 
             window.location.replace("index.html");
 
-        }, 700);
+        }, 1200);
+
 
     } catch (error) {
 
-        console.error("Login Error:", error);
+        console.error("BIG STORE Login Error:", error);
 
-        let message = "Login failed. Please try again.";
 
-        if (error.message.includes("Invalid login credentials")) {
+        let errorMessage = error.message;
 
-            message = "Incorrect email or password.";
 
-        } else if (error.message.includes("Email not confirmed")) {
+        if (error.message.includes("Email not confirmed")) {
 
-            message = "Please confirm your email before logging in.";
-
-        } else if (error.message.includes("Invalid API key")) {
-
-            message = "Supabase API key is incorrect.";
-
-        } else {
-
-            message = error.message;
+            errorMessage =
+                "Your email is not verified. Please verify your email first.";
 
         }
 
-        showMessage(message, "error");
+        else if (
+            error.message.includes("Invalid login credentials")
+        ) {
 
-        setLoading(false);
+            errorMessage =
+                "Incorrect email or password. Please try again.";
 
-    }
-
-});
-
-
-// ==========================================
-// FORGOT PASSWORD
-// ==========================================
-
-forgotPassword.addEventListener("click", async (event) => {
-
-    event.preventDefault();
-
-    const email = emailInput.value.trim();
-
-    if (!email) {
-
-        showMessage("Please enter your email address first.", "error");
-
-        emailInput.focus();
-
-        return;
-
-    }
-
-    try {
-
-        const { error } = await supabase.auth.resetPasswordForEmail(email, {
-
-            redirectTo: window.location.origin + "/reset-password.html"
-
-        });
-
-        if (error) {
-            throw error;
         }
 
-        showMessage("Password reset link sent to your email.", "success");
+        else if (
+            error.message.includes("Too many requests")
+        ) {
 
-    } catch (error) {
+            errorMessage =
+                "Too many login attempts. Please try again later.";
 
-        showMessage(error.message, "error");
+        }
+
+
+        showMessage(errorMessage, "error");
+
+
+    } finally {
+
+        loginButton.disabled = false;
+
+        buttonText.textContent = "SIGN IN TO ACCOUNT";
 
     }
 
