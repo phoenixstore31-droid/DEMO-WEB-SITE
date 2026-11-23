@@ -1,89 +1,161 @@
 /* =====================================================
-   BIG STORE - WALLET TOP UP
-   JavaScript
+   BIG STORE - REAL WALLET TOPUP
+   SUPABASE INTEGRATION
 ===================================================== */
+
+import { createClient } from
+"https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+
+
+/* =====================================================
+   SUPABASE CONNECTION
+===================================================== */
+
+const SUPABASE_URL =
+"https://drqanlbxrpahscbxmlyt.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_9xJxxVib4BAD5RXItitbQQ_O3qfyZ-T";
+
+const supabase = createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
+
 
 /* =====================================================
    DOM ELEMENTS
 ===================================================== */
 
-const depositAmount = document.getElementById("depositAmount");
+const depositAmount =
+document.getElementById("depositAmount");
 
-const bankMethod = document.getElementById("bankMethod");
-const ezcashMethod = document.getElementById("ezcashMethod");
-const binanceMethod = document.getElementById("binanceMethod");
+const bankMethod =
+document.getElementById("bankMethod");
 
-const bankDetailsPanel = document.getElementById("bankDetailsPanel");
-const ezcashDetailsPanel = document.getElementById("ezcashDetailsPanel");
-const binanceDetailsPanel = document.getElementById("binanceDetailsPanel");
+const ezcashMethod =
+document.getElementById("ezcashMethod");
 
-const selectedBank = document.getElementById("selectedBank");
+const binanceMethod =
+document.getElementById("binanceMethod");
 
-const bankDisplayName = document.getElementById("bankDisplayName");
-const bankAccountName = document.getElementById("bankAccountName");
-const bankAccountNumber = document.getElementById("bankAccountNumber");
-const bankBranch = document.getElementById("bankBranch");
+const bankDetailsPanel =
+document.getElementById("bankDetailsPanel");
 
-const bankReceipt = document.getElementById("bankReceipt");
-const ezcashReceipt = document.getElementById("ezcashReceipt");
-const binanceReceipt = document.getElementById("binanceReceipt");
+const ezcashDetailsPanel =
+document.getElementById("ezcashDetailsPanel");
 
-const bankReceiptPreview = document.getElementById("bankReceiptPreview");
-const ezcashReceiptPreview = document.getElementById("ezcashReceiptPreview");
-const binanceReceiptPreview = document.getElementById("binanceReceiptPreview");
+const binanceDetailsPanel =
+document.getElementById("binanceDetailsPanel");
 
-const submitDepositBtn = document.getElementById("submitDepositBtn");
+const selectedBank =
+document.getElementById("selectedBank");
 
-const walletToast = document.getElementById("walletToast");
-const walletToastMessage = document.getElementById("walletToastMessage");
+const bankDisplayName =
+document.getElementById("bankDisplayName");
 
-const cryptoTransactionId = document.getElementById("cryptoTransactionId");
+const bankAccountName =
+document.getElementById("bankAccountName");
+
+const bankAccountNumber =
+document.getElementById("bankAccountNumber");
+
+const bankBranch =
+document.getElementById("bankBranch");
+
+const bankReceipt =
+document.getElementById("bankReceipt");
+
+const ezcashReceipt =
+document.getElementById("ezcashReceipt");
+
+const binanceReceipt =
+document.getElementById("binanceReceipt");
+
+const bankReceiptPreview =
+document.getElementById("bankReceiptPreview");
+
+const ezcashReceiptPreview =
+document.getElementById("ezcashReceiptPreview");
+
+const binanceReceiptPreview =
+document.getElementById("binanceReceiptPreview");
+
+const cryptoTransactionId =
+document.getElementById("cryptoTransactionId");
+
+const submitDepositBtn =
+document.getElementById("submitDepositBtn");
+
+const walletBalance =
+document.getElementById("walletBalance");
+
+const depositHistoryList =
+document.getElementById("depositHistoryList");
+
+const walletToast =
+document.getElementById("walletToast");
+
+const walletToastMessage =
+document.getElementById("walletToastMessage");
+
 
 /* =====================================================
-   DEMO BANK DETAILS
+   CURRENT USER
+===================================================== */
+
+let currentUser = null;
+
+let currentPaymentMethod = "bank";
+
+let toastTimer;
+
+
+/* =====================================================
+   PAYMENT DETAILS
 ===================================================== */
 
 const bankDetails = {
-    boc: {
+
+    BOC: {
+
         name: "Bank of Ceylon",
-        accountName: "BIG STORE DEMO",
-        accountNumber: "1234567890",
-        branch: "Demo Branch"
+
+        accountName: "JOYTHAS K",
+
+        accountNumber: "96644532",
+
+        branch: "THIRUKKOVIL"
+
     },
 
-    commercial: {
-        name: "Commercial Bank",
-        accountName: "BIG STORE DEMO",
-        accountNumber: "2345678901",
-        branch: "Demo Branch"
-    },
+    HNB: {
 
-    sampath: {
-        name: "Sampath Bank",
-        accountName: "BIG STORE DEMO",
-        accountNumber: "3456789012",
-        branch: "Demo Branch"
-    },
-
-    hnb: {
         name: "Hatton National Bank",
-        accountName: "BIG STORE DEMO",
-        accountNumber: "4567890123",
-        branch: "Demo Branch"
+
+        accountName: "JOYTHAS K",
+
+        accountNumber: "134020110640",
+
+        branch: "THIRUKKOVIL"
+
     }
+
 };
 
-/* =====================================================
-   TOAST NOTIFICATION
-===================================================== */
 
-let toastTimer;
+/* =====================================================
+   TOAST
+===================================================== */
 
 function showToast(message, type = "info") {
 
     if (!walletToast || !walletToastMessage) {
+
         alert(message);
+
         return;
+
     }
 
     const icon = walletToast.querySelector("i");
@@ -93,11 +165,17 @@ function showToast(message, type = "info") {
     if (icon) {
 
         if (type === "success") {
+
             icon.className = "fas fa-check-circle";
+
         } else if (type === "error") {
+
             icon.className = "fas fa-exclamation-circle";
+
         } else {
+
             icon.className = "fas fa-info-circle";
+
         }
 
     }
@@ -107,9 +185,94 @@ function showToast(message, type = "info") {
     clearTimeout(toastTimer);
 
     toastTimer = setTimeout(() => {
+
         walletToast.classList.remove("show");
+
     }, 3500);
+
 }
+
+
+/* =====================================================
+   AUTHENTICATION
+===================================================== */
+
+async function checkAuthentication() {
+
+    const {
+        data,
+        error
+    } = await supabase.auth.getSession();
+
+    if (error) {
+
+        console.error(error);
+
+        showToast("Unable to verify login.", "error");
+
+        return false;
+
+    }
+
+    currentUser = data.session?.user || null;
+
+    if (!currentUser) {
+
+        window.location.replace("login.html");
+
+        return false;
+
+    }
+
+    return true;
+
+}
+
+
+/* =====================================================
+   LOAD WALLET BALANCE
+===================================================== */
+
+async function loadWalletBalance() {
+
+    if (!currentUser) return;
+
+    const { data, error } = await supabase
+
+        .from("profiles")
+
+        .select("wallet_balance")
+
+        .eq("id", currentUser.id)
+
+        .single();
+
+
+    if (error) {
+
+        console.error("Balance Error:", error);
+
+        showToast("Unable to load wallet balance.", "error");
+
+        return;
+
+    }
+
+
+    const balance = Number(data.wallet_balance || 0);
+
+    walletBalance.textContent =
+
+        "LKR " + balance.toLocaleString(
+            "en-LK",
+            {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }
+        );
+
+}
+
 
 /* =====================================================
    PAYMENT METHOD SELECTION
@@ -117,117 +280,109 @@ function showToast(message, type = "info") {
 
 function selectPaymentMethod(method) {
 
-    const methods = [
-        bankMethod,
-        ezcashMethod,
-        binanceMethod
-    ];
+    currentPaymentMethod = method;
 
-    methods.forEach(button => {
-        if (button) {
-            button.classList.remove("active");
-        }
+    document.querySelectorAll(".payment-method").forEach(button => {
+
+        button.classList.remove("active");
+
     });
 
-    if (bankDetailsPanel) bankDetailsPanel.hidden = true;
-    if (ezcashDetailsPanel) ezcashDetailsPanel.hidden = true;
-    if (binanceDetailsPanel) binanceDetailsPanel.hidden = true;
+    bankDetailsPanel.hidden = true;
+
+    ezcashDetailsPanel.hidden = true;
+
+    binanceDetailsPanel.hidden = true;
+
 
     if (method === "bank") {
 
-        bankMethod?.classList.add("active");
+        bankMethod.classList.add("active");
 
-        if (bankDetailsPanel) {
-            bankDetailsPanel.hidden = false;
-        }
+        bankDetailsPanel.hidden = false;
 
     }
+
 
     if (method === "ezcash") {
 
-        ezcashMethod?.classList.add("active");
+        ezcashMethod.classList.add("active");
 
-        if (ezcashDetailsPanel) {
-            ezcashDetailsPanel.hidden = false;
-        }
+        ezcashDetailsPanel.hidden = false;
 
     }
 
+
     if (method === "binance") {
 
-        binanceMethod?.classList.add("active");
+        binanceMethod.classList.add("active");
 
-        if (binanceDetailsPanel) {
-            binanceDetailsPanel.hidden = false;
-        }
+        binanceDetailsPanel.hidden = false;
 
     }
 
 }
 
-bankMethod?.addEventListener("click", () => {
+
+bankMethod.addEventListener("click", () => {
+
     selectPaymentMethod("bank");
+
 });
 
-ezcashMethod?.addEventListener("click", () => {
+ezcashMethod.addEventListener("click", () => {
+
     selectPaymentMethod("ezcash");
+
 });
 
-binanceMethod?.addEventListener("click", () => {
+binanceMethod.addEventListener("click", () => {
+
     selectPaymentMethod("binance");
+
 });
+
 
 /* =====================================================
-   BANK SELECTION
+   BANK DETAILS
 ===================================================== */
 
 function updateBankDetails() {
 
-    if (!selectedBank) return;
+    const bank = bankDetails[selectedBank.value];
 
-    const bankKey = selectedBank.value;
-    const details = bankDetails[bankKey];
+    if (!bank) {
 
-    if (!details) {
+        bankDisplayName.textContent = "Select a Bank";
 
-        if (bankDisplayName) bankDisplayName.textContent = "Select a Bank";
-        if (bankAccountName) bankAccountName.textContent = "-";
-        if (bankAccountNumber) bankAccountNumber.textContent = "-";
-        if (bankBranch) bankBranch.textContent = "-";
+        bankAccountName.textContent = "-";
+
+        bankAccountNumber.textContent = "-";
+
+        bankBranch.textContent = "-";
 
         return;
+
     }
 
-    if (bankDisplayName) {
-        bankDisplayName.textContent = details.name;
-    }
+    bankDisplayName.textContent = bank.name;
 
-    if (bankAccountName) {
-        bankAccountName.textContent = details.accountName;
-    }
+    bankAccountName.textContent = bank.accountName;
 
-    if (bankAccountNumber) {
-        bankAccountNumber.textContent = details.accountNumber;
-    }
+    bankAccountNumber.textContent = bank.accountNumber;
 
-    if (bankBranch) {
-        bankBranch.textContent = details.branch;
-    }
+    bankBranch.textContent = bank.branch;
 
 }
 
-selectedBank?.addEventListener("change", updateBankDetails);
+selectedBank.addEventListener("change", updateBankDetails);
+
 
 /* =====================================================
    COPY BUTTONS
 ===================================================== */
 
 async function copyText(text) {
-
-    if (!text || text === "-") {
-        showToast("Nothing to copy.", "error");
-        return;
-    }
 
     try {
 
@@ -245,31 +400,26 @@ async function copyText(text) {
 
         textarea.select();
 
-        try {
-            document.execCommand("copy");
-            showToast("Copied successfully!", "success");
-        } catch {
-            showToast("Unable to copy. Please copy manually.", "error");
-        }
+        document.execCommand("copy");
 
         textarea.remove();
+
+        showToast("Copied successfully!", "success");
 
     }
 
 }
 
+
 document.querySelectorAll("[data-copy]").forEach(button => {
 
     button.addEventListener("click", () => {
 
-        const targetId = button.dataset.copy;
+        const target = document.getElementById(
+            button.dataset.copy
+        );
 
-        const target = document.getElementById(targetId);
-
-        if (!target) {
-            showToast("Copy item not found.", "error");
-            return;
-        }
+        if (!target) return;
 
         copyText(target.textContent.trim());
 
@@ -277,8 +427,9 @@ document.querySelectorAll("[data-copy]").forEach(button => {
 
 });
 
+
 /* =====================================================
-   QUICK AMOUNT BUTTONS
+   QUICK AMOUNT
 ===================================================== */
 
 document.querySelectorAll(".amount-btn").forEach(button => {
@@ -287,14 +438,12 @@ document.querySelectorAll(".amount-btn").forEach(button => {
 
         const amount = Number(button.dataset.amount);
 
-        if (!Number.isFinite(amount) || amount <= 0) return;
-
-        if (depositAmount) {
-            depositAmount.value = amount;
-        }
+        depositAmount.value = amount;
 
         document.querySelectorAll(".amount-btn").forEach(btn => {
+
             btn.classList.remove("active");
+
         });
 
         button.classList.add("active");
@@ -303,256 +452,816 @@ document.querySelectorAll(".amount-btn").forEach(button => {
 
 });
 
-depositAmount?.addEventListener("input", () => {
+
+depositAmount.addEventListener("input", () => {
 
     document.querySelectorAll(".amount-btn").forEach(button => {
+
         button.classList.remove("active");
+
     });
 
 });
 
+
 /* =====================================================
-   RECEIPT IMAGE PREVIEW
+   RECEIPT PREVIEW
 ===================================================== */
 
 function setupReceiptPreview(input, preview) {
 
-    if (!input || !preview) return;
-
     input.addEventListener("change", () => {
 
         preview.innerHTML = "";
-        preview.classList.remove("show");
+
+        preview.classList.remove("visible");
 
         const file = input.files?.[0];
 
         if (!file) return;
 
-        if (!file.type.startsWith("image/")) {
+
+        const allowedTypes = [
+
+            "image/jpeg",
+
+            "image/png",
+
+            "image/webp",
+
+            "application/pdf"
+
+        ];
+
+
+        if (!allowedTypes.includes(file.type)) {
 
             input.value = "";
 
-            showToast("Please select an image file.", "error");
+            showToast("Unsupported file type.", "error");
 
             return;
+
         }
 
-        const MAX_SIZE = 5 * 1024 * 1024;
 
-        if (file.size > MAX_SIZE) {
+        if (file.size > 5 * 1024 * 1024) {
 
             input.value = "";
 
-            showToast("Image must be smaller than 5MB.", "error");
+            showToast("Maximum file size is 5 MB.", "error");
 
             return;
+
         }
 
-        const reader = new FileReader();
 
-        reader.onload = event => {
+        const info = document.createElement("div");
+
+        info.className = "receipt-file-info";
+
+
+        const title = document.createElement("strong");
+
+        title.textContent = file.name;
+
+
+        const size = document.createElement("small");
+
+        size.textContent =
+
+            (file.size / 1024 / 1024).toFixed(2) + " MB";
+
+
+        info.appendChild(title);
+
+        info.appendChild(size);
+
+
+        if (file.type.startsWith("image/")) {
 
             const image = document.createElement("img");
 
-            image.src = event.target.result;
+            image.src = URL.createObjectURL(file);
+
             image.alt = "Receipt preview";
 
-            const info = document.createElement("div");
-            info.className = "preview-info";
-
-            const title = document.createElement("strong");
-            title.textContent = file.name;
-
-            const size = document.createElement("span");
-
-            size.textContent =
-                (file.size / 1024 / 1024).toFixed(2) + " MB";
-
-            info.appendChild(title);
-            info.appendChild(size);
-
             preview.appendChild(image);
-            preview.appendChild(info);
 
-            preview.classList.add("show");
+        } else {
 
-        };
+            const pdfIcon = document.createElement("div");
 
-        reader.readAsDataURL(file);
+            pdfIcon.className = "receipt-pdf-icon";
+
+            pdfIcon.innerHTML = '<i class="fas fa-file-pdf"></i>';
+
+            preview.appendChild(pdfIcon);
+
+        }
+
+
+        const removeButton = document.createElement("button");
+
+        removeButton.type = "button";
+
+        removeButton.className = "remove-receipt-btn";
+
+        removeButton.innerHTML = '<i class="fas fa-trash"></i>';
+
+
+        removeButton.addEventListener("click", () => {
+
+            input.value = "";
+
+            preview.innerHTML = "";
+
+            preview.classList.remove("visible");
+
+        });
+
+
+        preview.appendChild(info);
+
+        preview.appendChild(removeButton);
+
+        preview.classList.add("visible");
 
     });
 
 }
 
+
 setupReceiptPreview(bankReceipt, bankReceiptPreview);
+
 setupReceiptPreview(ezcashReceipt, ezcashReceiptPreview);
+
 setupReceiptPreview(binanceReceipt, binanceReceiptPreview);
 
+
 /* =====================================================
-   DEPOSIT VALIDATION
+   VALIDATION
 ===================================================== */
 
-function getSelectedPaymentMethod() {
+function validateDeposit() {
 
-    if (bankMethod?.classList.contains("active")) {
-        return "bank";
+    const amount = Number(depositAmount.value);
+
+    if (!Number.isFinite(amount) || amount < 100) {
+
+        showToast(
+            "Minimum deposit amount is LKR 100.",
+            "error"
+        );
+
+        depositAmount.focus();
+
+        return false;
+
     }
 
-    if (ezcashMethod?.classList.contains("active")) {
-        return "ezcash";
+
+    if (amount > 9999999999) {
+
+        showToast("Invalid deposit amount.", "error");
+
+        return false;
+
     }
 
-    if (binanceMethod?.classList.contains("active")) {
-        return "binance";
+
+    if (currentPaymentMethod === "bank") {
+
+        if (!bankDetails[selectedBank.value]) {
+
+            showToast("Please select a bank.", "error");
+
+            selectedBank.focus();
+
+            return false;
+
+        }
+
+
+        if (!bankReceipt.files.length) {
+
+            showToast("Please upload your bank receipt.", "error");
+
+            return false;
+
+        }
+
+    }
+
+
+    if (currentPaymentMethod === "ezcash") {
+
+        if (!ezcashReceipt.files.length) {
+
+            showToast("Please upload your EZ Cash receipt.", "error");
+
+            return false;
+
+        }
+
+    }
+
+
+    if (currentPaymentMethod === "binance") {
+
+        if (!cryptoTransactionId.value.trim()) {
+
+            showToast("Please enter your Binance TXID.", "error");
+
+            cryptoTransactionId.focus();
+
+            return false;
+
+        }
+
+
+        if (!binanceReceipt.files.length) {
+
+            showToast("Please upload your Binance receipt.", "error");
+
+            return false;
+
+        }
+
+    }
+
+
+    return true;
+
+}
+
+
+/* =====================================================
+   GET RECEIPT FILE
+===================================================== */
+
+function getReceiptFile() {
+
+    if (currentPaymentMethod === "bank") {
+
+        return bankReceipt.files[0];
+
+    }
+
+    if (currentPaymentMethod === "ezcash") {
+
+        return ezcashReceipt.files[0];
+
+    }
+
+    if (currentPaymentMethod === "binance") {
+
+        return binanceReceipt.files[0];
+
     }
 
     return null;
 
 }
 
-function validateDeposit() {
 
-    const amount = Number(depositAmount?.value);
+/* =====================================================
+   RESET RECEIPT INPUTS
+===================================================== */
 
-    if (!Number.isFinite(amount) || amount <= 0) {
+function resetReceiptInputs() {
 
-        showToast("Please enter a valid deposit amount.", "error");
+    const inputs = [
 
-        depositAmount?.focus();
+        [bankReceipt, bankReceiptPreview],
 
-        return false;
-    }
+        [ezcashReceipt, ezcashReceiptPreview],
 
-    if (amount < 100) {
+        [binanceReceipt, binanceReceiptPreview]
 
-        showToast("Minimum demo amount is LKR 100.", "error");
+    ];
 
-        return false;
-    }
 
-    const method = getSelectedPaymentMethod();
+    inputs.forEach(([input, preview]) => {
 
-    if (!method) {
+        input.value = "";
 
-        showToast("Please select a payment method.", "error");
+        preview.innerHTML = "";
 
-        return false;
-    }
+        preview.classList.remove("visible");
 
-    if (method === "bank") {
+    });
 
-        if (!selectedBank?.value || !bankDetails[selectedBank.value]) {
 
-            showToast("Please select a bank.", "error");
-
-            selectedBank?.focus();
-
-            return false;
-        }
-
-        if (!bankReceipt?.files?.length) {
-
-            showToast("Please select your bank receipt image.", "error");
-
-            return false;
-        }
-
-    }
-
-    if (method === "ezcash") {
-
-        if (!ezcashReceipt?.files?.length) {
-
-            showToast("Please select your EZ Cash receipt image.", "error");
-
-            return false;
-        }
-
-    }
-
-    if (method === "binance") {
-
-        if (!cryptoTransactionId?.value.trim()) {
-
-            showToast("Please enter your transaction ID.", "error");
-
-            cryptoTransactionId?.focus();
-
-            return false;
-        }
-
-        if (!binanceReceipt?.files?.length) {
-
-            showToast("Please select your Binance receipt image.", "error");
-
-            return false;
-        }
-
-    }
-
-    return true;
+    cryptoTransactionId.value = "";
 
 }
 
+
 /* =====================================================
-   DEMO SUBMISSION
+   SUBMIT DEPOSIT REQUEST
 ===================================================== */
 
-submitDepositBtn?.addEventListener("click", event => {
-
-    event.preventDefault();
+async function submitDepositRequest() {
 
     if (!validateDeposit()) return;
 
-    showToast(
-        "Demo only! No payment request was submitted and wallet balance was not changed.",
-        "info"
-    );
 
-});
+    if (!currentUser) {
+
+        showToast("Please login again.", "error");
+
+        return;
+
+    }
+
+
+    const amount = Number(depositAmount.value);
+
+    const receiptFile = getReceiptFile();
+
+
+    if (!receiptFile) return;
+
+
+    submitDepositBtn.disabled = true;
+
+    submitDepositBtn.innerHTML = `
+
+        <span>Submitting Request...</span>
+
+        <i class="fas fa-spinner fa-spin"></i>
+
+    `;
+
+
+    try {
+
+
+        /* ----------------------------------
+           CREATE UNIQUE RECEIPT PATH
+        ---------------------------------- */
+
+        const extension =
+
+            receiptFile.name.split(".").pop().toLowerCase();
+
+
+        const filePath =
+
+            `${currentUser.id}/${crypto.randomUUID()}.${extension}`;
+
+
+        /* ----------------------------------
+           UPLOAD RECEIPT
+        ---------------------------------- */
+
+        const { data: uploadData, error: uploadError } =
+
+            await supabase.storage
+
+                .from("wallet-receipts")
+
+                .upload(filePath, receiptFile, {
+
+                    cacheControl: "3600",
+
+                    upsert: false,
+
+                    contentType: receiptFile.type
+
+                });
+
+
+        if (uploadError) {
+
+            throw uploadError;
+
+        }
+
+
+        /* ----------------------------------
+           CREATE DATABASE REQUEST
+        ---------------------------------- */
+
+        const requestData = {
+
+            user_id: currentUser.id,
+
+            amount: amount,
+
+            payment_method: currentPaymentMethod,
+
+            receipt_path: uploadData.path,
+
+            status: "pending"
+
+        };
+
+
+        if (currentPaymentMethod === "bank") {
+
+            requestData.bank_name = selectedBank.value;
+
+        }
+
+
+        if (currentPaymentMethod === "binance") {
+
+            requestData.transaction_id =
+
+                cryptoTransactionId.value.trim();
+
+        }
+
+
+        const { error: requestError } = await supabase
+
+            .from("wallet_requests")
+
+            .insert(requestData);
+
+
+        if (requestError) {
+
+            throw requestError;
+
+        }
+
+
+        showToast(
+
+            "Deposit request submitted successfully!",
+
+            "success"
+
+        );
+
+
+        depositAmount.value = "";
+
+        document.querySelectorAll(".amount-btn").forEach(button => {
+
+            button.classList.remove("active");
+
+        });
+
+
+        resetReceiptInputs();
+
+
+        await loadDepositHistory();
+
+
+        await loadWalletBalance();
+
+
+    } catch (error) {
+
+        console.error("Deposit Error:", error);
+
+        showToast(
+
+            error.message || "Unable to submit deposit request.",
+
+            "error"
+
+        );
+
+    } finally {
+
+        submitDepositBtn.disabled = false;
+
+        submitDepositBtn.innerHTML = `
+
+            <span>Submit Deposit Request</span>
+
+            <i class="fas fa-arrow-right"></i>
+
+        `;
+
+    }
+
+}
+
+
+submitDepositBtn.addEventListener(
+    "click",
+    submitDepositRequest
+);
+
+
+/* =====================================================
+   DEPOSIT HISTORY
+===================================================== */
+
+function formatDate(date) {
+
+    return new Date(date).toLocaleString("en-LK", {
+
+        year: "numeric",
+
+        month: "short",
+
+        day: "numeric",
+
+        hour: "2-digit",
+
+        minute: "2-digit"
+
+    });
+
+}
+
+
+function getPaymentName(method) {
+
+    const names = {
+
+        bank: "Bank Transfer",
+
+        ezcash: "EZ Cash",
+
+        binance: "Binance USDT"
+
+    };
+
+    return names[method] || method;
+
+}
+
+
+function renderDepositHistory(requests) {
+
+    depositHistoryList.innerHTML = "";
+
+
+    if (!requests.length) {
+
+        depositHistoryList.innerHTML = `
+
+            <div class="history-empty">
+
+                <div class="history-empty-icon">
+
+                    <i class="fas fa-receipt"></i>
+
+                </div>
+
+                <h3>No Deposits Yet</h3>
+
+                <p>Your deposit transactions will appear here.</p>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    requests.forEach(request => {
+
+        const card = document.createElement("div");
+
+        card.className = "deposit-history-card";
+
+
+        const status = request.status || "pending";
+
+
+        const bankText = request.bank_name
+
+            ? `<span>Bank: ${escapeHTML(request.bank_name)}</span>`
+
+            : "";
+
+
+        const txidText = request.transaction_id
+
+            ? `<span class="history-txid">TXID: ${escapeHTML(request.transaction_id)}</span>`
+
+            : "";
+
+
+        const noteText = request.admin_note
+
+            ? `<p class="history-admin-note">Admin note: ${escapeHTML(request.admin_note)}</p>`
+
+            : "";
+
+
+        card.innerHTML = `
+
+            <div class="history-card-top">
+
+                <div class="history-payment-icon">
+
+                    <i class="fas fa-wallet"></i>
+
+                </div>
+
+                <div class="history-main-info">
+
+                    <strong>${escapeHTML(getPaymentName(request.payment_method))}</strong>
+
+                    <small>${formatDate(request.created_at)}</small>
+
+                </div>
+
+                <span class="history-status ${status}">
+
+                    ${escapeHTML(status.toUpperCase())}
+
+                </span>
+
+            </div>
+
+            <div class="history-card-bottom">
+
+                <div>
+
+                    ${bankText}
+
+                    ${txidText}
+
+                </div>
+
+                <strong>
+
+                    LKR ${Number(request.amount).toLocaleString("en-LK", {
+
+                        minimumFractionDigits: 2,
+
+                        maximumFractionDigits: 2
+
+                    })}
+
+                </strong>
+
+            </div>
+
+            ${noteText}
+
+        `;
+
+
+        depositHistoryList.appendChild(card);
+
+    });
+
+}
+
+
+function escapeHTML(value) {
+
+    return String(value).replace(/[&<>"']/g, character => {
+
+        const entities = {
+
+            "&": "&amp;",
+
+            "<": "&lt;",
+
+            ">": "&gt;",
+
+            '"': "&quot;",
+
+            "'": "&#039;"
+
+        };
+
+        return entities[character];
+
+    });
+
+}
+
+
+async function loadDepositHistory() {
+
+    if (!currentUser) return;
+
+
+    const { data, error } = await supabase
+
+        .from("wallet_requests")
+
+        .select(`
+
+            id,
+
+            amount,
+
+            payment_method,
+
+            bank_name,
+
+            transaction_id,
+
+            status,
+
+            admin_note,
+
+            created_at
+
+        `)
+
+        .eq("user_id", currentUser.id)
+
+        .order("created_at", {
+
+            ascending: false
+
+        });
+
+
+    if (error) {
+
+        console.error("History Error:", error);
+
+        showToast("Unable to load deposit history.", "error");
+
+        return;
+
+    }
+
+
+    renderDepositHistory(data || []);
+
+}
+
 
 /* =====================================================
    HEADER BUTTONS
 ===================================================== */
 
-document.getElementById("notificationBtn")?.addEventListener("click", () => {
+document.getElementById("notificationBtn")
 
-    showToast("No new notifications.", "info");
+.addEventListener("click", () => {
+
+    window.location.href = "notifications.html";
 
 });
 
-document.getElementById("profileBtn")?.addEventListener("click", () => {
+
+document.getElementById("profileBtn")
+
+.addEventListener("click", () => {
 
     window.location.href = "profile.html";
 
 });
 
+
 /* =====================================================
    BOTTOM NAVIGATION
 ===================================================== */
 
-const currentPage = window.location.pathname.split("/").pop();
+const currentPage =
 
-document.querySelectorAll(".big-store-bottom-nav a").forEach(link => {
+window.location.pathname.split("/").pop();
 
-    const linkPage = link.getAttribute("href");
 
-    if (linkPage === currentPage) {
+document.querySelectorAll(".big-store-bottom-nav a")
+
+.forEach(link => {
+
+    if (link.getAttribute("href") === currentPage) {
+
         link.classList.add("active");
+
     } else {
+
         link.classList.remove("active");
+
     }
 
 });
+
 
 /* =====================================================
    INITIALIZATION
 ===================================================== */
 
-document.addEventListener("DOMContentLoaded", () => {
+async function initializeWallet() {
 
-    updateBankDetails();
+    const authenticated = await checkAuthentication();
+
+    if (!authenticated) return;
+
+
+    await loadWalletBalance();
+
+    await loadDepositHistory();
+
 
     selectPaymentMethod("bank");
 
-});
+    updateBankDetails();
+
+}
+
+
+initializeWallet();

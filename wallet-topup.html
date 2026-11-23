@@ -2,840 +2,716 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Wallet Top-Up | BIG STORE</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta name="description" content="Add funds to your BIG STORE wallet securely.">
+<title>Wallet Top-Up | BIG STORE</title>
 
-    <meta name="theme-color" content="#080808">
+<meta name="description" content="Add funds to your BIG STORE wallet securely.">
 
-    <!-- GOOGLE FONTS -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<meta name="theme-color" content="#080808">
 
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-    <!-- FONT AWESOME -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-    <!-- CSS -->
-    <link rel="stylesheet" href="wallet-topup.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<link rel="stylesheet" href="wallet-topup.css">
 
 </head>
 
 <body>
 
+<!-- HEADER -->
 
-    <!-- =====================================
-         HEADER
-    ====================================== -->
+<header class="wallet-header">
 
-    <header class="wallet-header">
+<a href="index.html" class="wallet-logo">
 
-        <a href="index.html" class="wallet-logo">
+<span class="logo-icon">
+<i class="fas fa-crown"></i>
+</span>
 
-            <span class="logo-icon">
-                <i class="fas fa-crown"></i>
-            </span>
+<span>BIG <b>STORE</b></span>
 
-            <span>BIG <b>STORE</b></span>
+</a>
 
-        </a>
+<div class="header-actions">
 
-        <div class="header-actions">
+<button class="header-icon-btn" id="notificationBtn">
+<i class="far fa-bell"></i>
+</button>
 
-            <button class="header-icon-btn" id="notificationBtn" aria-label="Notifications">
-                <i class="far fa-bell"></i>
-            </button>
+<button class="header-icon-btn" id="profileBtn">
+<i class="far fa-user"></i>
+</button>
 
-            <button class="header-icon-btn" id="profileBtn" aria-label="Profile">
-                <i class="far fa-user"></i>
-            </button>
+</div>
 
-        </div>
+</header>
 
-    </header>
 
+<main class="wallet-page">
 
+<!-- INTRO -->
 
-    <!-- =====================================
-         MAIN CONTENT
-    ====================================== -->
+<section class="wallet-intro">
 
-    <main class="wallet-page">
+<div class="intro-badge">
+<span></span>
+WALLET CENTER
+</div>
 
+<h1>
+Add Funds to <span>Wallet</span>
+</h1>
 
-        <!-- PAGE INTRO -->
+<p>
+Choose your preferred payment method and add funds to your BIG STORE wallet.
+</p>
 
-        <section class="wallet-intro">
+</section>
 
-            <div class="intro-badge">
-                <span></span>
-                WALLET CENTER
-            </div>
 
-            <h1>
-                Add Funds to <span>Wallet</span>
-            </h1>
+<!-- BALANCE -->
 
-            <p>
-                Choose your preferred payment method and
-                add funds to your BIG STORE wallet.
-            </p>
+<section class="wallet-balance-card">
 
-        </section>
+<div class="balance-top">
 
+<div class="balance-icon">
+<i class="fas fa-wallet"></i>
+</div>
 
+<span>AVAILABLE BALANCE</span>
 
-        <!-- =====================================
-             WALLET BALANCE
-        ====================================== -->
+</div>
 
-        <section class="wallet-balance-card">
+<h2 id="walletBalance">LKR 0.00</h2>
 
-            <div class="balance-top">
+<p>
+<i class="fas fa-shield-halved"></i>
+Your wallet balance
+</p>
 
-                <div class="balance-icon">
-                    <i class="fas fa-wallet"></i>
-                </div>
+</section>
 
-                <span>AVAILABLE BALANCE</span>
 
-            </div>
+<!-- TOPUP -->
 
-            <h2 id="walletBalance">LKR 0.00</h2>
+<section class="topup-section">
 
-            <p>
-                <i class="fas fa-shield-halved"></i>
-                Your wallet balance
-            </p>
+<div class="section-heading">
 
-        </section>
+<div>
+<span class="section-label">DEPOSIT</span>
+<h2>Top-Up Wallet</h2>
+</div>
 
+<div class="secure-badge">
+<i class="fas fa-lock"></i>
+Secure
+</div>
 
+</div>
 
-        <!-- =====================================
-             TOP-UP FORM
-        ====================================== -->
 
-        <section class="topup-section">
+<!-- AMOUNT -->
 
-            <div class="section-heading">
+<div class="form-group">
 
-                <div>
-                    <span class="section-label">DEPOSIT</span>
-                    <h2>Top-Up Wallet</h2>
-                </div>
+<label for="depositAmount">
+Enter Deposit Amount
+</label>
 
-                <div class="secure-badge">
-                    <i class="fas fa-lock"></i>
-                    Secure
-                </div>
+<div class="amount-input-wrapper">
 
-            </div>
+<span class="currency-symbol">LKR</span>
 
+<input
+type="number"
+id="depositAmount"
+placeholder="Enter amount"
+min="100"
+step="0.01"
+required
+>
 
+</div>
 
-            <!-- DEPOSIT AMOUNT -->
+<small>Minimum deposit amount: LKR 100.</small>
 
-            <div class="form-group">
+</div>
 
-                <label for="depositAmount">
-                    Enter Deposit Amount
-                </label>
 
-                <div class="amount-input-wrapper">
+<!-- QUICK AMOUNTS -->
 
-                    <span class="currency-symbol">LKR</span>
+<div class="quick-amounts">
 
-                    <input
-                        type="number"
-                        id="depositAmount"
-                        placeholder="Enter amount"
-                        min="1"
-                        step="0.01"
-                        required
-                    >
+<button type="button" class="amount-btn" data-amount="500">
+Rs. 500
+</button>
 
-                </div>
+<button type="button" class="amount-btn" data-amount="1000">
+Rs. 1,000
+</button>
 
-                <small>Enter the amount you want to deposit.</small>
+<button type="button" class="amount-btn" data-amount="2000">
+Rs. 2,000
+</button>
 
-            </div>
+<button type="button" class="amount-btn" data-amount="5000">
+Rs. 5,000
+</button>
 
+</div>
 
 
-            <!-- QUICK AMOUNTS -->
+<!-- PAYMENT METHODS -->
 
-            <div class="quick-amounts">
+<div class="form-group payment-method-group">
 
-                <button type="button" class="amount-btn" data-amount="500">
-                    Rs. 500
-                </button>
+<label>Select Payment Method</label>
 
-                <button type="button" class="amount-btn" data-amount="1000">
-                    Rs. 1,000
-                </button>
+<div class="payment-methods">
 
-                <button type="button" class="amount-btn" data-amount="2000">
-                    Rs. 2,000
-                </button>
+<button
+type="button"
+class="payment-method active"
+data-method="bank"
+id="bankMethod"
+>
 
-                <button type="button" class="amount-btn" data-amount="5000">
-                    Rs. 5,000
-                </button>
+<span class="method-icon">
+<i class="fas fa-building-columns"></i>
+</span>
 
-            </div>
+<span class="method-details">
+<strong>Bank Transfer</strong>
+<small>Local Bank Payment</small>
+</span>
 
+<span class="method-radio"></span>
 
+</button>
 
-            <!-- =====================================
-                 PAYMENT METHODS
-            ====================================== -->
 
-            <div class="form-group payment-method-group">
+<button
+type="button"
+class="payment-method"
+data-method="ezcash"
+id="ezcashMethod"
+>
 
-                <label>Select Payment Method</label>
+<span class="method-icon ezcash-icon">
+<i class="fas fa-mobile-screen-button"></i>
+</span>
 
-                <div class="payment-methods">
+<span class="method-details">
+<strong>EZ Cash</strong>
+<small>Mobile Money</small>
+</span>
 
+<span class="method-radio"></span>
 
-                    <!-- BANK TRANSFER -->
+</button>
 
-                    <button
-                        type="button"
-                        class="payment-method active"
-                        data-method="bank"
-                        id="bankMethod"
-                    >
 
-                        <span class="method-icon">
-                            <i class="fas fa-building-columns"></i>
-                        </span>
+<button
+type="button"
+class="payment-method"
+data-method="binance"
+id="binanceMethod"
+>
 
-                        <span class="method-details">
-                            <strong>Bank Transfer</strong>
-                            <small>Local Bank Payment</small>
-                        </span>
+<span class="method-icon binance-icon">
+<i class="fab fa-bitcoin"></i>
+</span>
 
-                        <span class="method-radio"></span>
+<span class="method-details">
+<strong>Binance USDT</strong>
+<small>Crypto Payment</small>
+</span>
 
-                    </button>
+<span class="method-radio"></span>
 
+</button>
 
+</div>
 
-                    <!-- EZ CASH -->
+</div>
 
-                    <button
-                        type="button"
-                        class="payment-method"
-                        data-method="ezcash"
-                        id="ezcashMethod"
-                    >
 
-                        <span class="method-icon ezcash-icon">
-                            <i class="fas fa-mobile-screen-button"></i>
-                        </span>
+<!-- BANK DETAILS -->
 
-                        <span class="method-details">
-                            <strong>EZ Cash</strong>
-                            <small>Mobile Money</small>
-                        </span>
+<div class="payment-details-panel" id="bankDetailsPanel">
 
-                        <span class="method-radio"></span>
+<div class="payment-panel-heading">
 
-                    </button>
+<div class="panel-icon">
+<i class="fas fa-building-columns"></i>
+</div>
 
+<div>
+<h3>Bank Transfer</h3>
+<p>Select your preferred bank.</p>
+</div>
 
+</div>
 
-                    <!-- BINANCE -->
 
-                    <button
-                        type="button"
-                        class="payment-method"
-                        data-method="binance"
-                        id="binanceMethod"
-                    >
+<div class="form-group">
 
-                        <span class="method-icon binance-icon">
-                            <i class="fab fa-bitcoin"></i>
-                        </span>
+<label for="selectedBank">
+Select Your Bank
+</label>
 
-                        <span class="method-details">
-                            <strong>Binance USDT</strong>
-                            <small>Crypto Payment</small>
-                        </span>
+<div class="select-wrapper">
 
-                        <span class="method-radio"></span>
+<select id="selectedBank" required>
 
-                    </button>
+<option value="">Choose a Bank</option>
 
+<option value="BOC">Bank of Ceylon</option>
 
-                </div>
+<option value="HNB">Hatton National Bank</option>
 
-            </div>
+</select>
 
+<i class="fas fa-chevron-down"></i>
 
+</div>
 
-            <!-- =====================================
-                 BANK TRANSFER DETAILS
-            ====================================== -->
+</div>
 
-            <div class="payment-details-panel" id="bankDetailsPanel">
 
-                <div class="payment-panel-heading">
+<div class="bank-account-card">
 
-                    <div class="panel-icon">
-                        <i class="fas fa-building-columns"></i>
-                    </div>
+<div class="bank-account-header">
 
-                    <div>
-                        <h3>Bank Transfer</h3>
-                        <p>Select your preferred bank.</p>
-                    </div>
+<div>
+<span class="account-label">BANK ACCOUNT DETAILS</span>
+<h4 id="bankDisplayName">Select a Bank</h4>
+</div>
 
-                </div>
+<span class="verified-badge">
+<i class="fas fa-check-circle"></i>
+Official
+</span>
 
+</div>
 
 
-                <!-- BANK SELECTION -->
+<div class="account-detail-row">
 
-                <div class="form-group">
+<span>Account Name</span>
 
-                    <label for="selectedBank">
-                        Select Your Bank
-                    </label>
+<div>
+<strong id="bankAccountName">-</strong>
 
-                    <div class="select-wrapper">
+<button type="button" class="copy-btn" data-copy="bankAccountName">
+<i class="far fa-copy"></i>
+</button>
+</div>
 
-                        <select id="selectedBank" required>
+</div>
 
-                            <option value="">Choose a Bank</option>
 
-                            <option value="BOC">Bank of Ceylon</option>
+<div class="account-detail-row">
 
-                            <option value="Commercial Bank">Commercial Bank</option>
+<span>Account Number</span>
 
-                            <option value="Sampath Bank">Sampath Bank</option>
+<div>
+<strong id="bankAccountNumber">-</strong>
 
-                            <option value="HNB">Hatton National Bank</option>
+<button type="button" class="copy-btn" data-copy="bankAccountNumber">
+<i class="far fa-copy"></i>
+</button>
+</div>
 
-                        </select>
+</div>
 
-                        <i class="fas fa-chevron-down"></i>
 
-                    </div>
+<div class="account-detail-row">
 
-                </div>
+<span>Branch</span>
 
+<strong id="bankBranch">-</strong>
 
+</div>
 
-                <!-- SELECTED BANK DETAILS -->
+</div>
 
-                <div class="bank-account-card" id="bankAccountCard">
 
-                    <div class="bank-account-header">
+<div class="form-group receipt-group">
 
-                        <div>
-                            <span class="account-label">BANK ACCOUNT DETAILS</span>
-                            <h4 id="bankDisplayName">Select a Bank</h4>
-                        </div>
+<label>Upload Bank Transfer Receipt</label>
 
-                        <span class="demo-badge">DEMO</span>
+<label for="bankReceipt" class="upload-box">
 
-                    </div>
+<input
+type="file"
+id="bankReceipt"
+accept="image/png,image/jpeg,image/webp,application/pdf"
+hidden
+>
 
+<span class="upload-icon">
+<i class="fas fa-cloud-arrow-up"></i>
+</span>
 
-                    <div class="account-detail-row">
+<strong>Click to Upload Receipt</strong>
 
-                        <span>Account Name</span>
+<small>PNG, JPG, WEBP or PDF · Maximum 5 MB</small>
 
-                        <div>
-                            <strong id="bankAccountName">BIG STORE DEMO</strong>
+</label>
 
-                            <button
-                                type="button"
-                                class="copy-btn"
-                                data-copy="bankAccountName"
-                                aria-label="Copy account name"
-                            >
-                                <i class="far fa-copy"></i>
-                            </button>
-                        </div>
+<div class="receipt-preview" id="bankReceiptPreview"></div>
 
-                    </div>
+</div>
 
+</div>
 
-                    <div class="account-detail-row">
 
-                        <span>Account Number</span>
+<!-- EZ CASH -->
 
-                        <div>
-                            <strong id="bankAccountNumber">1234567890</strong>
+<div class="payment-details-panel" id="ezcashDetailsPanel" hidden>
 
-                            <button
-                                type="button"
-                                class="copy-btn"
-                                data-copy="bankAccountNumber"
-                                aria-label="Copy account number"
-                            >
-                                <i class="far fa-copy"></i>
-                            </button>
-                        </div>
+<div class="payment-panel-heading">
 
-                    </div>
+<div class="panel-icon ezcash-icon">
+<i class="fas fa-mobile-screen-button"></i>
+</div>
 
+<div>
+<h3>EZ Cash Payment</h3>
+<p>Transfer money to the following number.</p>
+</div>
 
-                    <div class="account-detail-row">
+</div>
 
-                        <span>Branch</span>
 
-                        <strong id="bankBranch">Demo Branch</strong>
+<div class="bank-account-card">
 
-                    </div>
+<div class="bank-account-header">
 
+<div>
+<span class="account-label">EZ CASH NUMBER</span>
+<h4>0743829773</h4>
+</div>
 
-                    <div class="demo-warning">
+<span class="verified-badge">
+<i class="fas fa-check-circle"></i>
+Official
+</span>
 
-                        <i class="fas fa-triangle-exclamation"></i>
+</div>
 
-                        <span>
-                            Demo account details only. Do not send real money.
-                        </span>
 
-                    </div>
+<div class="account-detail-row">
 
-                </div>
+<span>Account Name</span>
 
+<div>
+<strong id="ezcashAccountName">JOYTHAS K</strong>
 
-                <!-- BANK RECEIPT UPLOAD -->
+<button type="button" class="copy-btn" data-copy="ezcashAccountName">
+<i class="far fa-copy"></i>
+</button>
+</div>
 
-                <div class="form-group receipt-group">
+</div>
 
-                    <label>
-                        Upload Bank Transfer Receipt
-                    </label>
 
-                    <label for="bankReceipt" class="upload-box" id="bankUploadBox">
+<div class="account-detail-row">
 
-                        <input
-                            type="file"
-                            id="bankReceipt"
-                            accept="image/png,image/jpeg,image/jpg"
-                            hidden
-                        >
+<span>Mobile Number</span>
 
-                        <span class="upload-icon">
-                            <i class="fas fa-cloud-arrow-up"></i>
-                        </span>
+<div>
+<strong id="ezcashNumber">0743829773</strong>
 
-                        <strong>Click to Upload Receipt</strong>
+<button type="button" class="copy-btn" data-copy="ezcashNumber">
+<i class="far fa-copy"></i>
+</button>
+</div>
 
-                        <small>PNG, JPG or JPEG · Maximum 5 MB</small>
+</div>
 
-                    </label>
+</div>
 
-                    <div class="receipt-preview" id="bankReceiptPreview"></div>
 
-                </div>
+<div class="form-group receipt-group">
 
-            </div>
+<label>Upload EZ Cash Receipt</label>
 
+<label for="ezcashReceipt" class="upload-box">
 
+<input
+type="file"
+id="ezcashReceipt"
+accept="image/png,image/jpeg,image/webp,application/pdf"
+hidden
+>
 
-            <!-- =====================================
-                 EZ CASH DETAILS
-            ====================================== -->
+<span class="upload-icon">
+<i class="fas fa-cloud-arrow-up"></i>
+</span>
 
-            <div class="payment-details-panel" id="ezcashDetailsPanel" hidden>
+<strong>Click to Upload Receipt</strong>
 
-                <div class="payment-panel-heading">
+<small>PNG, JPG, WEBP or PDF · Maximum 5 MB</small>
 
-                    <div class="panel-icon ezcash-icon">
-                        <i class="fas fa-mobile-screen-button"></i>
-                    </div>
+</label>
 
-                    <div>
-                        <h3>EZ Cash Payment</h3>
-                        <p>Use the demo number below.</p>
-                    </div>
+<div class="receipt-preview" id="ezcashReceiptPreview"></div>
 
-                </div>
+</div>
 
+</div>
 
-                <div class="bank-account-card">
 
-                    <div class="bank-account-header">
+<!-- BINANCE -->
 
-                        <div>
-                            <span class="account-label">EZ CASH NUMBER</span>
-                            <h4>0771234567</h4>
-                        </div>
+<div class="payment-details-panel" id="binanceDetailsPanel" hidden>
 
-                        <span class="demo-badge">DEMO</span>
+<div class="payment-panel-heading">
 
-                    </div>
+<div class="panel-icon binance-icon">
+<i class="fab fa-bitcoin"></i>
+</div>
 
+<div>
+<h3>Binance USDT</h3>
+<p>Send USDT to the Binance account below.</p>
+</div>
 
-                    <div class="account-detail-row">
+</div>
 
-                        <span>Account Name</span>
 
-                        <div>
-                            <strong id="ezcashAccountName">BIG STORE DEMO</strong>
+<div class="bank-account-card">
 
-                            <button
-                                type="button"
-                                class="copy-btn"
-                                data-copy="ezcashAccountName"
-                                aria-label="Copy account name"
-                            >
-                                <i class="far fa-copy"></i>
-                            </button>
-                        </div>
+<div class="bank-account-header">
 
-                    </div>
+<div>
+<span class="account-label">BINANCE PAYMENT</span>
+<h4>Binance UID</h4>
+</div>
 
+<span class="verified-badge">
+<i class="fas fa-check-circle"></i>
+Official
+</span>
 
-                    <div class="account-detail-row">
+</div>
 
-                        <span>Mobile Number</span>
 
-                        <div>
-                            <strong id="ezcashNumber">0771234567</strong>
+<div class="account-detail-row">
 
-                            <button
-                                type="button"
-                                class="copy-btn"
-                                data-copy="ezcashNumber"
-                                aria-label="Copy mobile number"
-                            >
-                                <i class="far fa-copy"></i>
-                            </button>
-                        </div>
+<span>Account Name</span>
 
-                    </div>
+<strong>JOYTHAS K</strong>
 
+</div>
 
-                    <div class="demo-warning">
 
-                        <i class="fas fa-triangle-exclamation"></i>
+<div class="account-detail-row">
 
-                        <span>
-                            Demo number only. Do not send real money.
-                        </span>
+<span>Binance UID</span>
 
-                    </div>
+<div>
+<strong id="binanceUID">1291730157</strong>
 
-                </div>
+<button type="button" class="copy-btn" data-copy="binanceUID">
+<i class="far fa-copy"></i>
+</button>
+</div>
 
+</div>
 
-                <div class="form-group receipt-group">
+</div>
 
-                    <label>Upload EZ Cash Receipt</label>
 
-                    <label for="ezcashReceipt" class="upload-box">
+<div class="form-group">
 
-                        <input
-                            type="file"
-                            id="ezcashReceipt"
-                            accept="image/png,image/jpeg,image/jpg"
-                            hidden
-                        >
+<label for="cryptoTransactionId">
+Transaction ID / TXID
+</label>
 
-                        <span class="upload-icon">
-                            <i class="fas fa-cloud-arrow-up"></i>
-                        </span>
+<input
+type="text"
+id="cryptoTransactionId"
+placeholder="Enter transaction ID"
+autocomplete="off"
+>
 
-                        <strong>Click to Upload Receipt</strong>
+</div>
 
-                        <small>PNG, JPG or JPEG · Maximum 5 MB</small>
 
-                    </label>
+<div class="form-group receipt-group">
 
-                    <div class="receipt-preview" id="ezcashReceiptPreview"></div>
+<label>Upload Binance Payment Screenshot</label>
 
-                </div>
+<label for="binanceReceipt" class="upload-box">
 
-            </div>
+<input
+type="file"
+id="binanceReceipt"
+accept="image/png,image/jpeg,image/webp,application/pdf"
+hidden
+>
 
+<span class="upload-icon">
+<i class="fas fa-cloud-arrow-up"></i>
+</span>
 
+<strong>Click to Upload Screenshot</strong>
 
-            <!-- =====================================
-                 BINANCE USDT DETAILS
-            ====================================== -->
+<small>PNG, JPG, WEBP or PDF · Maximum 5 MB</small>
 
-            <div class="payment-details-panel" id="binanceDetailsPanel" hidden>
+</label>
 
-                <div class="payment-panel-heading">
+<div class="receipt-preview" id="binanceReceiptPreview"></div>
 
-                    <div class="panel-icon binance-icon">
-                        <i class="fab fa-bitcoin"></i>
-                    </div>
+</div>
 
-                    <div>
-                        <h3>Binance USDT</h3>
-                        <p>Demo crypto payment details.</p>
-                    </div>
+</div>
 
-                </div>
 
+<!-- SUBMIT -->
 
-                <div class="bank-account-card">
+<div class="submit-section">
 
-                    <div class="bank-account-header">
+<div class="submit-notice">
 
-                        <div>
-                            <span class="account-label">USDT NETWORK</span>
-                            <h4>BEP20 (BSC)</h4>
-                        </div>
+<i class="fas fa-circle-info"></i>
 
-                        <span class="demo-badge">DEMO</span>
+<p>
+Your deposit request will be reviewed by the BIG STORE admin. Your wallet balance will only be updated after payment verification and approval.
+</p>
 
-                    </div>
+</div>
 
 
-                    <div class="account-detail-row">
+<button type="button" id="submitDepositBtn" class="submit-deposit-btn">
 
-                        <span>Wallet Address</span>
+<span>Submit Deposit Request</span>
 
-                        <div>
-                            <strong id="binanceAddress">
-                                0x1234567890ABCDEF1234567890ABCDEF12345678
-                            </strong>
+<i class="fas fa-arrow-right"></i>
 
-                            <button
-                                type="button"
-                                class="copy-btn"
-                                data-copy="binanceAddress"
-                                aria-label="Copy wallet address"
-                            >
-                                <i class="far fa-copy"></i>
-                            </button>
-                        </div>
+</button>
 
-                    </div>
+</div>
 
+</section>
 
-                    <div class="demo-warning">
 
-                        <i class="fas fa-triangle-exclamation"></i>
+<!-- DEPOSIT HISTORY -->
 
-                        <span>
-                            Fake wallet address. Never send USDT to this address.
-                        </span>
+<section class="deposit-history-section">
 
-                    </div>
+<div class="section-heading">
 
-                </div>
+<div>
+<span class="section-label">ACTIVITY</span>
+<h2>Deposit History</h2>
+</div>
 
+<span class="history-icon">
+<i class="fas fa-clock-rotate-left"></i>
+</span>
 
-                <div class="form-group">
+</div>
 
-                    <label for="cryptoTransactionId">
-                        Transaction ID / TXID
-                    </label>
 
-                    <input
-                        type="text"
-                        id="cryptoTransactionId"
-                        placeholder="Enter transaction ID"
-                    >
+<div id="depositHistoryList" class="deposit-history-list">
 
-                </div>
+<div class="history-empty">
 
+<div class="history-empty-icon">
+<i class="fas fa-receipt"></i>
+</div>
 
-                <div class="form-group receipt-group">
+<h3>Loading Deposits...</h3>
 
-                    <label>Upload Crypto Payment Screenshot</label>
+<p>Please wait.</p>
 
-                    <label for="binanceReceipt" class="upload-box">
+</div>
 
-                        <input
-                            type="file"
-                            id="binanceReceipt"
-                            accept="image/png,image/jpeg,image/jpg"
-                            hidden
-                        >
+</div>
 
-                        <span class="upload-icon">
-                            <i class="fas fa-cloud-arrow-up"></i>
-                        </span>
+</section>
 
-                        <strong>Click to Upload Screenshot</strong>
 
-                        <small>PNG, JPG or JPEG · Maximum 5 MB</small>
+<!-- SECURITY -->
 
-                    </label>
+<section class="wallet-security">
 
-                    <div class="receipt-preview" id="binanceReceiptPreview"></div>
+<div class="security-icon">
+<i class="fas fa-shield-halved"></i>
+</div>
 
-                </div>
+<div>
 
-            </div>
+<h3>Payment Security</h3>
 
+<p>
+Never share your password or OTP with anyone. Always verify payment details before making a transfer.
+</p>
 
+</div>
 
-            <!-- =====================================
-                 SUBMIT
-            ====================================== -->
+</section>
 
-            <div class="submit-section">
+</main>
 
-                <div class="submit-notice">
 
-                    <i class="fas fa-circle-info"></i>
+<!-- BOTTOM NAV -->
 
-                    <p>
-                        Your deposit request will be reviewed by the admin.
-                        Wallet balance will only be updated after approval.
-                    </p>
+<nav class="big-store-bottom-nav">
 
-                </div>
+<a href="index.html" class="nav-item">
+<i class="fas fa-house"></i>
+<span>Home</span>
+</a>
 
+<a href="games.html" class="nav-item">
+<i class="fas fa-gamepad"></i>
+<span>Games</span>
+</a>
 
-                <button type="button" id="submitDepositBtn" class="submit-deposit-btn">
+<a href="wallet-topup.html" class="nav-item active">
+<i class="fas fa-wallet"></i>
+<span>Wallet</span>
+</a>
 
-                    <span>Submit Deposit Request</span>
+<a href="history.html" class="nav-item">
+<i class="fas fa-clock-rotate-left"></i>
+<span>History</span>
+</a>
 
-                    <i class="fas fa-arrow-right"></i>
+<a href="profile.html" class="nav-item">
+<i class="fas fa-user"></i>
+<span>Profile</span>
+</a>
 
-                </button>
+</nav>
 
-                <p class="demo-page-note">
-                    Demo interface · Real payment processing is not enabled.
-                </p>
 
-            </div>
+<!-- TOAST -->
 
+<div id="walletToast" class="wallet-toast" role="status" aria-live="polite">
 
-        </section>
+<i class="fas fa-circle-info"></i>
 
+<span id="walletToastMessage"></span>
 
+</div>
 
-        <!-- =====================================
-             DEPOSIT HISTORY
-        ====================================== -->
 
-        <section class="deposit-history-section">
-
-            <div class="section-heading">
-
-                <div>
-                    <span class="section-label">ACTIVITY</span>
-                    <h2>Deposit History</h2>
-                </div>
-
-                <span class="history-icon">
-                    <i class="fas fa-clock-rotate-left"></i>
-                </span>
-
-            </div>
-
-
-            <div id="depositHistoryList" class="deposit-history-list">
-
-                <div class="history-empty">
-
-                    <div class="history-empty-icon">
-                        <i class="fas fa-receipt"></i>
-                    </div>
-
-                    <h3>No Deposits Yet</h3>
-
-                    <p>Your deposit transactions will appear here.</p>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-
-        <!-- =====================================
-             SECURITY INFO
-        ====================================== -->
-
-        <section class="wallet-security">
-
-            <div class="security-icon">
-                <i class="fas fa-shield-halved"></i>
-            </div>
-
-            <div>
-
-                <h3>Payment Security</h3>
-
-                <p>
-                    Never share your password or OTP with anyone.
-                    Always verify payment details before making a transfer.
-                </p>
-
-            </div>
-
-        </section>
-
-
-    </main>
-
-
-
-    <!-- =====================================
-         BOTTOM NAVIGATION
-    ====================================== -->
-
-    <nav class="big-store-bottom-nav">
-
-        <a href="index.html" class="nav-item">
-            <i class="fas fa-house"></i>
-            <span>Home</span>
-        </a>
-
-        <a href="games.html" class="nav-item">
-            <i class="fas fa-gamepad"></i>
-            <span>Games</span>
-        </a>
-
-        <a href="wallet-topup.html" class="nav-item active">
-            <i class="fas fa-wallet"></i>
-            <span>Wallet</span>
-        </a>
-
-        <a href="history.html" class="nav-item">
-            <i class="fas fa-clock-rotate-left"></i>
-            <span>History</span>
-        </a>
-
-        <a href="profile.html" class="nav-item">
-            <i class="fas fa-user"></i>
-            <span>Profile</span>
-        </a>
-
-    </nav>
-
-
-
-    <!-- =====================================
-         TOAST
-    ====================================== -->
-
-    <div id="walletToast" class="wallet-toast" role="status" aria-live="polite">
-
-        <i class="fas fa-circle-info"></i>
-
-        <span id="walletToastMessage"></span>
-
-    </div>
-
-
-
-    <!-- JAVASCRIPT -->
-
-    <script type="module" src="wallet-topup.js"></script>
+<script type="module" src="wallet-topup.js"></script>
 
 </body>
-
 </html>
