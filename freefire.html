@@ -1,613 +1,1188 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free Fire Top-Up | BIG STORE</title>
 
-    <title>Free Fire Top-Up | BIG STORE</title>
+<meta name="description" content="Buy Free Fire Diamonds and game packages securely at BIG STORE.">
 
-    <meta name="description"
-        content="Buy Free Fire Diamonds and game packages securely at BIG STORE.">
+<meta name="theme-color" content="#080808">
 
-    <meta name="theme-color" content="#080808">
+<link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-    <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
 
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
-        rel="stylesheet">
+<link rel="stylesheet" href="freefire.css">
 
-    <link rel="stylesheet" href="freefire.css">
-</head>
+<!-- BIG STORE BOTTOM NAVIGATION CSS -->
 
-<body>
+<style>
 
-    <!-- PAGE LOADER -->
-    <div class="page-loader" id="pageLoader">
-        <div class="loader-content">
-            <div class="loader-logo">BIG<span>STORE</span></div>
-            <div class="loader-spinner"></div>
-            <p>Preparing your experience...</p>
-        </div>
+    .big-store-bottom-nav {
+
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        z-index: 99999;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+
+        padding: 10px 5px;
+        padding-bottom: calc(10px + env(safe-area-inset-bottom));
+
+        background: rgba(8, 8, 8, 0.97);
+
+        border-top: 1px solid rgba(212, 175, 55, 0.20);
+
+        box-shadow: 0 -5px 25px rgba(0, 0, 0, 0.5);
+
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+
+    }
+
+
+    .big-store-bottom-nav .nav-item {
+
+        position: relative;
+
+        flex: 1;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        gap: 5px;
+
+        padding: 7px 2px;
+
+        color: #858585;
+
+        text-decoration: none;
+
+        font-family: Arial, sans-serif;
+
+        transition: all 0.25s ease;
+
+        -webkit-tap-highlight-color: transparent;
+
+    }
+
+
+    .big-store-bottom-nav .nav-item i {
+
+        font-size: 20px;
+
+        transition: all 0.25s ease;
+
+    }
+
+
+    .big-store-bottom-nav .nav-item span {
+
+        font-size: 11px;
+
+        font-weight: 600;
+
+        white-space: nowrap;
+
+    }
+
+
+    /* ACTIVE NAVIGATION */
+
+    .big-store-bottom-nav .nav-item.active {
+
+        color: #e9c65b;
+
+    }
+
+
+    .big-store-bottom-nav .nav-item.active i {
+
+        color: #f5d77a;
+
+        transform: translateY(-3px);
+
+        filter: drop-shadow(
+            0 0 7px rgba(212, 175, 55, 0.5)
+        );
+
+    }
+
+
+    /* ACTIVE INDICATOR */
+
+    .big-store-bottom-nav .nav-item.active::before {
+
+        content: "";
+
+        position: absolute;
+
+        top: -10px;
+
+        width: 28px;
+
+        height: 3px;
+
+        background: #d4af37;
+
+        border-radius: 0 0 5px 5px;
+
+        box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+
+    }
+
+
+    /* HOVER */
+
+    @media (hover: hover) {
+
+        .big-store-bottom-nav .nav-item:hover {
+
+            color: #f5d77a;
+
+            transform: translateY(-2px);
+
+        }
+
+    }
+
+
+    /* TABLET */
+
+    @media (min-width: 600px) {
+
+        .big-store-bottom-nav {
+
+            left: 50%;
+
+            transform: translateX(-50%);
+
+            bottom: 15px;
+
+            width: min(600px, calc(100% - 40px));
+
+            padding: 12px 15px;
+
+            border: 1px solid rgba(212, 175, 55, 0.2);
+
+            border-radius: 18px;
+
+        }
+
+    }
+
+
+    /* DESKTOP */
+
+    @media (min-width: 1000px) {
+
+        .big-store-bottom-nav {
+
+            width: 650px;
+
+            bottom: 20px;
+
+            padding: 13px 20px;
+
+        }
+
+    }
+
+
+    /* SMALL MOBILE */
+
+    @media (max-width: 360px) {
+
+        .big-store-bottom-nav .nav-item i {
+
+            font-size: 18px;
+
+        }
+
+        .big-store-bottom-nav .nav-item span {
+
+            font-size: 10px;
+
+        }
+
+    }
+
+
+    /* BODY SPACE */
+
+    body {
+
+        padding-bottom: 100px !important;
+
+    }
+
+
+    /* ACCESSIBILITY */
+
+    @media (prefers-reduced-motion: reduce) {
+
+        .big-store-bottom-nav * {
+
+            transition: none !important;
+
+        }
+
+    }
+
+</style>
+
+</head><body><!-- PAGE LOADER -->
+
+<div class="page-loader" id="pageLoader">
+
+    <div class="loader-content">
+
+        <div class="loader-logo">BIG<span>STORE</span></div>
+
+        <div class="loader-spinner"></div>
+
+        <p>Preparing your experience...</p>
+
     </div>
 
-    <!-- BACKGROUND -->
-    <div class="background-effects">
-        <div class="glow glow-one"></div>
-        <div class="glow glow-two"></div>
-    </div>
+</div>
 
-    <!-- HEADER -->
-    <header class="main-header">
 
-        <div class="header-container">
+<!-- BACKGROUND -->
 
-            <a href="index.html" class="brand-logo">
-                <span class="brand-icon">
-                    <i class="fa-solid fa-bolt"></i>
-                </span>
+<div class="background-effects">
 
-                <span class="brand-text">
-                    BIG<span>STORE</span>
-                </span>
-            </a>
+    <div class="glow glow-one"></div>
 
-            <nav class="header-navigation">
+    <div class="glow glow-two"></div>
 
-                <a href="index.html">
-                    <i class="fa-solid fa-house"></i>
-                    Home
-                </a>
+</div>
 
-                <a href="index.html#products">
-                    <i class="fa-solid fa-store"></i>
-                    Products
-                </a>
 
-                <a href="history.html">
-                    <i class="fa-solid fa-clock-rotate-left"></i>
-                    History
-                </a>
+<!-- HEADER -->
 
-            </nav>
+<header class="main-header">
 
-            <div class="header-actions">
+    <div class="header-container">
 
-                <div class="wallet-display" id="walletDisplay">
-                    <i class="fa-solid fa-wallet"></i>
+        <a href="index.html" class="brand-logo">
 
-                    <div>
-                        <small>MY WALLET</small>
-                        <strong id="walletBalance">LKR 0.00</strong>
-                    </div>
-                </div>
+            <span class="brand-icon">
 
-                <a href="profile.html" class="profile-button">
-                    <i class="fa-solid fa-user"></i>
-                    <span>Profile</span>
-                </a>
+                <i class="fa-solid fa-bolt"></i>
 
-            </div>
+            </span>
 
-            <button class="mobile-menu-button" id="mobileMenuButton"
-                aria-label="Open navigation menu">
-                <i class="fa-solid fa-bars"></i>
-            </button>
+            <span class="brand-text">
 
-        </div>
-
-    </header>
-
-    <!-- MOBILE NAVIGATION -->
-    <div class="mobile-navigation" id="mobileNavigation">
-
-        <a href="index.html">
-            <i class="fa-solid fa-house"></i>
-            Home
-        </a>
-
-        <a href="index.html#products">
-            <i class="fa-solid fa-store"></i>
-            Products
-        </a>
-
-        <a href="history.html">
-            <i class="fa-solid fa-clock-rotate-left"></i>
-            Order History
-        </a>
-
-        <a href="profile.html">
-            <i class="fa-solid fa-user"></i>
-            My Profile
-        </a>
-
-    </div>
-
-    <!-- MAIN CONTENT -->
-    <main class="main-container">
-
-        <!-- BREADCRUMB -->
-        <div class="breadcrumb">
-
-            <a href="index.html">Home</a>
-
-            <i class="fa-solid fa-chevron-right"></i>
-
-            <span>Free Fire Top-Up</span>
-
-        </div>
-
-        <!-- GAME HERO -->
-        <section class="game-hero">
-
-            <div class="game-hero-content">
-
-                <div class="game-badge">
-                    <span class="live-dot"></span>
-                    OFFICIAL TOP-UP SERVICE
-                </div>
-
-                <h1>
-                    FREE FIRE
-                    <span>TOP-UP</span>
-                </h1>
-
-                <p>
-                    Get your favourite Free Fire Diamonds and
-                    exclusive game packages with BIG STORE.
-                </p>
-
-                <div class="hero-features">
-
-                    <div>
-                        <i class="fa-solid fa-bolt"></i>
-                        <span>Fast Delivery</span>
-                    </div>
-
-                    <div>
-                        <i class="fa-solid fa-shield-halved"></i>
-                        <span>Secure Payment</span>
-                    </div>
-
-                    <div>
-                        <i class="fa-solid fa-headset"></i>
-                        <span>Support</span>
-                    </div>
-
-                </div>
-
-            </div>
-
-            <div class="game-hero-image">
-                <div class="hero-image-overlay"></div>
-
-                <div class="hero-game-label">
-                    <span>GAME TOP-UP</span>
-                    <strong>FREE FIRE</strong>
-                </div>
-            </div>
-
-        </section>
-
-        <!-- TOPUP LAYOUT -->
-        <div class="topup-layout">
-
-            <!-- LEFT SECTION -->
-            <section class="topup-main">
-
-                <!-- STEP 01: PLAYER INFORMATION -->
-                <div class="section-card">
-
-                    <div class="section-heading">
-
-                        <div class="step-number">01</div>
-
-                        <div>
-                            <h2>Player Information</h2>
-                            <p>Enter your Free Fire account details.</p>
-                        </div>
-
-                    </div>
-
-                    <div class="form-group">
-
-                        <label for="playerUID">
-                            Player ID (UID)
-                        </label>
-
-                        <div class="input-wrapper">
-
-                            <i class="fa-solid fa-id-card"></i>
-
-                            <input
-                                type="text"
-                                id="playerUID"
-                                placeholder="Enter your Free Fire UID"
-                                autocomplete="off"
-                                maxlength="30">
-
-                        </div>
-
-                        <small class="input-hint">
-                            Enter your correct Free Fire Player ID.
-                        </small>
-
-                    </div>
-
-                    <button class="primary-button name-check-button"
-                        id="nameCheckButton">
-
-                        <i class="fa-solid fa-magnifying-glass"></i>
-
-                        <span>Verify Player</span>
-
-                    </button>
-
-                    <!-- PLAYER RESULT -->
-                    <div class="player-result" id="playerResult">
-
-                        <div class="player-avatar">
-                            <i class="fa-solid fa-user-astronaut"></i>
-                        </div>
-
-                        <div class="player-information">
-
-                            <small>VERIFIED PLAYER</small>
-
-                            <h3 id="playerName">Player Name</h3>
-
-                            <span id="playerRegion">
-                                Region: Not Verified
-                            </span>
-
-                        </div>
-
-                        <div class="verified-icon" id="verifiedIcon">
-                            <i class="fa-solid fa-circle-check"></i>
-                        </div>
-
-                    </div>
-
-                    <div class="verification-message"
-                        id="verificationMessage">
-
-                        <i class="fa-solid fa-circle-info"></i>
-
-                        Please verify your Player ID before purchasing.
-
-                    </div>
-
-                </div>
-
-                <!-- STEP 02: PRODUCTS -->
-                <div class="section-card products-section">
-
-                    <div class="section-heading">
-
-                        <div class="step-number">02</div>
-
-                        <div>
-                            <h2>Select Your Package</h2>
-                            <p>Choose your favourite Free Fire package.</p>
-                        </div>
-
-                    </div>
-
-                    <!-- REGION INFORMATION -->
-                    <div class="region-information">
-
-                        <div class="region-icon">
-                            <i class="fa-solid fa-earth-asia"></i>
-                        </div>
-
-                        <div>
-                            <strong>Selected Region</strong>
-                            <p id="selectedRegion">
-                                Verify your Player ID first
-                            </p>
-                        </div>
-
-                        <span class="region-status" id="regionStatus">
-                            Waiting
-                        </span>
-
-                    </div>
-
-                    <!-- DYNAMIC PRODUCTS -->
-                    <div class="products-grid" id="productsGrid">
-                        <!-- Products will load from Supabase using freefire.js -->
-                    </div>
-
-                    <!-- NO PRODUCTS -->
-                    <div class="no-products" id="noProducts">
-
-                        <div class="empty-icon">
-                            <i class="fa-solid fa-box-open"></i>
-                        </div>
-
-                        <h3>No Products Available</h3>
-
-                        <p>
-                            Verify your player ID to view available packages.
-                        </p>
-
-                    </div>
-
-                </div>
-
-                <!-- STEP 03: ORDER CONFIRMATION -->
-                <div class="section-card">
-
-                    <div class="section-heading">
-
-                        <div class="step-number">03</div>
-
-                        <div>
-                            <h2>Order Confirmation</h2>
-                            <p>Review your purchase details.</p>
-                        </div>
-
-                    </div>
-
-                    <div class="order-summary">
-
-                        <div class="summary-row">
-                            <span>Game</span>
-                            <strong>Free Fire</strong>
-                        </div>
-
-                        <div class="summary-row">
-                            <span>Player ID</span>
-                            <strong id="summaryPlayerID">---</strong>
-                        </div>
-
-                        <div class="summary-row">
-                            <span>Player Name</span>
-                            <strong id="summaryPlayerName">---</strong>
-                        </div>
-
-                        <div class="summary-row">
-                            <span>Selected Package</span>
-                            <strong id="summaryProduct">Not Selected</strong>
-                        </div>
-
-                        <div class="summary-divider"></div>
-
-                        <div class="summary-total">
-                            <span>Total Amount</span>
-                            <strong id="summaryTotal">LKR 0.00</strong>
-                        </div>
-
-                    </div>
-
-                    <button class="purchase-button"
-                        id="purchaseButton" disabled>
-
-                        <i class="fa-solid fa-lock"></i>
-
-                        <span>Confirm Purchase</span>
-
-                        <i class="fa-solid fa-arrow-right"></i>
-
-                    </button>
-
-                    <div class="secure-payment">
-                        <i class="fa-solid fa-shield-halved"></i>
-                        Your transaction is protected by BIG STORE.
-                    </div>
-
-                </div>
-
-            </section>
-
-            <!-- RIGHT SIDEBAR -->
-            <aside class="topup-sidebar">
-
-                <!-- WALLET -->
-                <div class="sidebar-card wallet-card">
-
-                    <div class="sidebar-card-heading">
-
-                        <div class="sidebar-icon">
-                            <i class="fa-solid fa-wallet"></i>
-                        </div>
-
-                        <div>
-                            <h3>My Wallet</h3>
-                            <p>Your available balance</p>
-                        </div>
-
-                    </div>
-
-                    <div class="wallet-amount">
-
-                        <small>AVAILABLE BALANCE</small>
-
-                        <h2 id="sidebarWalletBalance">
-                            LKR 0.00
-                        </h2>
-
-                    </div>
-
-                    <a href="wallet.html" class="add-money-button">
-                        <i class="fa-solid fa-plus"></i>
-                        Add Money
-                    </a>
-
-                </div>
-
-                <!-- HOW IT WORKS -->
-                <div class="sidebar-card">
-
-                    <div class="sidebar-card-heading">
-
-                        <div class="sidebar-icon">
-                            <i class="fa-solid fa-list-check"></i>
-                        </div>
-
-                        <div>
-                            <h3>How It Works</h3>
-                            <p>Simple and easy steps</p>
-                        </div>
-
-                    </div>
-
-                    <div class="how-it-works">
-
-                        <div class="work-step">
-
-                            <div class="work-step-icon">
-                                <i class="fa-solid fa-id-card"></i>
-                            </div>
-
-                            <div>
-                                <strong>Enter Player ID</strong>
-                                <p>Enter your Free Fire UID.</p>
-                            </div>
-
-                        </div>
-
-                        <div class="work-step">
-
-                            <div class="work-step-icon">
-                                <i class="fa-solid fa-user-check"></i>
-                            </div>
-
-                            <div>
-                                <strong>Verify Account</strong>
-                                <p>Check your player information.</p>
-                            </div>
-
-                        </div>
-
-                        <div class="work-step">
-
-                            <div class="work-step-icon">
-                                <i class="fa-solid fa-gem"></i>
-                            </div>
-
-                            <div>
-                                <strong>Select Package</strong>
-                                <p>Choose your preferred package.</p>
-                            </div>
-
-                        </div>
-
-                        <div class="work-step">
-
-                            <div class="work-step-icon">
-                                <i class="fa-solid fa-bolt"></i>
-                            </div>
-
-                            <div>
-                                <strong>Complete Purchase</strong>
-                                <p>Receive your top-up after processing.</p>
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-                <!-- IMPORTANT NOTICE -->
-                <div class="sidebar-card notice-card">
-
-                    <div class="notice-heading">
-                        <i class="fa-solid fa-triangle-exclamation"></i>
-                        <h3>Important Notice</h3>
-                    </div>
-
-                    <ul>
-                        <li>Always enter the correct Player ID.</li>
-                        <li>Verify your player name before purchasing.</li>
-                        <li>Never share your game password.</li>
-                        <li>Top-up orders may take a few seconds to process.</li>
-                    </ul>
-
-                </div>
-
-                <!-- SUPPORT -->
-                <div class="sidebar-card support-card">
-
-                    <div class="support-icon">
-                        <i class="fa-solid fa-headset"></i>
-                    </div>
-
-                    <h3>Need Help?</h3>
-
-                    <p>
-                        Our support team is here to help you.
-                    </p>
-
-                    <a href="support.html">
-                        Contact Support
-                        <i class="fa-solid fa-arrow-right"></i>
-                    </a>
-
-                </div>
-
-            </aside>
-
-        </div>
-
-    </main>
-
-    <!-- FOOTER -->
-    <footer class="main-footer">
-
-        <div class="footer-container">
-
-            <a href="index.html" class="footer-logo">
                 BIG<span>STORE</span>
+
+            </span>
+
+        </a>
+
+
+        <nav class="header-navigation">
+
+            <a href="index.html">
+
+                <i class="fa-solid fa-house"></i>
+
+                Home
+
             </a>
 
-            <p>
-                Your trusted destination for gaming and digital services.
-            </p>
 
-            <div class="footer-bottom">
+            <a href="index.html#products">
 
-                <span>
-                    &copy; <span id="currentYear"></span> BIG STORE.
-                    All rights reserved.
-                </span>
+                <i class="fa-solid fa-store"></i>
 
-                <span class="powered-by">
-                    Powered by
-                    <a href="index.html">BIG STORE</a>
-                </span>
+                Products
+
+            </a>
+
+
+            <a href="history.html">
+
+                <i class="fa-solid fa-clock-rotate-left"></i>
+
+                History
+
+            </a>
+
+        </nav>
+
+
+        <div class="header-actions">
+
+            <div class="wallet-display" id="walletDisplay">
+
+                <i class="fa-solid fa-wallet"></i>
+
+                <div>
+
+                    <small>MY WALLET</small>
+
+                    <strong id="walletBalance">LKR 0.00</strong>
+
+                </div>
 
             </div>
 
+
+            <a href="profile.html" class="profile-button">
+
+                <i class="fa-solid fa-user"></i>
+
+                <span>Profile</span>
+
+            </a>
+
         </div>
 
-    </footer>
 
-    <!-- TOAST NOTIFICATION -->
-    <div class="toast-container" id="toastContainer">
+        <button class="mobile-menu-button" id="mobileMenuButton"
+            aria-label="Open navigation menu">
 
-        <div class="toast-icon">
-            <i class="fa-solid fa-circle-info"></i>
-        </div>
+            <i class="fa-solid fa-bars"></i>
 
-        <div class="toast-content">
-            <strong id="toastTitle">Notification</strong>
-            <p id="toastMessage">Message goes here.</p>
-        </div>
-
-        <button id="closeToast" aria-label="Close notification">
-            <i class="fa-solid fa-xmark"></i>
         </button>
 
     </div>
 
-    <!-- JAVASCRIPT -->
-    <script type="module" src="freefire.js"></script>
+</header>
 
-</body>
-</html>
+
+<!-- MOBILE NAVIGATION -->
+
+<div class="mobile-navigation" id="mobileNavigation">
+
+    <a href="index.html">
+
+        <i class="fa-solid fa-house"></i>
+
+        Home
+
+    </a>
+
+
+    <a href="index.html#products">
+
+        <i class="fa-solid fa-store"></i>
+
+        Products
+
+    </a>
+
+
+    <a href="history.html">
+
+        <i class="fa-solid fa-clock-rotate-left"></i>
+
+        Order History
+
+    </a>
+
+
+    <a href="profile.html">
+
+        <i class="fa-solid fa-user"></i>
+
+        My Profile
+
+    </a>
+
+</div>
+
+
+<!-- MAIN CONTENT -->
+
+<main class="main-container">
+
+
+    <!-- BREADCRUMB -->
+
+    <div class="breadcrumb">
+
+        <a href="index.html">Home</a>
+
+        <i class="fa-solid fa-chevron-right"></i>
+
+        <span>Free Fire Top-Up SG/MY</span>
+
+    </div>
+
+
+    <!-- GAME HERO -->
+
+    <section class="game-hero">
+
+        <div class="game-hero-content">
+
+            <div class="game-badge">
+
+                <span class="live-dot"></span>
+
+                OFFICIAL TOP-UP SERVICE
+
+            </div>
+
+
+            <h1>
+
+                FREE FIRE
+
+                <span>TOP-UP</span>
+
+            </h1>
+
+
+            <p>
+
+                Get your favourite Free Fire Diamonds and
+                exclusive game packages with BIG STORE.
+
+            </p>
+
+
+            <div class="hero-features">
+
+                <div>
+
+                    <i class="fa-solid fa-bolt"></i>
+
+                    <span>Fast Delivery</span>
+
+                </div>
+
+
+                <div>
+
+                    <i class="fa-solid fa-shield-halved"></i>
+
+                    <span>Secure Payment</span>
+
+                </div>
+
+
+                <div>
+
+                    <i class="fa-solid fa-headset"></i>
+
+                    <span>Support</span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="game-hero-image">
+
+            <div class="hero-image-overlay"></div>
+
+            <div class="hero-game-label">
+
+                <span>GAME TOP-UP</span>
+
+                <strong>FREE FIRE</strong>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- TOPUP LAYOUT -->
+
+    <div class="topup-layout">
+
+
+        <!-- LEFT SECTION -->
+
+        <section class="topup-main">
+
+
+            <!-- STEP 01 -->
+
+            <div class="section-card">
+
+                <div class="section-heading">
+
+                    <div class="step-number">01</div>
+
+                    <div>
+
+                        <h2>Player Information</h2>
+
+                        <p>Enter your Free Fire account details.</p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="playerUID">
+
+                        Player ID (UID)
+
+                    </label>
+
+
+                    <div class="input-wrapper">
+
+                        <i class="fa-solid fa-id-card"></i>
+
+                        <input
+                            type="text"
+                            id="playerUID"
+                            placeholder="Enter your Free Fire UID"
+                            autocomplete="off"
+                            maxlength="30">
+
+                    </div>
+
+
+                    <small class="input-hint">
+
+                        Enter your correct Free Fire Player ID.
+
+                    </small>
+
+                </div>
+
+
+                <button class="primary-button name-check-button"
+                    id="nameCheckButton">
+
+                    <i class="fa-solid fa-magnifying-glass"></i>
+
+                    <span>Verify Player</span>
+
+                </button>
+
+
+                <div class="player-result" id="playerResult">
+
+                    <div class="player-avatar">
+
+                        <i class="fa-solid fa-user-astronaut"></i>
+
+                    </div>
+
+
+                    <div class="player-information">
+
+                        <small>VERIFIED PLAYER</small>
+
+                        <h3 id="playerName">Player Name</h3>
+
+                        <span id="playerRegion">
+
+                            Region: Not Verified
+
+                        </span>
+
+                    </div>
+
+
+                    <div class="verified-icon" id="verifiedIcon">
+
+                        <i class="fa-solid fa-circle-check"></i>
+
+                    </div>
+
+                </div>
+
+
+                <div class="verification-message"
+                    id="verificationMessage">
+
+                    <i class="fa-solid fa-circle-info"></i>
+
+                    Please verify your Player ID before purchasing.
+
+                </div>
+
+            </div>
+
+
+            <!-- STEP 02 -->
+
+            <div class="section-card products-section">
+
+                <div class="section-heading">
+
+                    <div class="step-number">02</div>
+
+                    <div>
+
+                        <h2>Select Your Package</h2>
+
+                        <p>Choose your favourite Free Fire package.</p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="region-information">
+
+                    <div class="region-icon">
+
+                        <i class="fa-solid fa-earth-asia"></i>
+
+                    </div>
+
+
+                    <div>
+
+                        <strong>Selected Region</strong>
+
+                        <p id="selectedRegion">
+
+                            Verify your Player ID first
+
+                        </p>
+
+                    </div>
+
+
+                    <span class="region-status" id="regionStatus">
+
+                        Waiting
+
+                    </span>
+
+                </div>
+
+
+                <div class="products-grid" id="productsGrid">
+
+                    <!-- Products load from Supabase -->
+
+                </div>
+
+
+                <div class="no-products" id="noProducts">
+
+                    <div class="empty-icon">
+
+                        <i class="fa-solid fa-box-open"></i>
+
+                    </div>
+
+                    <h3>No Products Available</h3>
+
+                    <p>
+
+                        Verify your player ID to view available packages.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- STEP 03 -->
+
+            <div class="section-card">
+
+                <div class="section-heading">
+
+                    <div class="step-number">03</div>
+
+                    <div>
+
+                        <h2>Order Confirmation</h2>
+
+                        <p>Review your purchase details.</p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="order-summary">
+
+                    <div class="summary-row">
+
+                        <span>Game</span>
+
+                        <strong>Free Fire</strong>
+
+                    </div>
+
+
+                    <div class="summary-row">
+
+                        <span>Player ID</span>
+
+                        <strong id="summaryPlayerID">---</strong>
+
+                    </div>
+
+
+                    <div class="summary-row">
+
+                        <span>Player Name</span>
+
+                        <strong id="summaryPlayerName">---</strong>
+
+                    </div>
+
+
+                    <div class="summary-row">
+
+                        <span>Selected Package</span>
+
+                        <strong id="summaryProduct">Not Selected</strong>
+
+                    </div>
+
+
+                    <div class="summary-divider"></div>
+
+
+                    <div class="summary-total">
+
+                        <span>Total Amount</span>
+
+                        <strong id="summaryTotal">LKR 0.00</strong>
+
+                    </div>
+
+                </div>
+
+
+                <button class="purchase-button"
+                    id="purchaseButton" disabled>
+
+                    <i class="fa-solid fa-lock"></i>
+
+                    <span>Confirm Purchase</span>
+
+                    <i class="fa-solid fa-arrow-right"></i>
+
+                </button>
+
+
+                <div class="secure-payment">
+
+                    <i class="fa-solid fa-shield-halved"></i>
+
+                    Your transaction is protected by BIG STORE.
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- RIGHT SIDEBAR -->
+
+        <aside class="topup-sidebar">
+
+
+            <!-- WALLET -->
+
+            <div class="sidebar-card wallet-card">
+
+                <div class="sidebar-card-heading">
+
+                    <div class="sidebar-icon">
+
+                        <i class="fa-solid fa-wallet"></i>
+
+                    </div>
+
+
+                    <div>
+
+                        <h3>My Wallet</h3>
+
+                        <p>Your available balance</p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="wallet-amount">
+
+                    <small>AVAILABLE BALANCE</small>
+
+                    <h2 id="sidebarWalletBalance">
+
+                        LKR 0.00
+
+                    </h2>
+
+                </div>
+
+
+                <a href="wallet-topup.html" class="add-money-button">
+
+                    <i class="fa-solid fa-plus"></i>
+
+                    Add Money
+
+                </a>
+
+            </div>
+
+
+            <!-- HOW IT WORKS -->
+
+            <div class="sidebar-card">
+
+                <div class="sidebar-card-heading">
+
+                    <div class="sidebar-icon">
+
+                        <i class="fa-solid fa-list-check"></i>
+
+                    </div>
+
+
+                    <div>
+
+                        <h3>How It Works</h3>
+
+                        <p>Simple and easy steps</p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="how-it-works">
+
+                    <div class="work-step">
+
+                        <div class="work-step-icon">
+
+                            <i class="fa-solid fa-id-card"></i>
+
+                        </div>
+
+                        <div>
+
+                            <strong>Enter Player ID</strong>
+
+                            <p>Enter your Free Fire UID.</p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="work-step">
+
+                        <div class="work-step-icon">
+
+                            <i class="fa-solid fa-user-check"></i>
+
+                        </div>
+
+                        <div>
+
+                            <strong>Verify Account</strong>
+
+                            <p>Check your player information.</p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="work-step">
+
+                        <div class="work-step-icon">
+
+                            <i class="fa-solid fa-gem"></i>
+
+                        </div>
+
+                        <div>
+
+                            <strong>Select Package</strong>
+
+                            <p>Choose your preferred package.</p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="work-step">
+
+                        <div class="work-step-icon">
+
+                            <i class="fa-solid fa-bolt"></i>
+
+                        </div>
+
+                        <div>
+
+                            <strong>Complete Purchase</strong>
+
+                            <p>Receive your top-up after processing.</p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- IMPORTANT NOTICE -->
+
+            <div class="sidebar-card notice-card">
+
+                <div class="notice-heading">
+
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+
+                    <h3>Important Notice</h3>
+
+                </div>
+
+
+                <ul>
+
+                    <li>Always enter the correct Player ID.</li>
+
+                    <li>Verify your player name before purchasing.</li>
+
+                    <li>Never share your game password.</li>
+
+                    <li>Top-up orders may take a few seconds to process.</li>
+
+                </ul>
+
+            </div>
+
+
+            <!-- SUPPORT -->
+
+            <div class="sidebar-card support-card">
+
+                <div class="support-icon">
+
+                    <i class="fa-solid fa-headset"></i>
+
+                </div>
+
+
+                <h3>Need Help?</h3>
+
+                <p>
+
+                    Our support team is here to help you.
+
+                </p>
+
+
+                <a href="support.html">
+
+                    Contact Support
+
+                    <i class="fa-solid fa-arrow-right"></i>
+
+                </a>
+
+            </div>
+
+        </aside>
+
+    </div>
+
+</main>
+
+
+<!-- FOOTER -->
+
+<footer class="main-footer">
+
+    <div class="footer-container">
+
+        <a href="index.html" class="footer-logo">
+
+            BIG<span>STORE</span>
+
+        </a>
+
+
+        <p>
+
+            Your trusted destination for gaming and digital services.
+
+        </p>
+
+
+        <div class="footer-bottom">
+
+            <span>
+
+                &copy; <span id="currentYear"></span> BIG STORE.
+
+                All rights reserved.
+
+            </span>
+
+
+            <span class="powered-by">
+
+                Powered by
+
+                <a href="index.html">BIG STORE</a>
+
+            </span>
+
+        </div>
+
+    </div>
+
+</footer>
+
+
+<!-- TOAST NOTIFICATION -->
+
+<div class="toast-container" id="toastContainer">
+
+    <div class="toast-icon">
+
+        <i class="fa-solid fa-circle-info"></i>
+
+    </div>
+
+
+    <div class="toast-content">
+
+        <strong id="toastTitle">Notification</strong>
+
+        <p id="toastMessage">Message goes here.</p>
+
+    </div>
+
+
+    <button id="closeToast" aria-label="Close notification">
+
+        <i class="fa-solid fa-xmark"></i>
+
+    </button>
+
+</div>
+
+
+<!-- BIG STORE BOTTOM NAVIGATION -->
+
+<nav class="big-store-bottom-nav">
+
+    <a href="index.html" class="nav-item">
+
+        <i class="fas fa-home"></i>
+
+        <span>Home</span>
+
+    </a>
+
+
+    <a href="games.html" class="nav-item">
+
+        <i class="fas fa-gamepad"></i>
+
+        <span>Games</span>
+
+    </a>
+
+
+    <a href="wallet-topup.html" class="nav-item">
+
+        <i class="fas fa-wallet"></i>
+
+        <span>Wallet</span>
+
+    </a>
+
+
+    <a href="history.html" class="nav-item">
+
+        <i class="fas fa-clock-rotate-left"></i>
+
+        <span>History</span>
+
+    </a>
+
+
+    <a href="profile.html" class="nav-item">
+
+        <i class="fas fa-user"></i>
+
+        <span>Profile</span>
+
+    </a>
+
+</nav>
+
+
+<!-- ACTIVE NAVIGATION SYSTEM -->
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const currentPage = window.location.pathname
+            .split("/")
+            .pop()
+            .toLowerCase() || "index.html";
+
+        const navItems = document.querySelectorAll(
+            ".big-store-bottom-nav .nav-item"
+        );
+
+        navItems.forEach(item => {
+
+            const link = item.getAttribute("href").toLowerCase();
+
+            item.classList.toggle(
+                "active",
+                link === currentPage ||
+                (currentPage === "freefire.html" && link === "games.html")
+            );
+
+        });
+
+        console.log(
+            "BIG STORE Bottom Navigation Loaded Successfully!"
+        );
+
+    });
+
+</script>
+
+
+<!-- FREE FIRE JAVASCRIPT -->
+
+<script type="module" src="freefire.js"></script>
+
+</body></html>
