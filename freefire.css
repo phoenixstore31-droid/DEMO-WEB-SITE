@@ -1,0 +1,1937 @@
+/* =========================================
+   BIG STORE - FREE FIRE TOP-UP
+   PREMIUM BLACK & GOLD DESIGN
+========================================= */
+
+
+/* =========================================
+   01. ROOT VARIABLES
+========================================= */
+
+:root {
+    --bg: #080808;
+    --bg-secondary: #0e0e0e;
+    --card: #111111;
+    --card-light: #171717;
+
+    --gold: #f5c542;
+    --gold-light: #ffdf70;
+    --gold-dark: #b88a19;
+
+    --text: #ffffff;
+    --text-secondary: #a5a5a5;
+    --text-muted: #6f6f6f;
+
+    --border: rgba(255, 255, 255, 0.08);
+    --gold-border: rgba(245, 197, 66, 0.25);
+
+    --success: #28c76f;
+    --danger: #ff4d4d;
+    --blue: #3d9cff;
+
+    --radius: 16px;
+    --radius-small: 10px;
+
+    --transition: all 0.25s ease;
+}
+
+
+/* =========================================
+   02. GLOBAL RESET
+========================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    min-height: 100vh;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+    -webkit-tap-highlight-color: transparent;
+}
+
+button,
+input {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+img {
+    max-width: 100%;
+    display: block;
+}
+
+::selection {
+    background: var(--gold);
+    color: #000;
+}
+
+
+/* =========================================
+   03. SCROLLBAR
+========================================= */
+
+::-webkit-scrollbar {
+    width: 7px;
+}
+
+::-webkit-scrollbar-track {
+    background: #080808;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #454545;
+    border-radius: 20px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--gold);
+}
+
+
+/* =========================================
+   04. BACKGROUND EFFECTS
+========================================= */
+
+.background-effects {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: -1;
+}
+
+.glow {
+    position: absolute;
+    width: 400px;
+    height: 400px;
+    border-radius: 50%;
+    filter: blur(120px);
+    opacity: 0.08;
+}
+
+.glow-one {
+    top: 100px;
+    right: -200px;
+    background: var(--gold);
+}
+
+.glow-two {
+    bottom: 100px;
+    left: -200px;
+    background: #d18d00;
+}
+
+
+/* =========================================
+   05. PAGE LOADER
+========================================= */
+
+.page-loader {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: #080808;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.4s ease,
+                visibility 0.4s ease;
+}
+
+.page-loader.hide {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.loader-content {
+    text-align: center;
+}
+
+.loader-logo {
+    font-size: 28px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    margin-bottom: 25px;
+}
+
+.loader-logo span {
+    color: var(--gold);
+}
+
+.loader-spinner {
+    width: 42px;
+    height: 42px;
+    border: 3px solid #292929;
+    border-top-color: var(--gold);
+    border-radius: 50%;
+    margin: auto;
+    animation: spin 0.8s linear infinite;
+}
+
+.loader-content p {
+    margin-top: 18px;
+    color: var(--text-secondary);
+    font-size: 12px;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+
+/* =========================================
+   06. HEADER
+========================================= */
+
+.main-header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: rgba(8, 8, 8, 0.94);
+    backdrop-filter: blur(18px);
+    border-bottom: 1px solid var(--border);
+}
+
+.header-container {
+    max-width: 1400px;
+    min-height: 76px;
+    margin: auto;
+    padding: 0 30px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 25px;
+}
+
+
+/* LOGO */
+
+.brand-logo {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    flex-shrink: 0;
+}
+
+.brand-icon {
+    width: 39px;
+    height: 39px;
+    display: grid;
+    place-items: center;
+    background: var(--gold);
+    color: #000;
+    border-radius: 11px;
+    font-size: 19px;
+    box-shadow: 0 0 20px rgba(245, 197, 66, 0.15);
+}
+
+.brand-text {
+    font-size: 19px;
+    font-weight: 900;
+    letter-spacing: 1px;
+}
+
+.brand-text span {
+    color: var(--gold);
+}
+
+
+/* NAVIGATION */
+
+.header-navigation {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+.header-navigation a {
+    color: var(--text-secondary);
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: var(--transition);
+}
+
+.header-navigation a:hover {
+    color: var(--gold);
+}
+
+
+/* HEADER ACTIONS */
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+}
+
+.wallet-display {
+    min-height: 43px;
+    padding: 7px 13px;
+    border: 1px solid var(--gold-border);
+    background: rgba(245, 197, 66, 0.06);
+    border-radius: 11px;
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.wallet-display > i {
+    color: var(--gold);
+    font-size: 17px;
+}
+
+.wallet-display div {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.wallet-display small {
+    color: var(--text-muted);
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.wallet-display strong {
+    color: var(--gold-light);
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.profile-button {
+    min-height: 42px;
+    padding: 0 15px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-size: 12px;
+    font-weight: 700;
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    transition: var(--transition);
+}
+
+.profile-button:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+}
+
+
+/* MOBILE MENU BUTTON */
+
+.mobile-menu-button {
+    display: none;
+    width: 42px;
+    height: 42px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: white;
+    font-size: 18px;
+}
+
+
+/* =========================================
+   07. MOBILE NAVIGATION
+========================================= */
+
+.mobile-navigation {
+    display: none;
+    padding: 12px 20px 18px;
+    background: #0d0d0d;
+    border-bottom: 1px solid var(--border);
+}
+
+.mobile-navigation a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px;
+    color: var(--text-secondary);
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 9px;
+}
+
+.mobile-navigation a:hover {
+    background: rgba(245, 197, 66, 0.08);
+    color: var(--gold);
+}
+
+.mobile-navigation.show {
+    display: block;
+}
+
+
+/* =========================================
+   08. MAIN CONTAINER
+========================================= */
+
+.main-container {
+    max-width: 1400px;
+    margin: auto;
+    padding: 28px 30px 80px;
+}
+
+
+/* =========================================
+   09. BREADCRUMB
+========================================= */
+
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 25px;
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.breadcrumb a {
+    transition: var(--transition);
+}
+
+.breadcrumb a:hover {
+    color: var(--gold);
+}
+
+.breadcrumb i {
+    font-size: 9px;
+}
+
+.breadcrumb span {
+    color: var(--gold);
+    font-weight: 700;
+}
+
+
+/* =========================================
+   10. GAME HERO
+========================================= */
+
+.game-hero {
+    position: relative;
+    min-height: 320px;
+    padding: 45px;
+    margin-bottom: 35px;
+    overflow: hidden;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(0, 0, 0, 0.98) 0%,
+            rgba(0, 0, 0, 0.85) 48%,
+            rgba(0, 0, 0, 0.2) 100%
+        ),
+        linear-gradient(135deg, #252014, #0b0b0b);
+
+    border: 1px solid rgba(245, 197, 66, 0.2);
+    border-radius: 20px;
+}
+
+.game-hero::before {
+    content: "";
+    position: absolute;
+    top: -150px;
+    left: 45%;
+    width: 400px;
+    height: 400px;
+    border-radius: 50%;
+    background: rgba(245, 197, 66, 0.1);
+    filter: blur(100px);
+}
+
+.game-hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 570px;
+}
+
+.game-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+
+    padding: 8px 13px;
+    margin-bottom: 20px;
+
+    background: rgba(245, 197, 66, 0.09);
+    border: 1px solid rgba(245, 197, 66, 0.2);
+    border-radius: 30px;
+
+    color: var(--gold);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.live-dot {
+    width: 7px;
+    height: 7px;
+    background: var(--success);
+    border-radius: 50%;
+    box-shadow: 0 0 10px var(--success);
+}
+
+.game-hero h1 {
+    font-size: clamp(36px, 5vw, 58px);
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: -2px;
+}
+
+.game-hero h1 span {
+    color: var(--gold);
+}
+
+.game-hero-content > p {
+    max-width: 470px;
+    margin-top: 16px;
+    color: #aaa;
+    font-size: 14px;
+    line-height: 1.8;
+}
+
+.hero-features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 22px;
+    margin-top: 27px;
+}
+
+.hero-features div {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #ddd;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.hero-features i {
+    color: var(--gold);
+    font-size: 14px;
+}
+
+
+/* HERO IMAGE AREA */
+
+.game-hero-image {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 48%;
+    height: 100%;
+
+    background-image:
+        linear-gradient(
+            90deg,
+            #080808 0%,
+            transparent 65%
+        ),
+        url("images/freefire/freefire-banner.jpg");
+
+    background-size: cover;
+    background-position: center;
+}
+
+.hero-image-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.7),
+        transparent 70%
+    );
+}
+
+.hero-game-label {
+    position: absolute;
+    right: 35px;
+    bottom: 30px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 5px;
+}
+
+.hero-game-label span {
+    color: var(--gold);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 3px;
+}
+
+.hero-game-label strong {
+    color: white;
+    font-size: 22px;
+    font-weight: 900;
+    letter-spacing: 2px;
+}
+
+
+/* =========================================
+   11. TOP-UP LAYOUT
+========================================= */
+
+.topup-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 320px;
+    gap: 25px;
+    align-items: start;
+}
+
+.topup-main {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+}
+
+
+/* =========================================
+   12. SECTION CARD
+========================================= */
+
+.section-card,
+.sidebar-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 25px;
+}
+
+.section-card {
+    transition: border-color 0.25s ease;
+}
+
+.section-card:hover {
+    border-color: rgba(245, 197, 66, 0.16);
+}
+
+
+/* SECTION HEADING */
+
+.section-heading {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 25px;
+}
+
+.step-number {
+    width: 43px;
+    height: 43px;
+    flex-shrink: 0;
+
+    display: grid;
+    place-items: center;
+
+    background: rgba(245, 197, 66, 0.1);
+    border: 1px solid var(--gold-border);
+    border-radius: 12px;
+
+    color: var(--gold);
+    font-size: 15px;
+    font-weight: 900;
+}
+
+.section-heading h2 {
+    font-size: 17px;
+    font-weight: 800;
+}
+
+.section-heading p {
+    margin-top: 5px;
+    color: var(--text-muted);
+    font-size: 11px;
+}
+
+
+/* =========================================
+   13. PLAYER INPUT
+========================================= */
+
+.form-group {
+    margin-bottom: 17px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 10px;
+    color: #ddd;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.input-wrapper {
+    height: 53px;
+    display: flex;
+    align-items: center;
+    gap: 13px;
+
+    padding: 0 16px;
+
+    background: #090909;
+    border: 1px solid #292929;
+    border-radius: 11px;
+
+    transition: var(--transition);
+}
+
+.input-wrapper:focus-within {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(245, 197, 66, 0.08);
+}
+
+.input-wrapper i {
+    color: var(--gold);
+    font-size: 16px;
+}
+
+.input-wrapper input {
+    width: 100%;
+    height: 100%;
+    outline: none;
+    border: none;
+    background: transparent;
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.input-wrapper input::placeholder {
+    color: #5d5d5d;
+    font-weight: 400;
+}
+
+.input-hint {
+    display: block;
+    margin-top: 9px;
+    color: var(--text-muted);
+    font-size: 10px;
+}
+
+
+/* =========================================
+   14. PRIMARY BUTTON
+========================================= */
+
+.primary-button {
+    width: 100%;
+    min-height: 49px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    border: none;
+    border-radius: 10px;
+
+    background: linear-gradient(
+        135deg,
+        var(--gold-light),
+        var(--gold-dark)
+    );
+
+    color: #111;
+    font-size: 13px;
+    font-weight: 900;
+
+    transition: var(--transition);
+}
+
+.primary-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 7px 25px rgba(245, 197, 66, 0.18);
+}
+
+.primary-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+
+/* =========================================
+   15. PLAYER RESULT
+========================================= */
+
+.player-result {
+    display: none;
+    align-items: center;
+    gap: 13px;
+
+    margin-top: 20px;
+    padding: 15px;
+
+    background: rgba(40, 199, 111, 0.06);
+    border: 1px solid rgba(40, 199, 111, 0.2);
+    border-radius: 12px;
+}
+
+.player-result.show {
+    display: flex;
+    animation: fadeUp 0.35s ease;
+}
+
+.player-avatar {
+    width: 45px;
+    height: 45px;
+    flex-shrink: 0;
+
+    display: grid;
+    place-items: center;
+
+    background: #1b2820;
+    border-radius: 12px;
+
+    color: var(--success);
+    font-size: 20px;
+}
+
+.player-information {
+    flex: 1;
+    min-width: 0;
+}
+
+.player-information small {
+    color: var(--success);
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: 1px;
+}
+
+.player-information h3 {
+    margin: 5px 0;
+    font-size: 14px;
+    font-weight: 800;
+    overflow-wrap: anywhere;
+}
+
+.player-information span {
+    color: var(--text-secondary);
+    font-size: 10px;
+}
+
+.verified-icon {
+    color: var(--success);
+    font-size: 21px;
+}
+
+.verification-message {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+
+    margin-top: 15px;
+    padding: 12px;
+
+    background: rgba(61, 156, 255, 0.06);
+    border: 1px solid rgba(61, 156, 255, 0.15);
+    border-radius: 9px;
+
+    color: #8ebfff;
+    font-size: 10px;
+    line-height: 1.5;
+}
+
+.verification-message.error {
+    background: rgba(255, 77, 77, 0.07);
+    border-color: rgba(255, 77, 77, 0.2);
+    color: #ff8585;
+}
+
+
+/* =========================================
+   16. REGION INFORMATION
+========================================= */
+
+.region-information {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    padding: 14px;
+    margin-bottom: 20px;
+
+    background: #0b0b0b;
+    border: 1px solid var(--border);
+    border-radius: 11px;
+}
+
+.region-icon {
+    width: 38px;
+    height: 38px;
+    display: grid;
+    place-items: center;
+
+    background: rgba(245, 197, 66, 0.1);
+    color: var(--gold);
+    border-radius: 10px;
+}
+
+.region-information > div:nth-child(2) {
+    flex: 1;
+}
+
+.region-information strong {
+    font-size: 11px;
+}
+
+.region-information p {
+    margin-top: 5px;
+    color: var(--text-muted);
+    font-size: 10px;
+}
+
+.region-status {
+    padding: 6px 10px;
+    background: #202020;
+    color: #aaa;
+    border-radius: 20px;
+    font-size: 9px;
+    font-weight: 800;
+}
+
+.region-status.success {
+    background: rgba(40, 199, 111, 0.1);
+    color: var(--success);
+}
+
+.region-status.error {
+    background: rgba(255, 77, 77, 0.1);
+    color: var(--danger);
+}
+
+
+/* =========================================
+   17. PRODUCTS GRID
+========================================= */
+
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 13px;
+}
+
+.product-card {
+    position: relative;
+    min-width: 0;
+    padding: 15px 12px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+
+    background: #0b0b0b;
+    border: 1px solid #242424;
+    border-radius: 13px;
+
+    color: white;
+    transition: var(--transition);
+}
+
+.product-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--gold-border);
+    background: #121212;
+}
+
+.product-card.selected {
+    background: rgba(245, 197, 66, 0.07);
+    border-color: var(--gold);
+    box-shadow: 0 0 0 2px rgba(245, 197, 66, 0.08);
+}
+
+.product-card.selected::after {
+    content: "✓";
+    position: absolute;
+    top: 9px;
+    right: 9px;
+
+    width: 21px;
+    height: 21px;
+
+    display: grid;
+    place-items: center;
+
+    background: var(--gold);
+    color: #000;
+    border-radius: 50%;
+
+    font-size: 11px;
+    font-weight: 900;
+}
+
+.product-image {
+    position: relative;
+    width: 100%;
+    height: 78px;
+
+    display: grid;
+    place-items: center;
+
+    margin-bottom: 12px;
+}
+
+.product-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.fallback-gem {
+    color: var(--gold);
+    font-size: 35px;
+}
+
+.product-image img:not([src]),
+.product-image img[src=""] {
+    display: none;
+}
+
+.product-details h3 {
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.product-details p {
+    margin-top: 5px;
+    color: var(--text-muted);
+    font-size: 10px;
+}
+
+.product-price {
+    width: 100%;
+    margin-top: 14px;
+    padding-top: 11px;
+
+    border-top: 1px solid var(--border);
+
+    display: flex;
+    justify-content: center;
+    align-items: baseline;
+    gap: 5px;
+}
+
+.product-price span {
+    color: var(--gold);
+    font-size: 9px;
+    font-weight: 800;
+}
+
+.product-price strong {
+    color: white;
+    font-size: 14px;
+    font-weight: 900;
+}
+
+
+/* =========================================
+   18. EMPTY PRODUCTS
+========================================= */
+
+.no-products {
+    display: none;
+    padding: 40px 15px;
+    text-align: center;
+}
+
+.no-products.show {
+    display: block;
+}
+
+.empty-icon {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 15px;
+
+    display: grid;
+    place-items: center;
+
+    background: #1a1a1a;
+    border-radius: 17px;
+
+    color: var(--gold);
+    font-size: 25px;
+}
+
+.no-products h3 {
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.no-products p {
+    color: var(--text-muted);
+    font-size: 11px;
+    line-height: 1.6;
+}
+
+
+/* =========================================
+   19. ORDER SUMMARY
+========================================= */
+
+.order-summary {
+    padding: 17px;
+    background: #0b0b0b;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+}
+
+.summary-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 11px 0;
+}
+
+.summary-row span {
+    color: var(--text-muted);
+    font-size: 11px;
+}
+
+.summary-row strong {
+    max-width: 60%;
+    text-align: right;
+    color: #eee;
+    font-size: 11px;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.summary-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 9px 0;
+}
+
+.summary-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding-top: 8px;
+}
+
+.summary-total span {
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.summary-total strong {
+    color: var(--gold);
+    font-size: 20px;
+    font-weight: 900;
+}
+
+
+/* =========================================
+   20. PURCHASE BUTTON
+========================================= */
+
+.purchase-button {
+    width: 100%;
+    min-height: 55px;
+    margin-top: 20px;
+    padding: 0 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+
+    background: linear-gradient(
+        135deg,
+        var(--gold-light),
+        var(--gold-dark)
+    );
+
+    border: none;
+    border-radius: 11px;
+
+    color: #111;
+    font-size: 13px;
+    font-weight: 900;
+
+    transition: var(--transition);
+}
+
+.purchase-button > i:last-child {
+    margin-left: auto;
+}
+
+.purchase-button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(245, 197, 66, 0.2);
+}
+
+.purchase-button:disabled {
+    background: #292929;
+    color: #666;
+    cursor: not-allowed;
+}
+
+.secure-payment {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+
+    margin-top: 15px;
+
+    color: var(--text-muted);
+    font-size: 10px;
+}
+
+.secure-payment i {
+    color: var(--success);
+}
+
+
+/* =========================================
+   21. SIDEBAR
+========================================= */
+
+.topup-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+
+    position: sticky;
+    top: 100px;
+}
+
+.sidebar-card {
+    padding: 20px;
+}
+
+
+/* SIDEBAR HEADING */
+
+.sidebar-card-heading {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    margin-bottom: 22px;
+}
+
+.sidebar-icon {
+    width: 39px;
+    height: 39px;
+    display: grid;
+    place-items: center;
+
+    background: rgba(245, 197, 66, 0.1);
+    border-radius: 11px;
+
+    color: var(--gold);
+    font-size: 16px;
+}
+
+.sidebar-card-heading h3 {
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.sidebar-card-heading p {
+    margin-top: 4px;
+    color: var(--text-muted);
+    font-size: 10px;
+}
+
+
+/* =========================================
+   22. WALLET CARD
+========================================= */
+
+.wallet-card {
+    background:
+        linear-gradient(
+            140deg,
+            rgba(245, 197, 66, 0.08),
+            transparent 75%
+        ),
+        var(--card);
+
+    border-color: var(--gold-border);
+}
+
+.wallet-amount {
+    padding: 17px 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+}
+
+.wallet-amount small {
+    color: var(--text-muted);
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.wallet-amount h2 {
+    margin-top: 9px;
+    color: var(--gold);
+    font-size: 24px;
+    font-weight: 900;
+    overflow-wrap: anywhere;
+}
+
+.add-money-button {
+    min-height: 43px;
+    margin-top: 17px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 9px;
+
+    background: var(--gold);
+    border-radius: 9px;
+
+    color: #111;
+    font-size: 12px;
+    font-weight: 900;
+
+    transition: var(--transition);
+}
+
+.add-money-button:hover {
+    background: var(--gold-light);
+    transform: translateY(-2px);
+}
+
+
+/* =========================================
+   23. HOW IT WORKS
+========================================= */
+
+.how-it-works {
+    display: flex;
+    flex-direction: column;
+    gap: 21px;
+}
+
+.work-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.work-step-icon {
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+
+    display: grid;
+    place-items: center;
+
+    background: rgba(245, 197, 66, 0.08);
+    border: 1px solid var(--gold-border);
+    border-radius: 9px;
+
+    color: var(--gold);
+    font-size: 13px;
+}
+
+.work-step strong {
+    display: block;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.work-step p {
+    margin-top: 5px;
+    color: var(--text-muted);
+    font-size: 10px;
+    line-height: 1.6;
+}
+
+
+/* =========================================
+   24. NOTICE CARD
+========================================= */
+
+.notice-card {
+    border-color: rgba(255, 184, 0, 0.15);
+}
+
+.notice-heading {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 17px;
+}
+
+.notice-heading i {
+    color: var(--gold);
+    font-size: 16px;
+}
+
+.notice-heading h3 {
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.notice-card ul {
+    padding-left: 17px;
+}
+
+.notice-card li {
+    margin-bottom: 11px;
+    color: var(--text-secondary);
+    font-size: 10px;
+    line-height: 1.7;
+}
+
+.notice-card li:last-child {
+    margin-bottom: 0;
+}
+
+.notice-card li::marker {
+    color: var(--gold);
+}
+
+
+/* =========================================
+   25. SUPPORT CARD
+========================================= */
+
+.support-card {
+    text-align: center;
+    padding: 25px 20px;
+}
+
+.support-icon {
+    width: 53px;
+    height: 53px;
+    margin: 0 auto 14px;
+
+    display: grid;
+    place-items: center;
+
+    background: rgba(245, 197, 66, 0.1);
+    border-radius: 15px;
+
+    color: var(--gold);
+    font-size: 22px;
+}
+
+.support-card h3 {
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.support-card p {
+    margin: 9px 0 17px;
+    color: var(--text-muted);
+    font-size: 10px;
+    line-height: 1.7;
+}
+
+.support-card a {
+    min-height: 39px;
+    padding: 0 14px;
+
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 9px;
+
+    border: 1px solid var(--gold-border);
+    border-radius: 9px;
+
+    color: var(--gold);
+    font-size: 11px;
+    font-weight: 800;
+
+    transition: var(--transition);
+}
+
+.support-card a:hover {
+    background: var(--gold);
+    color: #000;
+}
+
+
+/* =========================================
+   26. FOOTER
+========================================= */
+
+.main-footer {
+    background: #050505;
+    border-top: 1px solid var(--border);
+}
+
+.footer-container {
+    max-width: 1400px;
+    margin: auto;
+    padding: 40px 30px 20px;
+}
+
+.footer-logo {
+    font-size: 21px;
+    font-weight: 900;
+    letter-spacing: 1px;
+}
+
+.footer-logo span {
+    color: var(--gold);
+}
+
+.footer-container > p {
+    margin-top: 10px;
+    color: var(--text-muted);
+    font-size: 11px;
+}
+
+.footer-bottom {
+    margin-top: 35px;
+    padding-top: 20px;
+
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 15px;
+
+    border-top: 1px solid var(--border);
+
+    color: var(--text-muted);
+    font-size: 10px;
+}
+
+.powered-by a {
+    color: var(--gold);
+    font-weight: 800;
+}
+
+
+/* =========================================
+   27. TOAST NOTIFICATION
+========================================= */
+
+.toast-container {
+    position: fixed;
+    right: 25px;
+    bottom: 25px;
+    z-index: 5000;
+
+    width: min(370px, calc(100% - 30px));
+    padding: 16px;
+
+    display: none;
+    align-items: center;
+    gap: 12px;
+
+    background: #171717;
+    border: 1px solid var(--gold-border);
+    border-radius: 13px;
+
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+.toast-container.show {
+    display: flex;
+    animation: fadeUp 0.3s ease;
+}
+
+.toast-icon {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+
+    display: grid;
+    place-items: center;
+
+    background: rgba(245, 197, 66, 0.1);
+    border-radius: 10px;
+
+    color: var(--gold);
+}
+
+.toast-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.toast-content strong {
+    font-size: 12px;
+}
+
+.toast-content p {
+    margin-top: 5px;
+    color: var(--text-secondary);
+    font-size: 10px;
+    line-height: 1.5;
+}
+
+#closeToast {
+    width: 27px;
+    height: 27px;
+
+    background: transparent;
+    border: none;
+
+    color: var(--text-muted);
+    font-size: 15px;
+}
+
+
+/* =========================================
+   28. ANIMATIONS
+========================================= */
+
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* =========================================
+   29. TABLET RESPONSIVE
+========================================= */
+
+@media (max-width: 1050px) {
+
+    .header-container {
+        padding: 0 20px;
+    }
+
+    .header-navigation {
+        gap: 18px;
+    }
+
+    .header-navigation a {
+        font-size: 11px;
+    }
+
+    .topup-layout {
+        grid-template-columns: minmax(0, 1fr) 280px;
+        gap: 17px;
+    }
+
+    .main-container {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+
+    .game-hero {
+        padding: 35px;
+    }
+
+    .section-card {
+        padding: 21px;
+    }
+
+    .products-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+}
+
+
+/* =========================================
+   30. MOBILE RESPONSIVE
+========================================= */
+
+@media (max-width: 760px) {
+
+    .header-container {
+        min-height: 66px;
+        padding: 0 15px;
+    }
+
+    .header-navigation {
+        display: none;
+    }
+
+    .header-actions {
+        margin-left: auto;
+    }
+
+    .profile-button {
+        display: none;
+    }
+
+    .wallet-display {
+        min-height: 39px;
+        padding: 5px 9px;
+    }
+
+    .wallet-display > i {
+        font-size: 14px;
+    }
+
+    .wallet-display small {
+        font-size: 8px;
+    }
+
+    .wallet-display strong {
+        font-size: 10px;
+    }
+
+    .mobile-menu-button {
+        display: grid;
+        place-items: center;
+    }
+
+    .main-container {
+        padding: 20px 15px 55px;
+    }
+
+    .breadcrumb {
+        margin-bottom: 19px;
+        font-size: 10px;
+    }
+
+    .game-hero {
+        min-height: 330px;
+        padding: 28px 22px;
+        align-items: flex-start;
+    }
+
+    .game-hero-content {
+        max-width: 100%;
+    }
+
+    .game-hero h1 {
+        font-size: 40px;
+    }
+
+    .game-hero-content > p {
+        max-width: 300px;
+        font-size: 12px;
+    }
+
+    .game-hero-image {
+        width: 100%;
+        opacity: 0.35;
+        background-position: center;
+    }
+
+    .hero-image-overlay {
+        background: linear-gradient(
+            90deg,
+            rgba(0, 0, 0, 0.9),
+            rgba(0, 0, 0, 0.3)
+        );
+    }
+
+    .hero-features {
+        gap: 13px;
+    }
+
+    .hero-features div {
+        font-size: 9px;
+    }
+
+    .hero-game-label {
+        right: 20px;
+        bottom: 18px;
+    }
+
+    .hero-game-label strong {
+        font-size: 17px;
+    }
+
+    .topup-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .topup-sidebar {
+        position: static;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        align-items: start;
+    }
+
+    .wallet-card,
+    .support-card {
+        grid-column: span 2;
+    }
+
+    .section-card {
+        padding: 19px;
+    }
+
+    .section-heading {
+        margin-bottom: 21px;
+    }
+
+    .section-heading h2 {
+        font-size: 15px;
+    }
+
+    .products-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    .product-card {
+        padding: 13px 9px;
+    }
+
+    .product-image {
+        height: 65px;
+    }
+
+    .footer-container {
+        padding: 32px 18px 18px;
+    }
+
+    .footer-bottom {
+        flex-direction: column;
+        font-size: 9px;
+    }
+
+}
+
+
+/* =========================================
+   31. SMALL MOBILE
+========================================= */
+
+@media (max-width: 400px) {
+
+    .brand-text {
+        font-size: 16px;
+    }
+
+    .brand-icon {
+        width: 34px;
+        height: 34px;
+        font-size: 16px;
+    }
+
+    .wallet-display {
+        gap: 6px;
+    }
+
+    .wallet-display strong {
+        font-size: 9px;
+    }
+
+    .game-hero {
+        min-height: 310px;
+        padding: 24px 17px;
+    }
+
+    .game-hero h1 {
+        font-size: 34px;
+    }
+
+    .game-badge {
+        font-size: 8px;
+    }
+
+    .hero-features {
+        gap: 10px;
+    }
+
+    .hero-features div {
+        font-size: 8px;
+    }
+
+    .topup-sidebar {
+        grid-template-columns: 1fr;
+    }
+
+    .wallet-card,
+    .support-card {
+        grid-column: span 1;
+    }
+
+    .section-card {
+        padding: 15px;
+    }
+
+    .step-number {
+        width: 38px;
+        height: 38px;
+        font-size: 13px;
+    }
+
+    .product-details h3 {
+        font-size: 11px;
+    }
+
+    .product-price strong {
+        font-size: 12px;
+    }
+
+    .summary-total strong {
+        font-size: 17px;
+    }
+
+}
+
+
+/* =========================================
+   32. ACCESSIBILITY
+========================================= */
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
+
+}

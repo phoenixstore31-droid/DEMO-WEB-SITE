@@ -332,13 +332,11 @@ function createGameCard(game) {
     card.className =
         `game-card ${isActive ? "" : "disabled"}`;
 
-
     card.dataset.name =
         game.product_name.toLowerCase();
 
     card.dataset.category =
         config.category.join(" ");
-
 
     // GAME LINK
 
@@ -347,11 +345,22 @@ function createGameCard(game) {
 
     link.className = "game-card-link";
 
-
     if (isActive) {
 
-        link.href =
-            `game-details.html?game=${encodeURIComponent(config.slug)}`;
+        // FREE FIRE PAGE
+
+        if (
+            game.product_name.toLowerCase().includes("free fire")
+        ) {
+
+            link.href = "freefire.html";
+
+        } else {
+
+            link.href =
+                `game-details.html?game=${encodeURIComponent(config.slug)}`;
+
+        }
 
     } else {
 
@@ -369,7 +378,6 @@ function createGameCard(game) {
 
     }
 
-
     // IMAGE
 
     const image =
@@ -377,7 +385,6 @@ function createGameCard(game) {
 
     image.className =
         `game-image ${config.css}`;
-
 
     if (game.image_url) {
 
@@ -402,7 +409,6 @@ function createGameCard(game) {
 
     }
 
-
     // ICON
 
     const icon =
@@ -414,7 +420,6 @@ function createGameCard(game) {
         `<i class="fas ${config.icon}"></i>`;
 
     image.appendChild(icon);
-
 
     // STATUS BADGE
 
@@ -429,14 +434,12 @@ function createGameCard(game) {
 
     image.appendChild(badge);
 
-
     // GAME INFO
 
     const info =
         document.createElement("div");
 
     info.className = "game-info";
-
 
     // TITLE
 
@@ -445,13 +448,11 @@ function createGameCard(game) {
 
     titleRow.className = "game-title-row";
 
-
     const title =
         document.createElement("h3");
 
     title.textContent =
         game.product_name;
-
 
     const arrow =
         document.createElement("i");
@@ -461,11 +462,9 @@ function createGameCard(game) {
             ? "fas fa-arrow-up-right-from-square"
             : "fas fa-lock";
 
-
     titleRow.appendChild(title);
 
     titleRow.appendChild(arrow);
-
 
     // DESCRIPTION
 
@@ -475,14 +474,12 @@ function createGameCard(game) {
     description.textContent =
         game.description || config.genre;
 
-
     // BOTTOM
 
     const bottom =
         document.createElement("div");
 
     bottom.className = "game-card-bottom";
-
 
     const genre =
         document.createElement("span");
@@ -494,7 +491,6 @@ function createGameCard(game) {
         document.createTextNode(config.genre)
     );
 
-
     const status =
         document.createElement("span");
 
@@ -504,11 +500,9 @@ function createGameCard(game) {
     status.textContent =
         isActive ? "Available" : "Coming Soon";
 
-
     bottom.appendChild(genre);
 
     bottom.appendChild(status);
-
 
     info.appendChild(titleRow);
 
@@ -516,13 +510,11 @@ function createGameCard(game) {
 
     info.appendChild(bottom);
 
-
     link.appendChild(image);
 
     link.appendChild(info);
 
     card.appendChild(link);
-
 
     return card;
 
