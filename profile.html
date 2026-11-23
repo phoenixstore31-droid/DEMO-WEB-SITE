@@ -1,647 +1,569 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>My Profile | BIG STORE</title>
 
-    <title>My Profile | BIG STORE</title>
+<meta name="theme-color" content="#080808">
+<meta name="description" content="Manage your BIG STORE account and profile.">
 
-    <meta name="theme-color" content="#080808">
-    <meta name="description" content="Manage your BIG STORE account and profile.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="profile.css">
 
-    <!-- CSS -->
-    <link rel="stylesheet" href="profile.css">
-</head>
+</head><body><header class="profile-header"><a href="index.html" class="profile-brand">
+    <div class="brand-icon">
+        <i class="fas fa-bolt"></i>
+    </div>
 
-<body>
+    <div class="brand-text">
+        <h2>BIG <span>STORE</span></h2>
+        <small>GAMING TOP-UP PLATFORM</small>
+    </div>
+</a>
 
-    <!-- ==============================
-         HEADER
-    =============================== -->
+<div class="header-actions">
 
-    <header class="profile-header">
+    <button class="header-btn" id="notificationBtn" type="button">
+        <i class="far fa-bell"></i>
+        <span class="notification-dot"></span>
+    </button>
 
-        <a href="index.html" class="profile-brand">
-            <div class="brand-icon">
-                <i class="fas fa-bolt"></i>
+    <button class="header-btn active" id="profileBtn" type="button">
+        <i class="far fa-user"></i>
+    </button>
+
+</div>
+
+</header><main class="profile-page"><section class="profile-intro">
+
+    <div class="intro-badge">
+        <i class="fas fa-user-shield"></i>
+        ACCOUNT CENTER
+    </div>
+
+    <h1>My <span>Profile</span></h1>
+
+    <p>Manage your account information, wallet and security settings.</p>
+
+</section>
+
+
+<!-- PROFILE HERO -->
+
+<section class="profile-hero-card">
+
+    <div class="profile-cover"></div>
+
+    <div class="profile-main-info">
+
+        <div class="profile-avatar-wrapper">
+
+            <div class="profile-avatar" id="profileAvatar">
+                <i class="fas fa-user"></i>
             </div>
 
-            <div class="brand-text">
-                <h2>BIG <span>STORE</span></h2>
-                <small>GAMING TOP-UP PLATFORM</small>
-            </div>
-        </a>
-
-        <div class="header-actions">
-
-            <button class="header-btn" id="notificationBtn" type="button">
-                <i class="far fa-bell"></i>
-                <span class="notification-dot"></span>
-            </button>
-
-            <button class="header-btn active" id="profileBtn" type="button">
-                <i class="far fa-user"></i>
-            </button>
+            <span class="online-indicator"></span>
 
         </div>
 
-    </header>
+        <div class="profile-user-details">
 
+            <h2 id="profileName">Loading...</h2>
 
-    <!-- ==============================
-         MAIN PROFILE PAGE
-    =============================== -->
+            <p id="profileEmail">Loading email...</p>
 
-    <main class="profile-page">
+            <div class="profile-user-badges">
 
-        <!-- PAGE INTRO -->
+                <span class="user-badge">
+                    <i class="fas fa-user-check"></i>
+                    <span id="accountStatus">Active Account</span>
+                </span>
 
-        <section class="profile-intro">
+                <span class="user-badge user-id-badge">
+                    ID: <span id="profileUserId">Loading...</span>
+                </span>
 
-            <div class="intro-badge">
-                <i class="fas fa-user-shield"></i>
-                ACCOUNT CENTER
             </div>
 
-            <h1>My <span>Profile</span></h1>
+        </div>
+
+        <button class="edit-profile-btn" id="editProfileBtn" type="button">
+            <i class="fas fa-pen"></i>
+            Edit Profile
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- STATISTICS -->
+
+<section class="profile-stats">
+
+    <div class="profile-stat-card">
+
+        <div class="stat-icon wallet-icon">
+            <i class="fas fa-wallet"></i>
+        </div>
+
+        <div class="stat-info">
+            <span>Wallet Balance</span>
+            <h3 id="profileWalletBalance">LKR 0.00</h3>
+        </div>
+
+    </div>
+
+
+    <div class="profile-stat-card">
+
+        <div class="stat-icon reward-icon">
+            <i class="fas fa-gift"></i>
+        </div>
+
+        <div class="stat-info">
+            <span>Reward Points</span>
+            <h3 id="profileRewardPoints">Not available</h3>
+        </div>
+
+    </div>
+
+
+    <div class="profile-stat-card">
+
+        <div class="stat-icon spent-icon">
+            <i class="fas fa-chart-line"></i>
+        </div>
+
+        <div class="stat-info">
+            <span>Total Spent</span>
+            <h3 id="profileTotalSpent">Not available</h3>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- PERSONAL INFORMATION -->
+
+<section class="profile-section">
+
+    <div class="section-heading">
+
+        <div>
+            <span class="section-label">ACCOUNT DETAILS</span>
+            <h2>Personal Information</h2>
+        </div>
+
+        <i class="fas fa-id-card section-heading-icon"></i>
+
+    </div>
+
+
+    <div class="profile-info-card">
+
+        <div class="info-row">
+
+            <div class="info-icon">
+                <i class="fas fa-user"></i>
+            </div>
+
+            <div class="info-content">
+                <span>Full Name</span>
+                <h4 id="infoFullName">Loading...</h4>
+            </div>
+
+        </div>
+
+
+        <div class="info-row">
+
+            <div class="info-icon">
+                <i class="fas fa-envelope"></i>
+            </div>
+
+            <div class="info-content">
+                <span>Email Address</span>
+                <h4 id="infoEmail">Loading...</h4>
+            </div>
+
+        </div>
+
+
+        <div class="info-row">
+
+            <div class="info-icon">
+                <i class="fas fa-phone"></i>
+            </div>
+
+            <div class="info-content">
+                <span>Phone Number</span>
+                <h4 id="infoPhone">Not added</h4>
+            </div>
+
+        </div>
+
+
+        <div class="info-row">
+
+            <div class="info-icon">
+                <i class="fas fa-calendar-alt"></i>
+            </div>
+
+            <div class="info-content">
+                <span>Member Since</span>
+                <h4 id="infoJoinedDate">Loading...</h4>
+            </div>
+
+        </div>
+
+
+        <div class="info-row">
+
+            <div class="info-icon">
+                <i class="fas fa-fingerprint"></i>
+            </div>
+
+            <div class="info-content">
+                <span>Account ID</span>
+                <h4 id="infoUserId">Loading...</h4>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- SETTINGS -->
+
+<section class="profile-section">
+
+    <div class="section-heading">
+
+        <div>
+            <span class="section-label">PREFERENCES</span>
+            <h2>Account Settings</h2>
+        </div>
+
+        <i class="fas fa-sliders section-heading-icon"></i>
+
+    </div>
+
+
+    <div class="settings-card">
+
+        <button class="settings-item" id="editPersonalInfoBtn" type="button">
+
+            <div class="settings-icon">
+                <i class="fas fa-user-pen"></i>
+            </div>
+
+            <div class="settings-text">
+                <h4>Edit Personal Information</h4>
+                <p>Update your name and contact details.</p>
+            </div>
+
+            <i class="fas fa-chevron-right settings-arrow"></i>
+
+        </button>
+
+
+        <button class="settings-item" id="changePasswordBtn" type="button">
+
+            <div class="settings-icon">
+                <i class="fas fa-lock"></i>
+            </div>
+
+            <div class="settings-text">
+                <h4>Change Password</h4>
+                <p>Update your account password.</p>
+            </div>
+
+            <i class="fas fa-chevron-right settings-arrow"></i>
+
+        </button>
+
+
+        <a href="history.html" class="settings-item">
+
+            <div class="settings-icon">
+                <i class="fas fa-clock-rotate-left"></i>
+            </div>
+
+            <div class="settings-text">
+                <h4>Transaction History</h4>
+                <p>View your previous transactions.</p>
+            </div>
+
+            <i class="fas fa-chevron-right settings-arrow"></i>
+
+        </a>
+
+
+        <a href="wallet-topup.html" class="settings-item">
+
+            <div class="settings-icon">
+                <i class="fas fa-wallet"></i>
+            </div>
+
+            <div class="settings-text">
+                <h4>My Wallet</h4>
+                <p>Manage your wallet balance.</p>
+            </div>
+
+            <i class="fas fa-chevron-right settings-arrow"></i>
+
+        </a>
+
+    </div>
+
+</section>
+
+
+<!-- SECURITY -->
+
+<section class="profile-section">
+
+    <div class="section-heading">
+
+        <div>
+            <span class="section-label">PROTECTION</span>
+            <h2>Security & Privacy</h2>
+        </div>
+
+        <i class="fas fa-shield-halved section-heading-icon"></i>
+
+    </div>
+
+
+    <div class="security-card">
+
+        <div class="security-icon">
+            <i class="fas fa-shield-halved"></i>
+        </div>
+
+        <div class="security-content">
+            <h3>Your Account is Protected</h3>
 
             <p>
-                Manage your account information, wallet and security settings.
+                Keep your login details private. Never share your
+                password or verification codes with anyone.
             </p>
-
-        </section>
-
-
-        <!-- ==============================
-             PROFILE HERO CARD
-        =============================== -->
-
-        <section class="profile-hero-card">
-
-            <div class="profile-cover"></div>
-
-            <div class="profile-main-info">
-
-                <div class="profile-avatar-wrapper">
-
-                    <div class="profile-avatar" id="profileAvatar">
-                        <i class="fas fa-user"></i>
-                    </div>
-
-                    <span class="online-indicator"></span>
-
-                </div>
-
-                <div class="profile-user-details">
-
-                    <h2 id="profileName">Loading...</h2>
-
-                    <p id="profileEmail">Loading email...</p>
-
-                    <div class="profile-user-badges">
-
-                        <span class="user-badge">
-                            <i class="fas fa-user-check"></i>
-                            <span id="accountStatus">Verified Account</span>
-                        </span>
-
-                        <span class="user-badge user-id-badge">
-                            ID: <span id="profileUserId">Loading...</span>
-                        </span>
-
-                    </div>
-
-                </div>
-
-                <button class="edit-profile-btn" id="editProfileBtn" type="button">
-                    <i class="fas fa-pen"></i>
-                    Edit Profile
-                </button>
-
-            </div>
-
-        </section>
-
-
-        <!-- ==============================
-             ACCOUNT STATISTICS
-        =============================== -->
-
-        <section class="profile-stats">
-
-            <div class="profile-stat-card">
-
-                <div class="stat-icon wallet-icon">
-                    <i class="fas fa-wallet"></i>
-                </div>
-
-                <div class="stat-info">
-                    <span>Wallet Balance</span>
-                    <h3 id="profileWalletBalance">LKR 0.00</h3>
-                </div>
-
-            </div>
-
-
-            <div class="profile-stat-card">
-
-                <div class="stat-icon reward-icon">
-                    <i class="fas fa-gift"></i>
-                </div>
-
-                <div class="stat-info">
-                    <span>Reward Points</span>
-                    <h3 id="profileRewardPoints">0.00</h3>
-                </div>
-
-            </div>
-
-
-            <div class="profile-stat-card">
-
-                <div class="stat-icon spent-icon">
-                    <i class="fas fa-chart-line"></i>
-                </div>
-
-                <div class="stat-info">
-                    <span>Total Spent</span>
-                    <h3 id="profileTotalSpent">LKR 0.00</h3>
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- ==============================
-             PERSONAL INFORMATION
-        =============================== -->
-
-        <section class="profile-section">
-
-            <div class="section-heading">
-
-                <div>
-                    <span class="section-label">ACCOUNT DETAILS</span>
-                    <h2>Personal Information</h2>
-                </div>
-
-                <i class="fas fa-id-card section-heading-icon"></i>
-
-            </div>
-
-
-            <div class="profile-info-card">
-
-                <div class="info-row">
-
-                    <div class="info-icon">
-                        <i class="fas fa-user"></i>
-                    </div>
-
-                    <div class="info-content">
-                        <span>Full Name</span>
-                        <h4 id="infoFullName">Loading...</h4>
-                    </div>
-
-                </div>
-
-
-                <div class="info-row">
-
-                    <div class="info-icon">
-                        <i class="fas fa-envelope"></i>
-                    </div>
-
-                    <div class="info-content">
-                        <span>Email Address</span>
-                        <h4 id="infoEmail">Loading...</h4>
-                    </div>
-
-                </div>
-
-
-                <div class="info-row">
-
-                    <div class="info-icon">
-                        <i class="fas fa-phone"></i>
-                    </div>
-
-                    <div class="info-content">
-                        <span>Phone Number</span>
-                        <h4 id="infoPhone">Not added</h4>
-                    </div>
-
-                </div>
-
-
-                <div class="info-row">
-
-                    <div class="info-icon">
-                        <i class="fas fa-calendar-alt"></i>
-                    </div>
-
-                    <div class="info-content">
-                        <span>Member Since</span>
-                        <h4 id="infoJoinedDate">Loading...</h4>
-                    </div>
-
-                </div>
-
-
-                <div class="info-row">
-
-                    <div class="info-icon">
-                        <i class="fas fa-fingerprint"></i>
-                    </div>
-
-                    <div class="info-content">
-                        <span>Account ID</span>
-                        <h4 id="infoUserId">Loading...</h4>
-                    </div>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- ==============================
-             ACCOUNT SETTINGS
-        =============================== -->
-
-        <section class="profile-section">
-
-            <div class="section-heading">
-
-                <div>
-                    <span class="section-label">PREFERENCES</span>
-                    <h2>Account Settings</h2>
-                </div>
-
-                <i class="fas fa-sliders section-heading-icon"></i>
-
-            </div>
-
-
-            <div class="settings-card">
-
-                <button class="settings-item" id="editPersonalInfoBtn" type="button">
-
-                    <div class="settings-icon">
-                        <i class="fas fa-user-pen"></i>
-                    </div>
-
-                    <div class="settings-text">
-                        <h4>Edit Personal Information</h4>
-                        <p>Update your name and contact details.</p>
-                    </div>
-
-                    <i class="fas fa-chevron-right settings-arrow"></i>
-
-                </button>
-
-
-                <button class="settings-item" id="changePasswordBtn" type="button">
-
-                    <div class="settings-icon">
-                        <i class="fas fa-lock"></i>
-                    </div>
-
-                    <div class="settings-text">
-                        <h4>Change Password</h4>
-                        <p>Update your account password.</p>
-                    </div>
-
-                    <i class="fas fa-chevron-right settings-arrow"></i>
-
-                </button>
-
-
-                <a href="history.html" class="settings-item">
-
-                    <div class="settings-icon">
-                        <i class="fas fa-clock-rotate-left"></i>
-                    </div>
-
-                    <div class="settings-text">
-                        <h4>Transaction History</h4>
-                        <p>View your previous transactions.</p>
-                    </div>
-
-                    <i class="fas fa-chevron-right settings-arrow"></i>
-
-                </a>
-
-
-                <a href="wallet-topup.html" class="settings-item">
-
-                    <div class="settings-icon">
-                        <i class="fas fa-wallet"></i>
-                    </div>
-
-                    <div class="settings-text">
-                        <h4>My Wallet</h4>
-                        <p>Manage your wallet balance.</p>
-                    </div>
-
-                    <i class="fas fa-chevron-right settings-arrow"></i>
-
-                </a>
-
-            </div>
-
-        </section>
-
-
-        <!-- ==============================
-             SECURITY
-        =============================== -->
-
-        <section class="profile-section">
-
-            <div class="section-heading">
-
-                <div>
-                    <span class="section-label">PROTECTION</span>
-                    <h2>Security & Privacy</h2>
-                </div>
-
-                <i class="fas fa-shield-halved section-heading-icon"></i>
-
-            </div>
-
-
-            <div class="security-card">
-
-                <div class="security-icon">
-                    <i class="fas fa-shield-check"></i>
-                </div>
-
-                <div class="security-content">
-                    <h3>Your Account is Protected</h3>
-
-                    <p>
-                        Keep your login details private. Never share your
-                        password or verification codes with anyone.
-                    </p>
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- ==============================
-             LOGOUT
-        =============================== -->
-
-        <section class="logout-section">
-
-            <button class="logout-btn" id="logoutBtn" type="button">
-                <i class="fas fa-right-from-bracket"></i>
-                Sign Out
-            </button>
-
-            <p>Thank you for choosing BIG STORE.</p>
-
-        </section>
-
-
-        <!-- LOADING -->
-
-        <div class="profile-loading" id="profileLoading">
-            <div class="loading-spinner"></div>
-            <p>Loading your profile...</p>
-        </div>
-
-
-        <!-- ERROR -->
-
-        <div class="profile-error" id="profileError" style="display:none;">
-
-            <i class="fas fa-circle-exclamation"></i>
-
-            <h3>Something Went Wrong</h3>
-
-            <p id="profileErrorMessage">
-                Unable to load profile information.
-            </p>
-
-            <button id="retryProfileBtn" type="button">
-                <i class="fas fa-rotate-right"></i>
-                Try Again
-            </button>
-
-        </div>
-
-    </main>
-
-
-    <!-- ==============================
-         EDIT PROFILE MODAL
-    =============================== -->
-
-    <div class="profile-modal" id="editProfileModal">
-
-        <div class="modal-overlay" id="closeModalOverlay"></div>
-
-        <div class="modal-content">
-
-            <div class="modal-header">
-
-                <div>
-                    <span class="section-label">ACCOUNT SETTINGS</span>
-                    <h2>Edit Profile</h2>
-                </div>
-
-                <button class="modal-close-btn" id="closeEditModal" type="button">
-                    <i class="fas fa-xmark"></i>
-                </button>
-
-            </div>
-
-
-            <form id="editProfileForm">
-
-                <div class="form-group">
-
-                    <label for="editFullName">Full Name</label>
-
-                    <input
-                        type="text"
-                        id="editFullName"
-                        placeholder="Enter your full name"
-                        maxlength="100"
-                        required
-                    >
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label for="editPhone">Phone Number</label>
-
-                    <input
-                        type="tel"
-                        id="editPhone"
-                        placeholder="Enter your phone number"
-                        maxlength="20"
-                    >
-
-                </div>
-
-
-                <div class="modal-actions">
-
-                    <button type="button" class="cancel-btn" id="cancelEditBtn">
-                        Cancel
-                    </button>
-
-                    <button type="submit" class="save-btn" id="saveProfileBtn">
-                        <i class="fas fa-check"></i>
-                        Save Changes
-                    </button>
-
-                </div>
-
-            </form>
-
         </div>
 
     </div>
 
-
-    <!-- ==============================
-         CHANGE PASSWORD MODAL
-    =============================== -->
-
-    <div class="profile-modal" id="passwordModal">
-
-        <div class="modal-overlay" id="closePasswordOverlay"></div>
-
-        <div class="modal-content">
-
-            <div class="modal-header">
-
-                <div>
-                    <span class="section-label">ACCOUNT SECURITY</span>
-                    <h2>Change Password</h2>
-                </div>
-
-                <button class="modal-close-btn" id="closePasswordModal" type="button">
-                    <i class="fas fa-xmark"></i>
-                </button>
-
-            </div>
+</section>
 
 
-            <form id="changePasswordForm">
+<!-- LOGOUT -->
 
-                <div class="form-group">
+<section class="logout-section">
 
-                    <label for="newPassword">New Password</label>
+    <button class="logout-btn" id="logoutBtn" type="button">
+        <i class="fas fa-right-from-bracket"></i>
+        Sign Out
+    </button>
 
-                    <input
-                        type="password"
-                        id="newPassword"
-                        placeholder="Enter new password"
-                        minlength="6"
-                        required
-                    >
+    <p>Thank you for choosing BIG STORE.</p>
 
-                </div>
+</section>
 
 
-                <div class="form-group">
+<!-- LOADING -->
 
-                    <label for="confirmPassword">Confirm New Password</label>
-
-                    <input
-                        type="password"
-                        id="confirmPassword"
-                        placeholder="Confirm new password"
-                        minlength="6"
-                        required
-                    >
-
-                </div>
+<div class="profile-loading" id="profileLoading">
+    <div class="loading-spinner"></div>
+    <p>Loading your profile...</p>
+</div>
 
 
-                <div class="modal-actions">
+<!-- ERROR -->
 
-                    <button type="button" class="cancel-btn" id="cancelPasswordBtn">
-                        Cancel
-                    </button>
+<div class="profile-error" id="profileError" style="display:none;">
 
-                    <button type="submit" class="save-btn" id="updatePasswordBtn">
-                        <i class="fas fa-lock"></i>
-                        Update Password
-                    </button>
+    <i class="fas fa-circle-exclamation"></i>
 
-                </div>
+    <h3>Something Went Wrong</h3>
 
-            </form>
+    <p id="profileErrorMessage">
+        Unable to load profile information.
+    </p>
 
+    <button id="retryProfileBtn" type="button">
+        <i class="fas fa-rotate-right"></i>
+        Try Again
+    </button>
+
+</div>
+
+</main><!-- EDIT PROFILE MODAL --><div class="profile-modal" id="editProfileModal"><div class="modal-overlay" id="closeModalOverlay"></div>
+
+<div class="modal-content">
+
+    <div class="modal-header">
+
+        <div>
+            <span class="section-label">ACCOUNT SETTINGS</span>
+            <h2>Edit Profile</h2>
         </div>
+
+        <button class="modal-close-btn" id="closeEditModal" type="button">
+            <i class="fas fa-xmark"></i>
+        </button>
 
     </div>
 
 
-    <!-- ==============================
-         NOTIFICATION
-    =============================== -->
+    <form id="editProfileForm">
 
-    <div class="profile-toast" id="profileToast"></div>
+        <div class="form-group">
 
+            <label for="editFullName">Full Name</label>
 
-    <!-- ==============================
-         BOTTOM NAVIGATION
-    =============================== -->
+            <input
+                type="text"
+                id="editFullName"
+                placeholder="Enter your full name"
+                maxlength="100"
+                required
+            >
 
-    <nav class="big-store-bottom-nav">
-
-        <a href="index.html" class="nav-item">
-            <i class="fas fa-house"></i>
-            <span>Home</span>
-        </a>
-
-        <a href="games.html" class="nav-item">
-            <i class="fas fa-gamepad"></i>
-            <span>Games</span>
-        </a>
-
-        <a href="wallet-topup.html" class="nav-item">
-            <i class="fas fa-wallet"></i>
-            <span>Wallet</span>
-        </a>
-
-        <a href="history.html" class="nav-item">
-            <i class="fas fa-clock-rotate-left"></i>
-            <span>History</span>
-        </a>
-
-        <a href="profile.html" class="nav-item active">
-            <i class="fas fa-user"></i>
-            <span>Profile</span>
-        </a>
-
-    </nav>
+        </div>
 
 
-    <!-- JavaScript -->
-    <script type="module" src="profile.js"></script>
+        <div class="form-group">
 
-</body>
+            <label for="editPhone">Phone Number</label>
+
+            <input
+                type="tel"
+                id="editPhone"
+                placeholder="Enter your phone number"
+                maxlength="20"
+            >
+
+        </div>
+
+
+        <div class="modal-actions">
+
+            <button type="button" class="cancel-btn" id="cancelEditBtn">
+                Cancel
+            </button>
+
+            <button type="submit" class="save-btn" id="saveProfileBtn">
+                <i class="fas fa-check"></i>
+                Save Changes
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+</div><!-- CHANGE PASSWORD MODAL --><div class="profile-modal" id="passwordModal"><div class="modal-overlay" id="closePasswordOverlay"></div>
+
+<div class="modal-content">
+
+    <div class="modal-header">
+
+        <div>
+            <span class="section-label">ACCOUNT SECURITY</span>
+            <h2>Change Password</h2>
+        </div>
+
+        <button class="modal-close-btn" id="closePasswordModal" type="button">
+            <i class="fas fa-xmark"></i>
+        </button>
+
+    </div>
+
+
+    <form id="changePasswordForm">
+
+        <div class="form-group">
+
+            <label for="newPassword">New Password</label>
+
+            <input
+                type="password"
+                id="newPassword"
+                placeholder="Enter new password"
+                minlength="6"
+                autocomplete="new-password"
+                required
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label for="confirmPassword">Confirm New Password</label>
+
+            <input
+                type="password"
+                id="confirmPassword"
+                placeholder="Confirm new password"
+                minlength="6"
+                autocomplete="new-password"
+                required
+            >
+
+        </div>
+
+
+        <div class="modal-actions">
+
+            <button type="button" class="cancel-btn" id="cancelPasswordBtn">
+                Cancel
+            </button>
+
+            <button type="submit" class="save-btn" id="updatePasswordBtn">
+                <i class="fas fa-lock"></i>
+                Update Password
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+</div><!-- TOAST --><div class="profile-toast" id="profileToast"></div><!-- BOTTOM NAVIGATION --><nav class="big-store-bottom-nav"><a href="index.html" class="nav-item">
+    <i class="fas fa-house"></i>
+    <span>Home</span>
+</a>
+
+<a href="games.html" class="nav-item">
+    <i class="fas fa-gamepad"></i>
+    <span>Games</span>
+</a>
+
+<a href="wallet-topup.html" class="nav-item">
+    <i class="fas fa-wallet"></i>
+    <span>Wallet</span>
+</a>
+
+<a href="history.html" class="nav-item">
+    <i class="fas fa-clock-rotate-left"></i>
+    <span>History</span>
+</a>
+
+<a href="profile.html" class="nav-item active">
+    <i class="fas fa-user"></i>
+    <span>Profile</span>
+</a>
+
+</nav><script type="module" src="profile.js"></script></body>
 </html>
