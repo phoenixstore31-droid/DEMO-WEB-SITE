@@ -1,5 +1,6 @@
 // ================================================
 // BIG STORE - MAIN INDEX JAVASCRIPT
+// FIXED VERSION
 // SUPABASE INTEGRATION
 // ================================================
 
@@ -31,53 +32,142 @@ const supabase = createClient(
 
 
 // ================================================
-// 02. PAGE INITIALIZATION
+// 02. GLOBAL STATE
 // ================================================
 
-document.addEventListener("DOMContentLoaded", async () => {
+let currentUser = null;
+
+let heroInterval = null;
+
+
+// ================================================
+// 03. IMAGE FALLBACK
+// FIXED 404 INFINITE LOOP
+// ================================================
+
+const FALLBACK_IMAGE =
+"data:image/svg+xml;charset=UTF-8," +
+encodeURIComponent(`
+<svg xmlns="http://www.w3.org/2000/svg"
+width="400" height="300" viewBox="0 0 400 300">
+
+<rect width="400" height="300" fill="#151515"/>
+
+<g fill="none" stroke="#d4af37"
+stroke-width="8" opacity=".8">
+
+<rect x="145" y="85" width="110"
+height="85" rx="12"/>
+
+<circle cx="180" cy="115" r="12"/>
+
+<path d="M150 155 L185 130 L210 150 L235 120 L255 155"/>
+
+</g>
+
+<text x="200" y="215"
+fill="#d4af37"
+font-size="18"
+text-anchor="middle"
+font-family="Arial">
+
+BIG STORE
+
+</text>
+
+</svg>
+`);
+
+
+function setupImageFallback(image) {
+
+    if (!image) return;
+
+    image.addEventListener("error", () => {
+
+        if (image.dataset.fallbackApplied === "true") {
+            return;
+        }
+
+        image.dataset.fallbackApplied = "true";
+
+        image.src = FALLBACK_IMAGE;
+
+    });
+
+}
+
+
+// ================================================
+// 04. INITIALIZATION
+// ================================================
+
+document.addEventListener(
+"DOMContentLoaded",
+async () => {
 
     const currentYear =
-        document.getElementById("currentYear");
+    document.getElementById("currentYear");
 
     if (currentYear) {
-        currentYear.textContent = new Date().getFullYear();
+
+        currentYear.textContent =
+        new Date().getFullYear();
+
     }
 
+
     initializeHeroSlider();
+
     initializeFAQ();
+
     initializeNavigation();
+
     initializeButtons();
+
+
+    // Fix existing images on page
+
+    document.querySelectorAll("img").forEach(img => {
+
+        setupImageFallback(img);
+
+    });
+
 
     document.body.classList.add("page-loaded");
 
-    // Check Login
+
     await checkUserSession();
 
-    console.log("BIG STORE initialized successfully!");
+
+    console.log(
+        "BIG STORE initialized successfully!"
+    );
 
 });
 
 
 // ================================================
-// 03. LOGIN SESSION CHECK
+// 05. AUTHENTICATION
 // ================================================
-
-let currentUser = null;
 
 async function checkUserSession() {
 
     try {
 
         const {
-            data: { session },
+            data,
             error
         } = await supabase.auth.getSession();
+
 
         if (error) {
             throw error;
         }
 
-        if (!session) {
+
+        if (!data.session) {
 
             window.location.replace("login.html");
 
@@ -85,21 +175,35 @@ async function checkUserSession() {
 
         }
 
-        currentUser = session.user;
 
-        await loadWalletBalance();
+        currentUser = data.session.user;
 
-        await loadFeaturedProducts();
 
-        await loadCustomerReviews();
+        // Load homepage data
 
-        await loadLeaderboard();
+        await Promise.allSettled([
+
+            loadWalletBalance(),
+
+            loadFeaturedProducts(),
+
+            loadCustomerReviews(),
+
+            loadLeaderboard()
+
+        ]);
+
 
     } catch (error) {
 
-        console.error("Session Error:", error);
+        console.error(
+            "Session Error:",
+            error
+        );
 
-        showToast("Unable to verify your account.");
+        showToast(
+            "Unable to verify your account."
+        );
 
     }
 
@@ -107,45 +211,69 @@ async function checkUserSession() {
 
 
 // ================================================
-// 04. WALLET BALANCE
+// 06. WALLET BALANCE
 // ================================================
 
 async function loadWalletBalance() {
 
     if (!currentUser) return;
 
+
     const walletElement =
-        document.getElementById("walletBalance");
+    document.getElementById("walletBalance");
+
 
     if (!walletElement) return;
 
+
     walletElement.textContent = "Loading...";
+
 
     try {
 
-        const { data, error } = await supabase
+        const {
+            data,
+            error
+        } = await supabase
+
             .from("profiles")
+
             .select("wallet_balance")
+
             .eq("id", currentUser.id)
+
             .single();
+
 
         if (error) {
             throw error;
         }
 
-        const balance = Number(data.wallet_balance || 0);
+
+        const balance =
+        Number(data.wallet_balance || 0);
+
 
         walletElement.textContent =
-            "LKR " + balance.toLocaleString("en-LK", {
+
+        "LKR " + balance.toLocaleString(
+            "en-LK",
+            {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2
-            });
+            }
+        );
+
 
     } catch (error) {
 
-        console.error("Wallet Error:", error);
+        console.error(
+            "Wallet Error:",
+            error
+        );
 
-        walletElement.textContent = "Unavailable";
+        walletElement.textContent =
+        "Unavailable";
 
     }
 
@@ -153,71 +281,113 @@ async function loadWalletBalance() {
 
 
 // ================================================
-// 05. HERO SLIDER
+// 07. HERO SLIDER
 // ================================================
 
 function initializeHeroSlider() {
 
     const heroSlider =
-        document.getElementById("heroSlider");
+    document.getElementById("heroSlider");
+
 
     if (!heroSlider) return;
+
+
+    const content =
+    heroSlider.querySelector(".hero-content");
+
+
+    if (!content) return;
+
+
+    const badge =
+    content.querySelector(".hero-badge");
+
+    const heading =
+    content.querySelector("h1");
+
+    const description =
+    content.querySelector("p");
+
+    const button =
+    content.querySelector(".hero-btn");
+
+
+    if (!badge || !heading || !description || !button) {
+        return;
+    }
+
 
     const heroSlides = [
 
         {
             badge: "PREMIUM GAMING STORE",
+
             title: "Power Up.<br><span>Play More.</span>",
+
             description:
-                "Fast, secure and reliable gaming top-up services around the world.",
+            "Fast, secure and reliable gaming top-up services around the world.",
+
             button: "Explore Games"
         },
 
         {
             badge: "GLOBAL GAMING SERVICES",
+
             title: "Your Game.<br><span>Your Power.</span>",
+
             description:
-                "Discover premium digital products and gaming services.",
+            "Discover premium digital products and gaming services.",
+
             button: "Browse Products"
         },
 
         {
             badge: "EXCLUSIVE OFFERS",
+
             title: "More Value.<br><span>More Rewards.</span>",
+
             description:
-                "Explore exciting offers and special gaming deals.",
+            "Explore exciting offers and special gaming deals.",
+
             button: "View Offers"
         }
 
     ];
 
+
     let currentSlide = 0;
+
 
     function showSlide(index) {
 
-        const content =
-            heroSlider.querySelector(".hero-content");
-
-        if (!content) return;
-
         const slide = heroSlides[index];
 
-        content.querySelector(".hero-badge").innerHTML =
-            `<i class="fa-solid fa-crown"></i> ${slide.badge}`;
 
-        content.querySelector("h1").innerHTML =
-            slide.title;
+        badge.innerHTML =
+        `<i class="fa-solid fa-crown"></i> ${slide.badge}`;
 
-        content.querySelector("p").textContent =
-            slide.description;
 
-        content.querySelector(".hero-btn").innerHTML =
-            `${slide.button} <i class="fa-solid fa-arrow-right"></i>`;
+        heading.innerHTML =
+        slide.title;
+
+
+        description.textContent =
+        slide.description;
+
+
+        button.innerHTML =
+        `${slide.button} <i class="fa-solid fa-arrow-right"></i>`;
+
 
         currentSlide = index;
 
+
         const indicators =
-            heroSlider.querySelectorAll(".slider-indicators span");
+        heroSlider.querySelectorAll(
+            ".slider-indicators span"
+        );
+
 
         indicators.forEach((indicator, i) => {
 
@@ -230,8 +400,12 @@ function initializeHeroSlider() {
 
     }
 
+
     const indicators =
-        heroSlider.querySelectorAll(".slider-indicators span");
+    heroSlider.querySelectorAll(
+        ".slider-indicators span"
+    );
+
 
     indicators.forEach((indicator, index) => {
 
@@ -241,30 +415,46 @@ function initializeHeroSlider() {
 
             showSlide(index);
 
+            restartSlider();
+
         });
 
     });
 
-    setInterval(() => {
 
-        currentSlide =
+    function restartSlider() {
+
+        clearInterval(heroInterval);
+
+        heroInterval = setInterval(() => {
+
+            const nextSlide =
             (currentSlide + 1) % heroSlides.length;
 
-        showSlide(currentSlide);
+            showSlide(nextSlide);
 
-    }, 5000);
+        }, 5000);
+
+    }
+
+
+    showSlide(0);
+
+    restartSlider();
 
 }
 
 
 // ================================================
-// 06. BUTTONS
+// 08. BUTTONS
 // ================================================
 
 function initializeButtons() {
 
+
     const startTopupBtn =
-        document.getElementById("startTopupBtn");
+    document.getElementById("startTopupBtn");
+
 
     if (startTopupBtn) {
 
@@ -278,7 +468,8 @@ function initializeButtons() {
 
 
     const addMoneyBtn =
-        document.getElementById("addMoneyBtn");
+    document.getElementById("addMoneyBtn");
+
 
     if (addMoneyBtn) {
 
@@ -292,7 +483,8 @@ function initializeButtons() {
 
 
     const profileBtn =
-        document.querySelector(".profile-btn");
+    document.querySelector(".profile-btn");
+
 
     if (profileBtn) {
 
@@ -306,7 +498,8 @@ function initializeButtons() {
 
 
     const notificationBtn =
-        document.querySelector(".notification-btn");
+    document.querySelector(".notification-btn");
+
 
     if (notificationBtn) {
 
@@ -322,32 +515,36 @@ function initializeButtons() {
 
 
 // ================================================
-// 07. BOTTOM NAVIGATION
+// 09. BOTTOM NAVIGATION
 // ================================================
 
 function initializeNavigation() {
 
     const currentPage =
-        window.location.pathname
-            .split("/")
-            .pop()
-            .toLowerCase() || "index.html";
 
-    const navItems =
-        document.querySelectorAll(
-            ".big-store-bottom-nav .nav-item"
-        );
+    window.location.pathname
+        .split("/")
+        .pop()
+        .toLowerCase() || "index.html";
 
-    navItems.forEach(item => {
+
+    document.querySelectorAll(
+        ".big-store-bottom-nav .nav-item"
+    ).forEach(item => {
 
         const link =
-            item.getAttribute("href");
+        item.getAttribute("href");
+
 
         if (!link) return;
 
+
         item.classList.toggle(
+
             "active",
+
             link.toLowerCase() === currentPage
+
         );
 
     });
@@ -356,13 +553,14 @@ function initializeNavigation() {
 
 
 // ================================================
-// 08. FAQ ACCORDION
+// 10. FAQ ACCORDION
 // ================================================
 
 function initializeFAQ() {
 
     const faqItems =
-        document.querySelectorAll(".faq-item");
+    document.querySelectorAll(".faq-item");
+
 
     faqItems.forEach(item => {
 
@@ -390,83 +588,144 @@ function initializeFAQ() {
 
 
 // ================================================
-// 09. FEATURED PRODUCTS
+// 11. FEATURED PRODUCTS
 // ================================================
 
 async function loadFeaturedProducts() {
 
     const dealsGrid =
-        document.getElementById("dealsGrid");
+    document.getElementById("dealsGrid");
+
 
     if (!dealsGrid) return;
 
+
+    dealsGrid.innerHTML = `
+
+        <div class="deals-placeholder">
+
+            <i class="fa-solid fa-spinner fa-spin"></i>
+
+            <p>Loading products...</p>
+
+        </div>
+
+    `;
+
+
     try {
 
-        const { data, error } = await supabase
+        const {
+            data,
+            error
+        } = await supabase
+
             .from("products")
+
             .select("*")
+
+            .eq("active", true)
+
             .limit(6);
+
 
         if (error) {
             throw error;
         }
 
+
         if (!data || data.length === 0) {
 
             dealsGrid.innerHTML = `
+
                 <div class="deals-placeholder">
+
                     <i class="fa-solid fa-box-open"></i>
+
                     <p>No products available right now.</p>
+
                 </div>
+
             `;
 
             return;
 
         }
 
+
         dealsGrid.innerHTML = "";
+
 
         data.forEach(product => {
 
             const name =
-                product.product_name ||
-                product.name ||
-                "Gaming Product";
+
+            product.product_name ||
+            product.name ||
+            "Gaming Product";
+
 
             const price =
-                Number(product.price || 0);
+            Number(product.price || 0);
+
 
             const image =
-                product.image_url ||
-                product.image ||
-                "image/default-avatar.jpg";
 
-            const card = document.createElement("div");
+            product.image_url ||
+            product.image ||
+            FALLBACK_IMAGE;
+
+
+            const card =
+            document.createElement("div");
+
 
             card.className = "deal-card";
 
-            const img = document.createElement("img");
+
+            const img =
+            document.createElement("img");
+
 
             img.src = image;
+
             img.alt = name;
+
             img.loading = "lazy";
 
-            img.onerror = () => {
-                img.src = "image/default-avatar.jpg";
-            };
+            setupImageFallback(img);
 
-            const title = document.createElement("h3");
+
+            const title =
+            document.createElement("h3");
+
 
             title.textContent = name;
 
-            const priceElement = document.createElement("p");
+
+            const priceElement =
+            document.createElement("p");
+
 
             priceElement.textContent =
-                "LKR " + price.toFixed(2);
 
-            const button = document.createElement("button");
+            "LKR " + price.toLocaleString(
+                "en-LK",
+                {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                }
+            );
+
+
+            const button =
+            document.createElement("button");
+
+
+            button.type = "button";
 
             button.textContent = "View Product";
+
 
             button.addEventListener("click", () => {
 
@@ -474,24 +733,39 @@ async function loadFeaturedProducts() {
 
             });
 
+
             card.appendChild(img);
+
             card.appendChild(title);
+
             card.appendChild(priceElement);
+
             card.appendChild(button);
+
 
             dealsGrid.appendChild(card);
 
         });
 
+
     } catch (error) {
 
-        console.error("Products Error:", error);
+        console.error(
+            "Products Error:",
+            error
+        );
+
 
         dealsGrid.innerHTML = `
+
             <div class="deals-placeholder">
+
                 <i class="fa-solid fa-triangle-exclamation"></i>
+
                 <p>Products could not be loaded.</p>
+
             </div>
+
         `;
 
     }
@@ -500,88 +774,143 @@ async function loadFeaturedProducts() {
 
 
 // ================================================
-// 10. CUSTOMER REVIEWS
+// 12. CUSTOMER REVIEWS
 // ================================================
 
 async function loadCustomerReviews() {
 
     const reviewsContainer =
-        document.getElementById("reviewsContainer");
+    document.getElementById("reviewsContainer");
+
 
     if (!reviewsContainer) return;
 
+
     try {
 
-        const { data, error } = await supabase
+        const {
+            data,
+            error
+        } = await supabase
+
             .from("reviews")
+
             .select("*")
+
             .eq("status", "approved")
+
             .limit(6);
+
 
         if (error) {
             throw error;
         }
 
+
         if (!data || data.length === 0) {
 
             reviewsContainer.innerHTML = `
+
                 <div class="reviews-placeholder">
+
                     <i class="fa-solid fa-star"></i>
+
                     <p>No customer reviews available yet.</p>
+
                 </div>
+
             `;
 
             return;
 
         }
 
+
         reviewsContainer.innerHTML = "";
+
 
         data.forEach(review => {
 
-            const card = document.createElement("div");
+            const card =
+            document.createElement("div");
+
 
             card.className = "review-card";
 
-            const name = document.createElement("h3");
+
+            // Customer name
+
+            const name =
+            document.createElement("h3");
+
 
             name.textContent =
-                review.customer_name || "Customer";
+            review.customer_name || "Customer";
 
-            const rating = document.createElement("div");
+
+            // Rating
+
+            const rating =
+            document.createElement("div");
+
 
             rating.className = "review-rating";
 
+
             const stars = Math.max(
                 0,
-                Math.min(5, Number(review.rating || 0))
+                Math.min(5, Math.floor(
+                    Number(review.rating || 0)
+                ))
             );
 
-            rating.textContent =
-                "★".repeat(stars) + "☆".repeat(5 - stars);
 
-            const message = document.createElement("p");
+            rating.textContent =
+
+            "\u2605".repeat(stars) +
+            "\u2606".repeat(5 - stars);
+
+
+            // Review message
+
+            const message =
+            document.createElement("p");
+
 
             message.textContent =
-                review.review_text || "";
+            review.review_text || "";
+
 
             card.appendChild(name);
+
             card.appendChild(rating);
+
             card.appendChild(message);
+
 
             reviewsContainer.appendChild(card);
 
         });
 
+
     } catch (error) {
 
-        console.error("Reviews Error:", error);
+        console.error(
+            "Reviews Error:",
+            error
+        );
+
 
         reviewsContainer.innerHTML = `
+
             <div class="reviews-placeholder">
+
                 <i class="fa-solid fa-star"></i>
+
                 <p>Reviews could not be loaded.</p>
+
             </div>
+
         `;
 
     }
@@ -590,37 +919,34 @@ async function loadCustomerReviews() {
 
 
 // ================================================
-// 11. LEADERBOARD
+// 13. LEADERBOARD
 // ================================================
 
 async function loadLeaderboard() {
 
     const leaderboardList =
-        document.getElementById("leaderboardList");
+    document.getElementById("leaderboardList");
+
 
     const rankingElement =
-        document.getElementById("userRanking");
+    document.getElementById("userRanking");
+
 
     if (!leaderboardList) return;
 
-    /*
-       IMPORTANT:
-       The current profiles RLS policy only permits
-       users to view their own profile.
-
-       Therefore, this page cannot safely read other
-       users' profiles for a public leaderboard.
-
-       We will connect this section after creating
-       a secure leaderboard database function.
-    */
 
     leaderboardList.innerHTML = `
+
         <div class="leaderboard-placeholder">
+
             <i class="fa-solid fa-trophy"></i>
+
             <p>Leaderboard will be available soon.</p>
+
         </div>
+
     `;
+
 
     if (rankingElement) {
 
@@ -632,44 +958,70 @@ async function loadLeaderboard() {
 
 
 // ================================================
-// 12. TOAST MESSAGE
+// 14. TOAST MESSAGE
 // ================================================
 
 function showToast(message) {
 
     let toast =
-        document.getElementById("indexToast");
+    document.getElementById("indexToast");
+
 
     if (!toast) {
 
-        toast = document.createElement("div");
+        toast =
+        document.createElement("div");
+
 
         toast.id = "indexToast";
 
+
         toast.style.cssText = `
+
             position:fixed;
+
             bottom:110px;
+
             left:50%;
+
             transform:translateX(-50%);
+
             background:#222;
+
             color:#fff;
+
             padding:13px 20px;
+
             border:1px solid #d4af37;
+
             border-radius:10px;
+
             z-index:999999;
+
             font-size:14px;
+
             box-shadow:0 5px 20px rgba(0,0,0,.4);
+
+            max-width:90%;
+
+            text-align:center;
+
         `;
+
 
         document.body.appendChild(toast);
 
     }
 
+
     toast.textContent = message;
+
 
     toast.style.display = "block";
 
+
     clearTimeout(toast.hideTimer);
+
 
     toast.hideTimer = setTimeout(() => {
 
@@ -681,15 +1033,24 @@ function showToast(message) {
 
 
 // ================================================
-// 13. AUTH STATE LISTENER
+// 15. AUTH STATE LISTENER
 // ================================================
 
-supabase.auth.onAuthStateChange((event, session) => {
+supabase.auth.onAuthStateChange((event) => {
 
-    if (event === "SIGNED_OUT" || !session) {
+    if (event === "SIGNED_OUT") {
 
         window.location.replace("login.html");
 
     }
 
 });
+
+
+// ================================================
+// 16. END
+// ================================================
+
+console.log(
+    "BIG STORE INDEX.JS LOADED"
+);
