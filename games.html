@@ -2,511 +2,392 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Games | BIG STORE</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta name="description" content="Explore your favorite games and purchase game top-ups at BIG STORE.">
+<title>Games | BIG STORE</title>
 
-    <meta name="theme-color" content="#080808">
+<meta name="description" content="Explore your favorite games and purchase game top-ups at BIG STORE.">
 
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<meta name="theme-color" content="#080808">
 
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-    <!-- CSS -->
-    <link rel="stylesheet" href="games.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<link rel="stylesheet" href="games.css">
+
+<style>
+
+/* GAME STATUS */
+
+.game-status {
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.game-status.available {
+    color: #42d98a;
+}
+
+.game-status.coming-soon {
+    color: #e9c65b;
+}
+
+.game-card.disabled {
+    cursor: not-allowed;
+    opacity: 0.72;
+}
+
+.game-card.disabled .game-card-link {
+    pointer-events: none;
+}
+
+.game-image {
+    position: relative;
+    overflow: hidden;
+}
+
+.game-label {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    padding: 6px 10px;
+    border-radius: 7px;
+    font-size: 10px;
+    font-weight: 800;
+}
+
+.game-label.popular {
+    background: #d4af37;
+    color: #080808;
+}
+
+.game-label.soon {
+    background: rgba(212,175,55,0.15);
+    color: #f5d77a;
+    border: 1px solid rgba(212,175,55,0.3);
+}
+
+.game-card-link {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+}
+
+.game-loading,
+.game-error {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 45px 15px;
+}
+
+.game-loading i,
+.game-error i {
+    font-size: 30px;
+    color: #d4af37;
+    margin-bottom: 15px;
+}
+
+.game-card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+</style>
 
 </head>
 
+
 <body>
 
-    <!-- =====================================
-         HEADER
-    ====================================== -->
 
-    <header class="games-header">
+<!-- HEADER -->
 
-        <a href="index.html" class="games-logo">
-            <span class="logo-icon">
-                <i class="fas fa-crown"></i>
-            </span>
+<header class="games-header">
 
-            <span>BIG <b>STORE</b></span>
-        </a>
+<a href="index.html" class="games-logo">
 
-        <div class="header-actions">
+<span class="logo-icon">
+<i class="fas fa-crown"></i>
+</span>
 
-            <button class="header-icon-btn" id="notificationBtn" aria-label="Notifications">
-                <i class="far fa-bell"></i>
-                <span class="notification-dot"></span>
-            </button>
+<span>BIG <b>STORE</b></span>
 
-            <button class="header-icon-btn" id="profileBtn" aria-label="Profile">
-                <i class="far fa-user"></i>
-            </button>
+</a>
 
-        </div>
 
-    </header>
+<div class="header-actions">
 
+<button class="header-icon-btn" id="notificationBtn" aria-label="Notifications">
 
-    <!-- =====================================
-         MAIN CONTENT
-    ====================================== -->
+<i class="far fa-bell"></i>
 
-    <main class="games-page">
+<span class="notification-dot"></span>
 
-        <!-- PAGE INTRO -->
+</button>
 
-        <section class="games-intro">
 
-            <div class="intro-badge">
-                <span class="badge-dot"></span>
-                GAMING DESTINATION
-            </div>
+<button class="header-icon-btn" id="profileBtn" aria-label="Profile">
 
-            <h1>
-                Explore <span>Games</span>
-            </h1>
+<i class="far fa-user"></i>
 
-            <p>
-                Discover your favorite games and get ready
-                for your next gaming adventure.
-            </p>
+</button>
 
-        </section>
+</div>
 
+</header>
 
-        <!-- =====================================
-             SEARCH
-        ====================================== -->
 
-        <section class="games-search-section">
 
-            <div class="games-search-box">
+<!-- MAIN CONTENT -->
 
-                <i class="fas fa-search"></i>
+<main class="games-page">
 
-                <input
-                    type="search"
-                    id="gameSearch"
-                    placeholder="Search your favorite games..."
-                    autocomplete="off"
-                >
 
-                <button id="clearGameSearch" type="button" aria-label="Clear search">
-                    <i class="fas fa-times"></i>
-                </button>
+<!-- INTRO -->
 
-            </div>
+<section class="games-intro">
 
-        </section>
+<div class="intro-badge">
 
+<span class="badge-dot"></span>
 
-        <!-- =====================================
-             CATEGORY FILTER
-        ====================================== -->
+GAMING DESTINATION
 
-        <section class="games-filter-section">
+</div>
 
-            <div class="filter-heading">
+<h1>
+Explore <span>Games</span>
+</h1>
 
-                <h2>Browse Games</h2>
+<p>
+Discover your favorite games and get ready
+for your next gaming adventure.
+</p>
 
-                <span id="gamesCount">7 Games</span>
+</section>
 
-            </div>
 
-            <div class="games-categories">
 
-                <button class="category-btn active" data-category="all">
-                    <i class="fas fa-border-all"></i>
-                    All Games
-                </button>
+<!-- SEARCH -->
 
-                <button class="category-btn" data-category="battle-royale">
-                    <i class="fas fa-crosshairs"></i>
-                    Battle Royale
-                </button>
+<section class="games-search-section">
 
-                <button class="category-btn" data-category="mobile">
-                    <i class="fas fa-mobile-alt"></i>
-                    Mobile
-                </button>
+<div class="games-search-box">
 
-                <button class="category-btn" data-category="other">
-                    <i class="fas fa-gamepad"></i>
-                    Other Games
-                </button>
+<i class="fas fa-search"></i>
 
-            </div>
+<input
+type="search"
+id="gameSearch"
+placeholder="Search your favorite games..."
+autocomplete="off"
+>
 
-        </section>
+<button id="clearGameSearch" type="button" aria-label="Clear search">
 
+<i class="fas fa-times"></i>
 
-        <!-- =====================================
-             GAMES GRID
-        ====================================== -->
+</button>
 
-        <section class="games-grid-section">
+</div>
 
-            <div class="games-grid" id="gamesGrid">
+</section>
 
 
-                <!-- FREE FIRE -->
 
-                <article class="game-card"
-                    data-name="Free Fire"
-                    data-category="battle-royale mobile">
+<!-- CATEGORY -->
 
-                    <a href="game-details.html?game=free-fire" class="game-card-link">
+<section class="games-filter-section">
 
-                        <div class="game-image game-free-fire">
+<div class="filter-heading">
 
-                            <div class="game-image-icon">
-                                <i class="fas fa-fire"></i>
-                            </div>
+<h2>Browse Games</h2>
 
-                            <span class="game-label">POPULAR</span>
+<span id="gamesCount">Loading...</span>
 
-                        </div>
+</div>
 
-                        <div class="game-info">
 
-                            <div class="game-title-row">
-                                <h3>Free Fire</h3>
-                                <i class="fas fa-arrow-up-right-from-square"></i>
-                            </div>
+<div class="games-categories">
 
-                            <p>Garena Free Fire</p>
+<button class="category-btn active" data-category="all">
 
-                            <div class="game-card-bottom">
-                                <span><i class="fas fa-gamepad"></i> Battle Royale</span>
-                                <span class="game-status">Available</span>
-                            </div>
+<i class="fas fa-border-all"></i>
 
-                        </div>
+All Games
 
-                    </a>
+</button>
 
-                </article>
 
+<button class="category-btn" data-category="battle-royale">
 
-                <!-- PUBG MOBILE -->
+<i class="fas fa-crosshairs"></i>
 
-                <article class="game-card"
-                    data-name="PUBG Mobile"
-                    data-category="battle-royale mobile">
+Battle Royale
 
-                    <a href="game-details.html?game=pubg-mobile" class="game-card-link">
+</button>
 
-                        <div class="game-image game-pubg">
 
-                            <div class="game-image-icon">
-                                <i class="fas fa-crosshairs"></i>
-                            </div>
+<button class="category-btn" data-category="mobile">
 
-                        </div>
+<i class="fas fa-mobile-alt"></i>
 
-                        <div class="game-info">
+Mobile
 
-                            <div class="game-title-row">
-                                <h3>PUBG Mobile</h3>
-                                <i class="fas fa-arrow-up-right-from-square"></i>
-                            </div>
+</button>
 
-                            <p>PUBG Mobile</p>
 
-                            <div class="game-card-bottom">
-                                <span><i class="fas fa-gamepad"></i> Battle Royale</span>
-                                <span class="game-status">Available</span>
-                            </div>
+<button class="category-btn" data-category="other">
 
-                        </div>
+<i class="fas fa-gamepad"></i>
 
-                    </a>
+Other Games
 
-                </article>
+</button>
 
+</div>
 
-                <!-- MOBILE LEGENDS -->
+</section>
 
-                <article class="game-card"
-                    data-name="Mobile Legends"
-                    data-category="mobile">
 
-                    <a href="game-details.html?game=mobile-legends" class="game-card-link">
 
-                        <div class="game-image game-ml">
+<!-- GAMES GRID -->
 
-                            <div class="game-image-icon">
-                                <i class="fas fa-shield-halved"></i>
-                            </div>
+<section class="games-grid-section">
 
-                        </div>
+<div class="games-grid" id="gamesGrid">
 
-                        <div class="game-info">
+<div class="game-loading">
 
-                            <div class="game-title-row">
-                                <h3>Mobile Legends</h3>
-                                <i class="fas fa-arrow-up-right-from-square"></i>
-                            </div>
+<i class="fas fa-spinner fa-spin"></i>
 
-                            <p>Bang Bang</p>
+<p>Loading Games...</p>
 
-                            <div class="game-card-bottom">
-                                <span><i class="fas fa-gamepad"></i> MOBA</span>
-                                <span class="game-status">Available</span>
-                            </div>
+</div>
 
-                        </div>
+</div>
 
-                    </a>
 
-                </article>
 
+<!-- NO RESULTS -->
 
-                <!-- GENSHIN IMPACT -->
+<div class="games-no-results" id="noGamesFound" style="display:none;">
 
-                <article class="game-card"
-                    data-name="Genshin Impact"
-                    data-category="other">
+<div class="no-results-icon">
 
-                    <a href="game-details.html?game=genshin-impact" class="game-card-link">
+<i class="fas fa-gamepad"></i>
 
-                        <div class="game-image game-genshin">
+</div>
 
-                            <div class="game-image-icon">
-                                <i class="fas fa-wand-magic-sparkles"></i>
-                            </div>
+<h3>No Games Found</h3>
 
-                        </div>
+<p>Try searching with another game name.</p>
 
-                        <div class="game-info">
+<button type="button" id="resetGameSearch">
 
-                            <div class="game-title-row">
-                                <h3>Genshin Impact</h3>
-                                <i class="fas fa-arrow-up-right-from-square"></i>
-                            </div>
+<i class="fas fa-rotate-left"></i>
 
-                            <p>Open World Adventure</p>
+Show All Games
 
-                            <div class="game-card-bottom">
-                                <span><i class="fas fa-gamepad"></i> Adventure</span>
-                                <span class="game-status">Available</span>
-                            </div>
+</button>
 
-                        </div>
+</div>
 
-                    </a>
+</section>
 
-                </article>
 
 
-                <!-- CALL OF DUTY -->
+<!-- INFORMATION -->
 
-                <article class="game-card"
-                    data-name="Call of Duty Mobile"
-                    data-category="battle-royale mobile">
+<section class="games-info-banner">
 
-                    <a href="game-details.html?game=call-of-duty" class="game-card-link">
+<div class="info-banner-icon">
 
-                        <div class="game-image game-cod">
+<i class="fas fa-bolt"></i>
 
-                            <div class="game-image-icon">
-                                <i class="fas fa-bullseye"></i>
-                            </div>
+</div>
 
-                        </div>
+<div class="info-banner-content">
 
-                        <div class="game-info">
+<h3>Ready to Level Up?</h3>
 
-                            <div class="game-title-row">
-                                <h3>Call of Duty</h3>
-                                <i class="fas fa-arrow-up-right-from-square"></i>
-                            </div>
+<p>
+Choose your favorite game and explore available top-up options.
+</p>
 
-                            <p>Call of Duty Mobile</p>
+</div>
 
-                            <div class="game-card-bottom">
-                                <span><i class="fas fa-gamepad"></i> Action</span>
-                                <span class="game-status">Available</span>
-                            </div>
+<i class="fas fa-arrow-right banner-arrow"></i>
 
-                        </div>
+</section>
 
-                    </a>
 
-                </article>
+</main>
 
 
-                <!-- ROBLOX -->
 
-                <article class="game-card"
-                    data-name="Roblox"
-                    data-category="other">
+<!-- BOTTOM NAVIGATION -->
 
-                    <a href="game-details.html?game=roblox" class="game-card-link">
+<nav class="big-store-bottom-nav">
 
-                        <div class="game-image game-roblox">
+<a href="index.html" class="nav-item">
 
-                            <div class="game-image-icon">
-                                <i class="fas fa-cube"></i>
-                            </div>
+<i class="fas fa-house"></i>
 
-                        </div>
+<span>Home</span>
 
-                        <div class="game-info">
+</a>
 
-                            <div class="game-title-row">
-                                <h3>Roblox</h3>
-                                <i class="fas fa-arrow-up-right-from-square"></i>
-                            </div>
 
-                            <p>Roblox Gaming</p>
+<a href="games.html" class="nav-item">
 
-                            <div class="game-card-bottom">
-                                <span><i class="fas fa-gamepad"></i> Adventure</span>
-                                <span class="game-status">Available</span>
-                            </div>
+<i class="fas fa-gamepad"></i>
 
-                        </div>
+<span>Games</span>
 
-                    </a>
+</a>
 
-                </article>
 
+<a href="wallet-topup.html" class="nav-item">
 
-                <!-- HONOR OF KINGS -->
+<i class="fas fa-wallet"></i>
 
-                <article class="game-card"
-                    data-name="Honor of Kings"
-                    data-category="mobile">
+<span>Wallet</span>
 
-                    <a href="game-details.html?game=honor-of-kings" class="game-card-link">
+</a>
 
-                        <div class="game-image game-hok">
 
-                            <div class="game-image-icon">
-                                <i class="fas fa-chess-knight"></i>
-                            </div>
+<a href="history.html" class="nav-item">
 
-                        </div>
+<i class="fas fa-clock-rotate-left"></i>
 
-                        <div class="game-info">
+<span>History</span>
 
-                            <div class="game-title-row">
-                                <h3>Honor of Kings</h3>
-                                <i class="fas fa-arrow-up-right-from-square"></i>
-                            </div>
+</a>
 
-                            <p>Honor of Kings</p>
 
-                            <div class="game-card-bottom">
-                                <span><i class="fas fa-gamepad"></i> MOBA</span>
-                                <span class="game-status">Available</span>
-                            </div>
+<a href="profile.html" class="nav-item">
 
-                        </div>
+<i class="fas fa-user"></i>
 
-                    </a>
+<span>Profile</span>
 
-                </article>
+</a>
 
+</nav>
 
-            </div>
 
 
-            <!-- NO RESULTS -->
+<!-- JAVASCRIPT -->
 
-            <div class="games-no-results" id="noGamesFound" style="display:none;">
-
-                <div class="no-results-icon">
-                    <i class="fas fa-gamepad"></i>
-                </div>
-
-                <h3>No Games Found</h3>
-
-                <p>Try searching with another game name.</p>
-
-                <button type="button" id="resetGameSearch">
-                    <i class="fas fa-rotate-left"></i>
-                    Show All Games
-                </button>
-
-            </div>
-
-        </section>
-
-
-        <!-- BOTTOM INFORMATION -->
-
-        <section class="games-info-banner">
-
-            <div class="info-banner-icon">
-                <i class="fas fa-bolt"></i>
-            </div>
-
-            <div class="info-banner-content">
-
-                <h3>Ready to Level Up?</h3>
-
-                <p>Choose your favorite game and explore available top-up options.</p>
-
-            </div>
-
-            <i class="fas fa-arrow-right banner-arrow"></i>
-
-        </section>
-
-
-    </main>
-
-
-    <!-- =====================================
-         BOTTOM NAVIGATION
-    ====================================== -->
-
-    <nav class="big-store-bottom-nav">
-
-        <a href="index.html" class="nav-item">
-            <i class="fas fa-house"></i>
-            <span>Home</span>
-        </a>
-
-        <a href="games.html" class="nav-item active">
-            <i class="fas fa-gamepad"></i>
-            <span>Games</span>
-        </a>
-
-        <a href="wallet-topup.html" class="nav-item">
-            <i class="fas fa-wallet"></i>
-            <span>Wallet</span>
-        </a>
-
-        <a href="history.html" class="nav-item">
-            <i class="fas fa-clock-rotate-left"></i>
-            <span>History</span>
-        </a>
-
-        <a href="profile.html" class="nav-item">
-            <i class="fas fa-user"></i>
-            <span>Profile</span>
-        </a>
-
-    </nav>
-
-
-    <!-- JAVASCRIPT -->
-
-    <script type="module" src="games.js"></script>
+<script type="module" src="games.js"></script>
 
 </body>
 
