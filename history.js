@@ -904,6 +904,7 @@ function applyFilters() {
 
 // ==========================================
 // CREATE TRANSACTION CARD
+// CLICK TO VIEW DETAILS
 // ==========================================
 
 function createTransactionCard(item) {
@@ -912,175 +913,119 @@ function createTransactionCard(item) {
 
     card.className = "transaction-card";
 
+    card.setAttribute("role", "button");
+    card.setAttribute("tabindex", "0");
 
-    const isOrder =
-
-        item.history_type === "order";
-
+    const isOrder = item.history_type === "order";
 
     const status = item.history_status;
 
-
     const statusLabels = {
-
         success: "Successful",
-
         pending: "Pending",
-
         failed: "Failed"
-
     };
 
-
-    const icon = isOrder
-
-        ? "fa-gamepad"
-
-        : "fa-wallet";
-
+    const icon = isOrder ? "fa-gamepad" : "fa-wallet";
 
     const iconStatus = {
-
         success: "fa-circle-check",
-
         pending: "fa-clock",
-
         failed: "fa-circle-xmark"
-
     };
 
+    const direction = item.history_direction || "credit";
 
-    const direction =
-
-        item.history_direction || "credit";
-
-
-    const amountPrefix =
-
-        direction === "debit" ? "-" : "+";
-
-
-    // TRANSACTION TITLE
+    const amountPrefix = direction === "debit" ? "-" : "+";
 
     const title = document.createElement("h3");
 
-    title.textContent =
-
-        item.history_title || "Transaction";
-
-
-    // TRANSACTION ID
+    title.textContent = item.history_title || "Transaction";
 
     const transactionId = document.createElement("p");
 
     transactionId.className = "transaction-id";
 
     transactionId.textContent =
-
         "ID: " + (item.history_id || "N/A");
-
-
-    // STATUS BADGE
 
     const statusBadge = document.createElement("span");
 
     statusBadge.className =
-
         "transaction-status status-" + status;
-
 
     const statusIcon = document.createElement("i");
 
     statusIcon.className =
-
         "fas " + iconStatus[status];
-
 
     statusBadge.appendChild(statusIcon);
 
     statusBadge.appendChild(
-
-        document.createTextNode(
-
-            " " + statusLabels[status]
-
-        )
-
+        document.createTextNode(" " + statusLabels[status])
     );
-
-
-    // DETAILS
 
     const details = document.createElement("div");
 
     details.className = "transaction-details";
 
     details.appendChild(title);
-
     details.appendChild(transactionId);
-
     details.appendChild(statusBadge);
-
-
-    // ICON
 
     const transactionIcon = document.createElement("div");
 
     transactionIcon.className = "transaction-icon";
 
-
     const iconElement = document.createElement("i");
 
     iconElement.className = "fas " + icon;
 
-
     transactionIcon.appendChild(iconElement);
-
-
-    // RIGHT SIDE
 
     const right = document.createElement("div");
 
     right.className = "transaction-right";
-
-
-    // AMOUNT
 
     const amount = document.createElement("span");
 
     amount.className = "transaction-amount";
 
     amount.textContent =
-
-        amountPrefix +
-
-        formatCurrency(item.history_amount);
-
-
-    // DATE
+        amountPrefix + formatCurrency(item.history_amount);
 
     const date = document.createElement("span");
 
     date.className = "transaction-date";
 
-    date.textContent =
-
-        formatDate(item.history_date);
-
+    date.textContent = formatDate(item.history_date);
 
     right.appendChild(amount);
-
     right.appendChild(date);
 
-
-    // BUILD CARD
-
     card.appendChild(transactionIcon);
-
     card.appendChild(details);
-
     card.appendChild(right);
 
+    // OPEN DETAILS POPUP
+
+    card.addEventListener("click", () => {
+
+        openOrderDetails(item);
+
+    });
+
+    card.addEventListener("keydown", event => {
+
+        if (event.key === "Enter" || event.key === " ") {
+
+            event.preventDefault();
+
+            openOrderDetails(item);
+
+        }
+
+    });
 
     return card;
 
@@ -1436,6 +1381,338 @@ setupBottomNavigation();
 // ==========================================
 
 loadHistory();
+
+
+// ==========================================
+// ORDER DETAILS POPUP
+// ==========================================
+
+const orderDetailsModal =
+    document.getElementById("orderDetailsModal");
+
+const orderModalOverlay =
+    document.getElementById("orderModalOverlay");
+
+const closeOrderModal =
+    document.getElementById("closeOrderModal");
+
+const copyOrderDetails =
+    document.getElementById("copyOrderDetails");
+
+const copyOrderMessage =
+    document.getElementById("copyOrderMessage");
+
+let currentPopupDetails = "";
+
+
+// GET REAL DATABASE VALUE
+
+function getOrderValue(item, possibleNames) {
+
+    for (const name of possibleNames) {
+
+        const value = item[name];
+
+        if (
+            value !== null &&
+            value !== undefined &&
+            String(value).trim() !== ""
+        ) {
+
+            return String(value);
+
+        }
+
+    }
+
+    return "-";
+
+}
+
+
+// SET POPUP TEXT SAFELY
+
+function setPopupText(id, value) {
+
+    const element = document.getElementById(id);
+
+    if (element) {
+
+        element.textContent = value || "-";
+
+    }
+
+}
+
+
+// OPEN POPUP
+
+function openOrderDetails(item) {
+
+    if (!orderDetailsModal) return;
+
+    const isOrder = item.history_type === "order";
+
+    const gameName = getOrderValue(item, [
+
+        "game_name",
+        "game",
+        "game_title"
+
+    ]);
+
+    const uid = getOrderValue(item, [
+
+        "player_id",
+        "player_uid",
+        "uid",
+        "game_uid",
+        "account_id"
+
+    ]);
+
+    const username = getOrderValue(item, [
+
+        "player_name",
+        "username",
+        "player_username",
+        "game_username",
+        "account_name"
+
+    ]);
+
+    const productName = getOrderValue(item, [
+
+        "product_name",
+        "product",
+        "item_name",
+        "history_title"
+
+    ]);
+
+    const orderID = getOrderValue(item, [
+
+        "order_number",
+        "transaction_id",
+        "id"
+
+    ]);
+
+    const price = formatCurrency(item.history_amount);
+
+    const date = formatDate(item.history_date);
+
+    const status = item.history_status || "pending";
+
+    // POPULATE DATA
+
+    setPopupText(
+        "modalProductName",
+        productName
+    );
+
+    setPopupText(
+        "modalGame",
+        isOrder ? gameName : "Wallet Transaction"
+    );
+
+    setPopupText(
+        "modalUID",
+        isOrder ? uid : "Not applicable"
+    );
+
+    setPopupText(
+        "modalUsername",
+        isOrder ? username : "Not applicable"
+    );
+
+    setPopupText(
+        "modalProduct",
+        productName
+    );
+
+    setPopupText(
+        "modalOrderID",
+        orderID
+    );
+
+    setPopupText(
+        "modalPrice",
+        price
+    );
+
+    setPopupText(
+        "modalDate",
+        date
+    );
+
+    // STATUS
+
+    const statusElement =
+        document.getElementById("modalStatus");
+
+    if (statusElement) {
+
+        const statusLabels = {
+
+            success: "Successful",
+            pending: "Pending",
+            failed: "Failed"
+
+        };
+
+        statusElement.textContent =
+            statusLabels[status] || "Pending";
+
+        statusElement.className =
+            "modal-status status-" + status;
+
+    }
+
+    // COPY TEXT
+
+    currentPopupDetails = [
+
+        "BIG STORE - ORDER DETAILS",
+
+        "------------------------------",
+
+        "Game: " + (isOrder ? gameName : "Wallet Transaction"),
+
+        "UID: " + (isOrder ? uid : "Not applicable"),
+
+        "Username: " + (isOrder ? username : "Not applicable"),
+
+        "Product: " + productName,
+
+        "Order ID: " + orderID,
+
+        "Price: " + price,
+
+        "Status: " + (statusElement?.textContent || status),
+
+        "Date: " + date,
+
+        "------------------------------",
+
+        "BIG STORE"
+
+    ].join("\n");
+
+    copyOrderMessage.textContent = "";
+
+    orderDetailsModal.hidden = false;
+
+    document.body.style.overflow = "hidden";
+
+}
+
+
+// CLOSE POPUP
+
+function closeOrderDetails() {
+
+    if (!orderDetailsModal) return;
+
+    orderDetailsModal.hidden = true;
+
+    document.body.style.overflow = "";
+
+}
+
+
+// CLOSE BUTTON
+
+closeOrderModal?.addEventListener("click", closeOrderDetails);
+
+
+// OVERLAY CLICK
+
+orderModalOverlay?.addEventListener(
+    "click",
+    closeOrderDetails
+);
+
+
+// ESCAPE KEY
+
+document.addEventListener("keydown", event => {
+
+    if (
+        event.key === "Escape" &&
+        orderDetailsModal &&
+        !orderDetailsModal.hidden
+    ) {
+
+        closeOrderDetails();
+
+    }
+
+});
+
+
+// ==========================================
+// COPY ORDER DETAILS
+// ==========================================
+
+copyOrderDetails?.addEventListener("click", async () => {
+
+    if (!currentPopupDetails) return;
+
+    try {
+
+        await navigator.clipboard.writeText(
+            currentPopupDetails
+        );
+
+        copyOrderMessage.textContent =
+            "Copied Successfully!";
+
+        copyOrderMessage.className =
+            "copy-message copy-success";
+
+    }
+
+    catch (error) {
+
+        // FALLBACK
+
+        const textarea = document.createElement("textarea");
+
+        textarea.value = currentPopupDetails;
+
+        textarea.style.position = "fixed";
+        textarea.style.opacity = "0";
+
+        document.body.appendChild(textarea);
+
+        textarea.select();
+
+        const copied = document.execCommand("copy");
+
+        textarea.remove();
+
+        if (copied) {
+
+            copyOrderMessage.textContent =
+                "Copied Successfully!";
+
+            copyOrderMessage.className =
+                "copy-message copy-success";
+
+        } else {
+
+            copyOrderMessage.textContent =
+                "Unable to copy. Please try again.";
+
+            copyOrderMessage.className =
+                "copy-message copy-error";
+
+        }
+
+    }
+
+});
 
 
 // ==========================================

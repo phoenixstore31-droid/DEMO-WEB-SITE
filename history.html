@@ -402,6 +402,106 @@
         </section>
 
 
+        <!-- ==========================================
+     ORDER DETAILS POPUP
+========================================== -->
+
+<div class="order-modal" id="orderDetailsModal" hidden>
+
+    <div class="order-modal-overlay" id="orderModalOverlay"></div>
+
+    <div class="order-modal-content">
+
+        <div class="order-modal-header">
+
+            <div>
+                <span class="modal-label">BIG STORE</span>
+                <h2>Order <span>Details</span></h2>
+            </div>
+
+            <button
+                type="button"
+                class="modal-close"
+                id="closeOrderModal"
+                aria-label="Close"
+            >
+                <i class="fas fa-times"></i>
+            </button>
+
+        </div>
+
+        <div class="modal-order-icon">
+            <i class="fas fa-gamepad"></i>
+        </div>
+
+        <div class="modal-product-heading">
+
+            <h3 id="modalProductName">Product Name</h3>
+
+            <span id="modalStatus" class="modal-status">
+                Successful
+            </span>
+
+        </div>
+
+        <div class="modal-details-list">
+
+            <div class="modal-detail-row">
+                <span>Game</span>
+                <strong id="modalGame">-</strong>
+            </div>
+
+            <div class="modal-detail-row">
+                <span>UID</span>
+                <strong id="modalUID">-</strong>
+            </div>
+
+            <div class="modal-detail-row">
+                <span>Username</span>
+                <strong id="modalUsername">-</strong>
+            </div>
+
+            <div class="modal-detail-row">
+                <span>Product</span>
+                <strong id="modalProduct">-</strong>
+            </div>
+
+            <div class="modal-detail-row">
+                <span>Order ID</span>
+                <strong id="modalOrderID">-</strong>
+            </div>
+
+            <div class="modal-detail-row">
+                <span>Price</span>
+                <strong id="modalPrice">-</strong>
+            </div>
+
+            <div class="modal-detail-row">
+                <span>Date</span>
+                <strong id="modalDate">-</strong>
+            </div>
+
+        </div>
+
+        <button
+            type="button"
+            class="copy-order-details"
+            id="copyOrderDetails"
+        >
+
+            <i class="fas fa-copy"></i>
+
+            Copy Order Details
+
+        </button>
+
+        <p class="copy-message" id="copyOrderMessage" aria-live="polite"></p>
+
+    </div>
+
+</div>
+
+
     </main>
 
 
